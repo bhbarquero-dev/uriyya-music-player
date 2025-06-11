@@ -1,5 +1,12 @@
 name: Build Electron App
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -7,9 +14,18 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 22
-      - run: npm install
-      - run: npm run make
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - run: pnpm install
+      - run: pnpm run lint
+      - run: pnpm run make
+      - name: Upload Artifacts
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v3
+        with:
+          name: electron-artifacts
+          path: out/make/**
