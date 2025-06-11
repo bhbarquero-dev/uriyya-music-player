@@ -8,7 +8,24 @@ on:
       - main
   workflow_dispatch:
 jobs:
+  lint_and_install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - run: pnpm install
+      - run: pnpm run lint
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/pnpm-lock.yaml') }}
   build:
+    needs: lint_and_install
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -21,7 +38,6 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
       - run: pnpm install
-      - run: pnpm run lint
       - run: pnpm run make
       - name: Upload Artifacts
         if: github.event_name != 'pull_request'
