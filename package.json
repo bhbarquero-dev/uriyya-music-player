@@ -1,8 +1,8 @@
 {
-  "name": "my-app",
-  "productName": "my-app",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "name": "uriyya-music-player",
+  "productName": "uriyya-music-player",
+  "version": "0.0.2",
+  "description": "The Music Player for Uriyya",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": {
-    "name": "Bernal I. Hernández Barquero",
+    "name": "bhbarquero-dev",
     "email": "bhbarquero@outlook.com"
   },
   "license": "MIT",
@@ -33,6 +33,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
     "@electron-forge/plugin-fuses": "^7.8.1",
     "@electron-forge/plugin-vite": "^7.8.1",
+    "@electron-forge/publisher-github": "^7.8.1",
     "@electron/fuses": "^1.8.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
