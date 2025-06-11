@@ -1,7 +1,7 @@
 {
   "name": "uriyya-music-player",
   "productName": "uriyya-music-player",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The Music Player for Uriyya",
   "main": ".vite/build/main.js",
   "scripts": {
