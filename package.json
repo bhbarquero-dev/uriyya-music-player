@@ -1,8 +1,8 @@
 {
-  "name": "my-app",
-  "productName": "my-app",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "name": "uriyya-music-player",
+  "productName": "uriyya-music-player",
+  "version": "0.0.1-beta.1",
+  "description": "The Music Player for Uriyya",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": {
-    "name": "Bernal I. Hernández Barquero",
+    "name": "bhbarquero-dev",
     "email": "bhbarquero@outlook.com"
   },
   "license": "MIT",
