@@ -2,8 +2,7 @@
   grid-area: player;
   background-color: var(--background-elevated);
   border-bottom: 1px solid var(--border-color);
-  padding: 0 20px;
-  padding-right: 140px; /* Espacio para los controles de ventana */
+  padding: 0 160px 0 20px; /* Aumentado el padding derecho para los controles de ventana */
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
@@ -12,7 +11,6 @@
   position: relative;
   z-index: 1;
   -webkit-app-region: drag;
-  pointer-events: auto;
 }
 
 .track-info {

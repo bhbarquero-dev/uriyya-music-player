@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { WindowControls } from './WindowControls';
 import '../styles/player.css';
 
 export const Player = () => {
@@ -9,15 +10,14 @@ export const Player = () => {
 
     return (
         <div className="player">
-            <div className="track-info">
-                <div className="track-image" />
-                <div className="track-details">
-                    <span className="track-title">Song Title</span>
-                    <span className="track-artist">Artist Name</span>
+                <div className="track-info">
+                    <div className="track-image" />
+                    <div className="track-details">
+                        <span className="track-title">Song Title</span>
+                        <span className="track-artist">Artist Name</span>
+                    </div>
                 </div>
-            </div>
-
-            <div className="player-controls">
+                <WindowControls />            <div className="player-controls">
                 <div className="control-buttons">
                     <button className="control-button">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
