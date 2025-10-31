@@ -1,0 +1,65 @@
+.sidebar {
+  grid-area: sidebar;
+  background-color: var(--background-primary);
+  border-right: 1px solid var(--border-color);
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 0 20px;
+  margin-bottom: 30px;
+  -webkit-app-region: drag;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-logo h1 {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.nav-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  -webkit-app-region: no-drag;
+}
+
+.nav-item {
+  padding: 12px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.nav-item:hover {
+  color: var(--text-primary);
+  background-color: var(--background-elevated);
+}
+
+.nav-item.active {
+  color: var(--text-primary);
+  background-color: var(--background-elevated);
+}
+
+.nav-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.section-title {
+  padding: 16px 20px 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

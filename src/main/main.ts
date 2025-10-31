@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+require('@electron/remote/main').initialize();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -12,10 +13,19 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     },
   });
+  
+  require('@electron/remote/main').enable(mainWindow.webContents);
+
+  // Establecer el menú como null para deshabilitar el menú de la aplicación
+  Menu.setApplicationMenu(null);
 
   // and load the index.html of the app.
   console.log(MAIN_WINDOW_VITE_DEV_SERVER_URL);

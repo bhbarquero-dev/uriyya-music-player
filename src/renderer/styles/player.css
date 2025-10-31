@@ -1,0 +1,233 @@
+.player {
+  grid-area: player;
+  background-color: var(--background-elevated);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 20px;
+  padding-right: 140px; /* Espacio para los controles de ventana */
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 1px 8px var(--shadow-color);
+  position: relative;
+  z-index: 1;
+  -webkit-app-region: drag;
+  pointer-events: auto;
+}
+
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.track-image {
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  background-color: var(--background-secondary);
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.track-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.track-title {
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.track-artist {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.player-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-buttons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  -webkit-app-region: no-drag;
+}
+
+.control-button {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 50%;
+}
+
+.control-button:hover {
+  transform: scale(1.1);
+  background-color: var(--hover-overlay);
+}
+
+.play-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--text-primary);
+  color: var(--background-primary);
+}
+
+.play-button:hover {
+  background-color: var(--text-primary);
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.progress-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  -webkit-app-region: no-drag;
+}
+
+.progress-slider {
+  flex: 1;
+  height: 4px;
+  background-color: var(--background-secondary);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+
+.progress-slider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: var(--progress, 0%);
+  background-color: var(--text-primary);
+  border-radius: 2px;
+}
+
+.playback-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  -webkit-app-region: no-drag;
+}
+
+.volume-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.volume-button {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.volume-button:hover {
+  color: var(--text-primary);
+}
+
+.volume-slider-container {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: -45px;
+  background-color: var(--background-elevated);
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  transform-origin: bottom center;
+  animation: slideIn 0.2s ease;
+}
+
+.volume-slider {
+  width: 100px;
+  height: 4px;
+  background-color: var(--background-secondary);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.volume-slider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: var(--volume, 50%);
+  background-color: var(--text-primary);
+  border-radius: 2px;
+}
+
+.playback-mode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 16px;
+  border-right: 1px solid var(--border-color);
+}
+
+.mode-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.mode-button:hover {
+  color: var(--text-primary);
+  background-color: var(--hover-overlay);
+}
+
+.mode-button.active {
+  color: var(--accent-color);
+  background-color: var(--active-overlay);
+}
+
+.mode-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.mode-button span {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
