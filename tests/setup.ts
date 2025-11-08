@@ -1,5 +1,4 @@
-import '@testing-library/jest-dom';
-import { mockElectronRemote } from './mocks/electron';
+import { mockElectronRemote } from './utils/mocks/electron';
 
 // Setup global mocks
 jest.mock('@electron/remote', () => mockElectronRemote);

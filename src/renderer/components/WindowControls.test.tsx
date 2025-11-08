@@ -1,5 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { WindowControls } from '../../../../src/renderer/components/WindowControls';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { WindowControls } from './WindowControls';
+import '@testing-library/jest-dom';
 
 describe('WindowControls', () => {
   it('renders window control buttons', () => {
