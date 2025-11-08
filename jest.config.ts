@@ -14,7 +14,7 @@ const config: Config = {
     '!src/**/*.d.ts',
     '!src/main/**/*',
     '!src/renderer/index.tsx',
-  ],
+  ]
 };
 
 export default config;
