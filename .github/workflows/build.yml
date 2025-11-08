@@ -40,8 +40,15 @@ jobs:
     - name: Run tests
       run: pnpm test:ci
     
+    - name: Get version
+      id: version
+      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
     - name: SonarQubeScan
       uses: SonarSource/sonarqube-scan-action@v6
+      with:
+        args: >
+          -Dsonar.projectVersion=${{ steps.version.outputs.version }}
       env: 
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
