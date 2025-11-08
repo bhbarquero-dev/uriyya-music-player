@@ -34,7 +34,7 @@ const createWindow = () => {
     // Only log in development to avoid console usage in production
     // Allow console in development for debugging purposes
     /* biome-disable-next-line lint/suspicious/noConsole */
-    console.log(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    console.info(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   }
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
