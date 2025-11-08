@@ -83,7 +83,7 @@ export const WindowControls = () => {
         className="window-control-button"
         onClick={() => handleWindowControls('minimize')}
         title="Minimizar"
-        aria-label='minimize'
+        aria-label="minimize"
       >
         <svg width="11" height="1" viewBox="0 0 11 1" aria-hidden="true">
           <path
@@ -97,7 +97,7 @@ export const WindowControls = () => {
         className="window-control-button"
         onClick={() => handleWindowControls('maximize')}
         title={isMaximized ? 'Restaurar' : 'Maximizar'}
-        aria-label='maximize'
+        aria-label="maximize"
       >
         {isMaximized ? (
           <svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true">
@@ -120,7 +120,7 @@ export const WindowControls = () => {
         className="window-control-button close"
         onClick={() => handleWindowControls('close')}
         title="Cerrar"
-        aria-label='close'
+        aria-label="close"
       >
         <svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true">
           <path
