@@ -17,10 +17,10 @@ export const mockElectronRemote = {
 
 // Helper to reset all mocks between tests
 export const resetElectronMocks = () => {
-  Object.values(mockElectronWindow).forEach((mock) => {
+  for(const mock of Object.values(mockElectronWindow)){
     if (jest.isMockFunction(mock)) {
       mock.mockClear();
     }
-  });
+  };
   mockElectronRemote.getCurrentWindow.mockClear();
 };
