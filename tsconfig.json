@@ -43,7 +43,7 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    
+
     // Configuración de mapas de origen
     "sourceMap": true,
     "inlineSources": true,
@@ -53,11 +53,6 @@
     // Configuración de Node
     "types": ["node"]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

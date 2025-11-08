@@ -9,7 +9,11 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "biome check . --write --max-diagnostics=500",
+    "format": "biome format . --write",
+    "test": "jest --coverage",
+    "lint:ci": "biome ci",
+    "test:ci": "jest --ci --coverage"
   },
   "keywords": [],
   "author": {
@@ -22,9 +26,13 @@
       "electron",
       "electron-winstaller",
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "tmp": "^0.2.4"
+    }
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.3.4",
     "@electron-forge/cli": "^7.8.1",
     "@electron-forge/maker-deb": "^7.8.1",
     "@electron-forge/maker-rpm": "^7.8.1",
@@ -35,14 +43,20 @@
     "@electron-forge/plugin-vite": "^7.8.1",
     "@electron-forge/publisher-github": "^7.8.1",
     "@electron/fuses": "^1.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/electron-squirrel-startup": "^1.0.2",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@typescript-eslint/eslint-plugin": "^8.34.0",
-    "@typescript-eslint/parser": "^8.34.0",
     "electron": "39.0.0",
-    "eslint": "^9.28.0",
-    "eslint-plugin-import": "^2.31.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "playwright": "^1.56.1",
+    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3",
     "vite": "^7.1.12"

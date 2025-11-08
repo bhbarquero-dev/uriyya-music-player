@@ -110,7 +110,7 @@
 }
 
 .progress-slider::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -177,7 +177,7 @@
 }
 
 .volume-slider::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -228,4 +228,3 @@
   font-weight: 500;
   white-space: nowrap;
 }
-

@@ -55,11 +55,11 @@ const config: ForgeConfig = {
       config: {
         repository: {
           owner: 'bhbarquero-dev',
-          name: 'uriyya-music-player'
+          name: 'uriyya-music-player',
         },
-        prerelease: true
-      }
-    }
+        prerelease: true,
+      },
+    },
   ],
 };
 
