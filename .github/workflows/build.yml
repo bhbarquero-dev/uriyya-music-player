@@ -40,6 +40,11 @@ jobs:
     - name: Run tests
       run: pnpm test:ci
     
+    - name: SonarQubeScan
+      uses: SonarSource/sonarqube-scan-action@v6
+      env: 
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
     - name: Upload test coverage
       uses: actions/upload-artifact@v4
       with:
