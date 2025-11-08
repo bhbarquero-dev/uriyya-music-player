@@ -1,5 +1,10 @@
 # Uriyya Music Player
 
+![GitHub License](https://img.shields.io/github/license/bhbarquero-dev/uriyya-music-player)
+[![Checked with Biome](https://img.shields.io/badge/Checked_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bhbarquero-dev_uriyya-music-player&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=bhbarquero-dev_uriyya-music-player)
+
+
 A modern, cross-platform music player built with Electron, React, and TypeScript.
 
 ## Development
