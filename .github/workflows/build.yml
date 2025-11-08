@@ -32,7 +32,7 @@ jobs:
       run: pnpm install
     
     - name: Run linting
-      run: pnpm lint
+      run: pnpm lint:ci
     
     - name: Run tests
       run: pnpm test:ci
