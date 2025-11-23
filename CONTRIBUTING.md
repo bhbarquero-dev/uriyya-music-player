@@ -40,6 +40,7 @@ describe('Component', () => {
 ```typescript
 // components/Component/index.tsx
 export const Component: FC<ComponentProps> = ({ value, onChange }) => {
+
   return <input value={value} onChange={e => onChange(e.target.value)} />;
 };
 ```
@@ -52,7 +53,7 @@ components/
 └── ComponentName/
     ├── index.tsx           # Main component
     ├── SubComponent.tsx    # Child components
-    └── ComponentName.test.tsx
+    └── ComponentName.test.tsx # Co-located unit test
 ```
 
 #### Business Logic
@@ -61,14 +62,8 @@ components/
 - Test hooks independently
 
 #### Test Organization
-```
-tests/
-├── unit/               # Unit tests
-├── e2e/               # End-to-end tests
-└── utils/             # Test utilities
-    ├── mocks/        # Mock implementations
-    └── setup.ts      # Test setup
-```
+- Unit tests should be co-located with the component they test (e.g., `Component.test.tsx` next to `index.tsx`).
+- E2E tests and utilities are located in the `tests/` directory.
 
 ### Testing Guidelines
 
