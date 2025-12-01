@@ -3,7 +3,6 @@ import { Sidebar } from './Sidebar';
 import '@testing-library/jest-dom';
 
 describe('Sidebar', () => {
-
   it('renders navigation items', () => {
     render(<Sidebar />);
     expect(screen.getByText('Recently Added')).toBeInTheDocument();

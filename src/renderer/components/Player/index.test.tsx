@@ -31,5 +31,4 @@ describe('Player', () => {
 
     expect(screen.getByRole('slider', { name: 'Volume Slider' })).toBeInTheDocument();
   });
-
 });

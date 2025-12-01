@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import '../../styles/player.css';
-import { TrackInfo } from './TrackInfo';
 import { Controls } from './Controls';
 import { ProgressBar } from './ProgressBar';
+import { TrackInfo } from './TrackInfo';
 import { VolumeControl } from './VolumeControl';
 
 export const Player = () => {
@@ -20,8 +20,8 @@ export const Player = () => {
         <Controls
           isPlaying={isPlaying}
           onPlayPause={() => setIsPlaying(!isPlaying)}
-          onPrevious={() => { }}
-          onNext={() => { }}
+          onPrevious={() => {}}
+          onNext={() => {}}
         />
         <ProgressBar currentTime={currentTime} duration={duration} />
       </div>

@@ -31,7 +31,7 @@ describe('VolumeControl', () => {
       height: 10,
       x: 0,
       y: 0,
-      toJSON: () => { },
+      toJSON: () => {},
     }));
     slider.getBoundingClientRect = mockGetBoundingClientRect;
 

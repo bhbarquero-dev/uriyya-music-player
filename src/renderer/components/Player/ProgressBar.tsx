@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 interface ProgressBarProps {
   currentTime: number;
@@ -6,7 +6,7 @@ interface ProgressBarProps {
   onSeek?: (time: number) => void;
 }
 
-export const ProgressBar: React.FC<ProgressBarProps> = ({ currentTime, duration, onSeek }) => {
+export const ProgressBar: React.FC<ProgressBarProps> = ({ currentTime, duration }) => {
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
