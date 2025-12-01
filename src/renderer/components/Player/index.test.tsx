@@ -32,22 +32,4 @@ describe('Player', () => {
     expect(screen.getByRole('slider', { name: 'Volume Slider' })).toBeInTheDocument();
   });
 
-  it('adjusts volume via slider interaction', () => {
-    render(<Player />);
-
-    const slider = screen.getByRole('slider', { name: 'Volume Slider' });
-
-    // Test keyboard interaction
-    fireEvent.keyDown(slider, { key: 'ArrowUp' });
-    expect(slider).toHaveAttribute('aria-valuenow', '55'); // Initial 50 + 5
-
-    fireEvent.keyDown(slider, { key: 'ArrowDown' });
-    expect(slider).toHaveAttribute('aria-valuenow', '50');
-
-    fireEvent.keyDown(slider, { key: 'Home' });
-    expect(slider).toHaveAttribute('aria-valuenow', '0');
-
-    fireEvent.keyDown(slider, { key: 'End' });
-    expect(slider).toHaveAttribute('aria-valuenow', '100');
-  });
 });

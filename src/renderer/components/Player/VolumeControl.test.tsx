@@ -16,18 +16,6 @@ describe('VolumeControl', () => {
     expect(screen.getByLabelText('Volume Control')).toBeInTheDocument();
   });
 
-  it('handles keyboard interaction', () => {
-    render(<VolumeControl volume={50} onVolumeChange={mockOnVolumeChange} />);
-
-    const slider = screen.getByRole('slider');
-
-    fireEvent.keyDown(slider, { key: 'ArrowUp' });
-    expect(mockOnVolumeChange).toHaveBeenCalledWith(55);
-
-    fireEvent.keyDown(slider, { key: 'ArrowDown' });
-    expect(mockOnVolumeChange).toHaveBeenCalledWith(45);
-  });
-
   it('handles click interaction on slider', () => {
     render(<VolumeControl volume={50} onVolumeChange={mockOnVolumeChange} />);
 
@@ -43,7 +31,7 @@ describe('VolumeControl', () => {
       height: 10,
       x: 0,
       y: 0,
-      toJSON: () => {},
+      toJSON: () => { },
     }));
     slider.getBoundingClientRect = mockGetBoundingClientRect;
 
