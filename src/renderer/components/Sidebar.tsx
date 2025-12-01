@@ -3,11 +3,14 @@ import '../styles/sidebar.css';
 export const Sidebar = () => {
   return (
     <aside className="sidebar">
-      <div className="sidebar-logo">
-        <h1>Uriyyá Music Player</h1>
+      <div className="section-header">
+        <div className="section-title">Your Playlists</div>
+        <button type="button" className="add-playlist-button" aria-label="Add Playlist">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6z" />
+          </svg>
+        </button>
       </div>
-
-      <div className="section-title">Your Playlists</div>
       <ul className="nav-menu">
         <li className="nav-item">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

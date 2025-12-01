@@ -2,7 +2,7 @@
   grid-area: player;
   background-color: var(--background-elevated);
   border-bottom: 1px solid var(--border-color);
-  padding: 0 160px 0 20px; /* Aumentado el padding derecho para los controles de ventana */
+  padding: 0 20px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
@@ -17,14 +17,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.track-image {
-  width: 56px;
-  height: 56px;
-  border-radius: 6px;
-  background-color: var(--background-secondary);
-  box-shadow: 0 2px 8px var(--shadow-color);
 }
 
 .track-details {
@@ -144,18 +136,6 @@
   color: var(--text-primary);
 }
 
-.volume-slider-container {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  right: -45px;
-  background-color: var(--background-elevated);
-  padding: 10px;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px var(--shadow-color);
-  transform-origin: bottom center;
-  animation: slideIn 0.2s ease;
-}
-
 .volume-slider {
   width: 100px;
   height: 4px;
@@ -163,17 +143,6 @@
   border-radius: 2px;
   position: relative;
   cursor: pointer;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .volume-slider::before {

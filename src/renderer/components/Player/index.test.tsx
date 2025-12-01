@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Player } from './Player';
+import { Player } from './index';
 import '@testing-library/jest-dom';
 
 describe('Player', () => {
@@ -26,23 +26,15 @@ describe('Player', () => {
     expect(screen.getByLabelText('Play')).toBeInTheDocument();
   });
 
-  it('toggles volume slider visibility', () => {
+  it('renders volume slider always visible', () => {
     render(<Player />);
 
-    const volumeButton = screen.getByLabelText('Volume Control');
-    fireEvent.click(volumeButton);
-
     expect(screen.getByRole('slider', { name: 'Volume Slider' })).toBeInTheDocument();
-
-    fireEvent.click(volumeButton);
-    expect(screen.queryByRole('slider', { name: 'Volume Slider' })).not.toBeInTheDocument();
   });
 
   it('adjusts volume via slider interaction', () => {
     render(<Player />);
 
-    // Open volume slider
-    fireEvent.click(screen.getByLabelText('Volume Control'));
     const slider = screen.getByRole('slider', { name: 'Volume Slider' });
 
     // Test keyboard interaction
