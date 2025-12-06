@@ -43,7 +43,7 @@ const warnings = [];
 const errors = [];
 
 const badPatterns = [
-  'node_modules', 'dist', 'build', '.env', '.env.local', '.DS_Store', '.sqlite', '.db', '.pem', '.key', '.p12', '.crt', '.log', '.zip', '.exe', 'package-lock.json', 'yarn.lock'
+  'node_modules', 'dist', 'build', '.env', '.env.local', '.DS_Store', '.sqlite', '.db', '.pem', '.key', '.p12', '.crt', '.log', '.zip', '.exe'
 ];
 
 const largeThreshold = 5 * 1024 * 1024;
