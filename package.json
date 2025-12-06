@@ -10,6 +10,8 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "biome check . --write --max-diagnostics=500",
+    "check:commit": "node tools/commit-checker/check-commit.js",
+    "prepare": "husky install",
     "format": "biome format . --write",
     "test": "jest --coverage",
     "lint:ci": "biome ci",
@@ -58,7 +60,11 @@
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3",
-    "vite": "^7.2.6"
+    "vite": "^7.2.6",
+    "husky": "^8.0.0"
+  },
+  "husky": {
+    "hooks": {}
   },
   "dependencies": {
     "@electron/remote": "^2.1.3",
