@@ -10,7 +10,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "biome check . --write --max-diagnostics=500",
-    "check:commit": "node tools/commit-checker/check-commit.js",
+    "check:commit": "node scripts/check-commit.js",
     "prepare": "husky install",
     "format": "biome format . --write",
     "test": "jest --coverage",
