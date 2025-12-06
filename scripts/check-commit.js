@@ -72,7 +72,7 @@ filesToCheck.forEach(file => {
 
 console.log('\nChequeos de código: ejecutando linters y tests (puede tardar)');
 console.log('  • Ejecutando `pnpm lint`...');
-const lint = run('pnpm lint');
+const lint = run('pnpm lint:ci');
 if (lint.ok) {
   console.log('    ✔ Lint completado.');
 } else {
