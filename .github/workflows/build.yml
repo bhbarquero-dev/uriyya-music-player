@@ -1,42 +1,93 @@
-name: Build Electron App
+name: Build and Test
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '22'
+  PNPM_VERSION: '10'
+  ARTIFACT_RETENTION_DAYS: 7
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main, develop ]
   pull_request:
-    branches:
-      - main
+    branches: [ main, develop ]
   workflow_dispatch:
+
 jobs:
-  lint_and_install:
+  validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Install pnpm
-        run: npm install -g pnpm
-      - run: pnpm install
-      - run: pnpm run lint
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: ${{ env.PNPM_VERSION }}
+    
+    - name: Install dependencies
+      run: pnpm install
+    
+    - name: Run linting
+      run: pnpm lint:ci
+    
+    - name: Run tests
+      run: pnpm test:ci
+    
+    - name: Get version
+      id: version
+      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+    - name: SonarQubeScan
+      uses: SonarSource/sonarqube-scan-action@v6
+      with:
+        args: >
+          -Dsonar.projectVersion=${{ steps.version.outputs.version }}
+      env: 
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    - name: Upload test coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage/
+        retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
+
   build:
-    needs: lint_and_install
+    needs: validate
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: Install pnpm
-        run: npm install -g pnpm
-      - run: pnpm install
-      - run: pnpm run make
-      - name: Upload Artifacts
-        if: github.event_name != 'pull_request'
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build application
+        run: pnpm run make
+      
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
         with:
           name: electron-artifacts-${{ matrix.os }}
           path: out/make/**
+          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
