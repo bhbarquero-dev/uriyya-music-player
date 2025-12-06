@@ -2,7 +2,6 @@
   grid-area: sidebar;
   background-color: var(--background-primary);
   border-right: 1px solid var(--border-color);
-  padding: 20px 0;
   overflow-y: auto;
 }
 
