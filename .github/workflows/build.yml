@@ -64,7 +64,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            run_make: true
+            make_cmd: pnpm run make -- --platform=linux
+          - os: windows-latest
+            run_make: true
+            make_cmd: pnpm run make -- --platform=win32
+          - os: macos-latest
+            run_make: true
+            make_cmd: pnpm run make -- --platform=darwin --arch=universal
     steps:
       - uses: actions/checkout@v4
       
@@ -72,21 +81,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: ${{ env.PNPM_VERSION }}
-      
+
       - name: Install dependencies
         run: pnpm install
-      
-      - name: Build application
-        run: pnpm run make
-      
+
+      - name: Build application (renderer/main)
+        run: pnpm run build
+
+      - name: Run native packager (make)
+        if: ${{ matrix.run_make }}
+        run: ${{ matrix.make_cmd }}
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name != 'pull_request' && matrix.run_make }}
         with:
           name: electron-artifacts-${{ matrix.os }}
           path: out/make/**
