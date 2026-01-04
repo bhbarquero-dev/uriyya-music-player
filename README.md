@@ -1,117 +1,57 @@
 # Uriyya Music Player
 
 ![GitHub License](https://img.shields.io/github/license/bhbarquero-dev/uriyya-music-player)
-[![Checked with Biome](https://img.shields.io/badge/Checked_with-Biome-60a5fa?style=flat&logo=biome)](https://biomejs.dev)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bhbarquero-dev_uriyya-music-player&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=bhbarquero-dev_uriyya-music-player)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/bhbarquero-dev/uriyya-music-player/build.yml)
 
+Uriyya Music Player is a desktop music player built with React + TypeScript and packaged with Tauri. It provides a lightweight UI for playing local audio files and demonstrates integration between a modern web frontend and native desktop capabilities.
 
-A modern, cross-platform music player built with Electron, React, and TypeScript.
+## Prerequisites
+- [Tauri](https://v2.tauri.app/start/prerequisites/) 
+- pnpm
 
-## Development
+## Quick Start (Development)
+1. Install dependencies:
 
-### Prerequisites
-- Node.js (v18.x or higher)
-- pnpm (v10.x or higher)
-- Git
+	```bash
+	pnpm install
+	```
 
-### Setup
+2. In a separate terminal, run the Tauri dev environment (this will open the desktop window and load the frontend):
+
+	```bash
+	pnpm tauri dev
+	```
+
+The Tauri config expects the frontend dev server at `http://localhost:1420` for development.
+
+## Build (Production)
+1. Build the native desktop application with Tauri:
+
+	```bash
+	pnpm tauri build
+	```
+
+The final bundles and installers will be created under the Tauri build output for your platform.
+
+## Testing
+Run unit tests with Vitest:
+
 ```bash
-# Clone the repository
-git clone https://github.com/bhbarquero-dev/uriyya-music-player.git
-cd uriyya-music-player
-
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm start
-```
-
-### Testing
-This project follows Test-Driven Development (TDD) practices.
-
-```bash
-# Run all tests
 pnpm test
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Run E2E tests
-pnpm test:e2e
-
-# Run tests with coverage
-pnpm test:coverage
 ```
 
-### Project Structure
-```
-uriyya-music-player/
-├── src/
-│   ├── main/              # Electron main process
-│   │   ├── main.ts       # Main entry point
-│   │   └── preload.ts    # Preload scripts
-│   ├── renderer/         # React UI components
-│   │   ├── components/   # React components
-│   │   ├── hooks/       # Custom React hooks
-│   │   └── styles/      # CSS modules
-│   ├── types/           # TypeScript type definitions
-│   └── utils/           # Shared utilities
-├── tests/
-│   ├── unit/            # Unit tests
-│   ├── e2e/            # End-to-end tests
-│   └── utils/          # Test utilities and mocks
-└── ...config files
-```
+## Project Structure (high level)
+- `src/` — React app source (components, hooks, logic)
+- `public/` — static assets
+- `src-tauri/` — Tauri/Rust configuration and native code
+- `test/` — unit tests
 
-### Development Guidelines
+## Notes & Troubleshooting
+- If Tauri commands fail, ensure the Rust toolchain is installed and up to date.
+- If the app can't connect in dev mode, verify the frontend dev server URL and port (configured in `src-tauri/tauri.conf.json`).
 
-#### Component Development
-1. Start with types:
-   - Define component props interface
-   - Create necessary data models
-
-2. Write tests:
-   - Unit tests for components
-   - Tests for custom hooks
-   - Integration tests if needed
-
-3. Implement:
-   - Create pure UI components
-   - Extract business logic to hooks
-   - Add utility functions as needed
-
-#### Testing Patterns
-```typescript
-import { render, screen } from '@testing-library/react';
-import { ComponentName } from './ComponentName';
-
-describe('ComponentName', () => {
-  it('renders successfully', () => {
-    const props = {
-      // ... test props
-    };
-    render(<ComponentName {...props} />);
-    expect(screen.getByRole('button')).toBeInTheDocument();
-  });
-});
-```
-
-### Build
-```bash
-# Create production build
-pnpm make
-```
-
-### Contributing
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Write tests first (TDD)
-4. Implement your changes
-5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
+## Contributing
+Contributions are welcome — please follow the contribution guidelines in [CONTRIBUTING.md](CONTRIBUTING.md). The document describes the development flow, testing practices, and the pull request process.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for the full license text.

@@ -1,0 +1,59 @@
+export class PlaylistManager {
+    private songs: string[] = [];
+    private currentIndex: number = -1;
+
+    public setSongs(songs: string[]) {
+        this.songs = songs;
+        if (this.songs.length > 0 && this.currentIndex === -1) {
+            this.currentIndex = 0;
+        } else if (this.songs.length === 0) {
+            this.currentIndex = -1;
+        }
+    }
+
+    public getSongs(): string[] {
+        return this.songs;
+    }
+
+    public setCurrentSong(song: string) {
+        this.currentIndex = this.songs.indexOf(song);
+    }
+
+    public getCurrentSong(): string | null {
+        if (this.currentIndex >= 0 && this.currentIndex < this.songs.length) {
+            return this.songs[this.currentIndex];
+        }
+        return null;
+    }
+
+    public getNext(): string | null {
+        if (this.songs.length === 0) return null;
+        if (this.currentIndex < this.songs.length - 1) {
+            this.currentIndex++;
+            return this.songs[this.currentIndex];
+        }
+        return this.songs[this.currentIndex]; // Stay at end
+    }
+
+    public getPrevious(): string | null {
+        if (this.songs.length === 0) return null;
+        if (this.currentIndex > 0) {
+            this.currentIndex--;
+            return this.songs[this.currentIndex];
+        }
+        if (this.currentIndex === -1 && this.songs.length > 0) {
+            this.currentIndex = 0;
+            return this.songs[0];
+        }
+        return this.songs[this.currentIndex]; // Stay at start
+    }
+
+    public clear() {
+        this.songs = [];
+        this.currentIndex = -1;
+    }
+
+    public isEmpty(): boolean {
+        return this.songs.length === 0;
+    }
+}
