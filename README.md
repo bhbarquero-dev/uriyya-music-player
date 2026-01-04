@@ -1,7 +1,7 @@
 # Uriyya Music Player
 
 ![GitHub License](https://img.shields.io/github/license/bhbarquero-dev/uriyya-music-player)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/bhbarquero-dev/uriyya-music-player/build.yml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/bhbarquero-dev/uriyya-music-player/cd.yml)
 
 Uriyya Music Player is a desktop music player built with React + TypeScript and packaged with Tauri. It provides a lightweight UI for playing local audio files and demonstrates integration between a modern web frontend and native desktop capabilities.
 
