@@ -1,0 +1,444 @@
+:root {
+  --apple-bg: #f5f5f7;
+  --apple-sidebar: #ebedf0;
+  --apple-main: #ffffff;
+  --apple-accent: #fa243c;
+  --apple-text: #1d1d1f;
+  --apple-text-secondary: #86868b;
+  --apple-border: rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --sidebar-width: 300px;
+  --player-height: 80px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --apple-bg: #000000;
+    --apple-sidebar: #121212;
+    --apple-main: #1c1c1e;
+    --apple-accent: #ff2d55;
+    --apple-text: #f5f5f7;
+    --apple-text-secondary: #a1a1a6;
+    --apple-border: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(28, 28, 30, 0.8);
+  }
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--apple-bg);
+  color: var(--apple-text);
+  overflow: hidden;
+  height: 100vh;
+}
+
+.app-container {
+  display: grid;
+  grid-template-areas:
+    "sidebar player"
+    "sidebar main"
+    "sidebar footer";
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: var(--player-height) 1fr 50px;
+  box-sizing: border-box;
+  background: var(--apple-bg);
+  height: 100vh;
+}
+
+/* Player Styles */
+.player-header {
+  grid-area: player;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--apple-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Changed from space-between */
+  gap: 48px;
+  /* Added gap between controls and info */
+  padding: 0 24px;
+  z-index: 100;
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.control-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--apple-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+
+.control-btn:active {
+  transform: scale(0.9);
+}
+
+.control-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.play-pause-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--apple-accent);
+  color: white;
+}
+
+.pause-btn,
+.stop-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  /* Light gray background */
+  color: var(--apple-text);
+  border: 1px solid var(--apple-border);
+}
+
+@media (prefers-color-scheme: dark) {
+
+  .pause-btn,
+  .stop-btn {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.control-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.player-info {
+  /* Removed flex: 1 */
+  width: 400px;
+  /* Set a reasonable width for the info area */
+  text-align: center;
+}
+
+.song-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.progress-container {
+  width: 100%;
+  height: 4px;
+  background: var(--apple-border);
+  border-radius: 2px;
+  margin-top: 8px;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--apple-accent);
+  border-radius: 2px;
+  width: 0%;
+}
+
+
+/* Sidebar Styles */
+.sidebar {
+  grid-area: sidebar;
+  background: var(--apple-sidebar);
+  border-right: 1px solid var(--apple-border);
+  padding: 24px 16px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: hidden;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sidebar-footer {
+  height: 50px;
+  box-sizing: border-box;
+  padding: 12px 8px;
+  border-top: 1px solid var(--apple-border);
+  font-size: 11px;
+  color: var(--apple-text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.sidebar-footer a {
+  color: var(--apple-accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.sidebar-footer a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.sidebar-section {
+  margin-bottom: 24px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 8px;
+}
+
+.sidebar-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--apple-text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+.add-btn {
+  background: none;
+  border: none;
+  color: var(--apple-accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.add-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .add-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.sidebar-menu {
+  list-style: none;
+}
+
+.sidebar-item {
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--apple-text);
+  margin-bottom: 2px;
+}
+
+.sidebar-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-item.active {
+  background: var(--apple-accent);
+  color: white;
+}
+
+/* Main Content Styles */
+.main-content {
+  grid-area: main;
+  background: var(--apple-main);
+  overflow-y: auto;
+  padding: 0;
+  padding-bottom: 40px;
+  /* Added margin/padding at the bottom */
+}
+
+.section-header {
+  position: sticky;
+  top: 0;
+  background: var(--apple-main);
+  z-index: 20;
+  padding: 32px 48px 12px;
+  margin-bottom: 0;
+}
+
+.section-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+.song-list-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.song-list-header {
+  border-bottom: 1px solid var(--apple-border);
+  text-align: left;
+  color: var(--apple-text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.song-list-header th {
+  position: sticky;
+  top: 76px;
+  /* Adjusted to sit below .section-header */
+  background: var(--apple-main);
+  z-index: 15;
+  padding: 8px 48px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--apple-border);
+}
+
+.song-row {
+  cursor: pointer;
+}
+
+.song-row:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.song-row.selected {
+  background: rgba(250, 36, 60, 0.1);
+}
+
+.song-row td {
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--apple-border);
+}
+
+.song-row .song-title {
+  font-weight: 500;
+}
+
+.btn-load {
+  background: var(--apple-accent);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.btn-load:hover {
+  opacity: 0.9;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.playing-indicator {
+  display: flex;
+  align-items: center;
+  animation: pulse 1.5s infinite;
+}
+
+/* Footer & Shortcut Styles */
+.shortcuts-footer {
+  grid-area: footer;
+  background: var(--apple-main);
+  border-top: 1px solid var(--apple-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 48px;
+  gap: 32px;
+  z-index: 10;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--apple-text-secondary);
+  font-weight: 500;
+}
+
+.key-cap {
+  background: var(--apple-bg);
+  border: 1px solid var(--apple-border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+  font-size: 10px;
+  color: var(--apple-text);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  min-width: 18px;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .key-cap {
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+}

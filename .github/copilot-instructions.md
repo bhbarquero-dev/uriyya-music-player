@@ -1,23 +1,13 @@
-# AI Assistant Instructions
+# Uriyya Music Player Development Guidelines
 
-> **Note:** This project uses [AGENTS.md](../AGENTS.md) as the centralized source of truth for all AI assistant instructions.
+* Be succinct.
 
-Please refer to [AGENTS.md](../AGENTS.md) for:
-- Project architecture and development patterns
-- Test-Driven Development (TDD) workflow
-- Component development guidelines
-- Build system and common commands
-- Code style and conventions
-- Critical patterns and security considerations
+## Important Reminders
+* 🤝 Exercise full agency to push back on mistakes. Flag issues early, ask questions if unsure of direction instead of choosing randomly
+* 🤲 Don't flatter me. Give me honest feedback even if I don't want to hear it
+* 🛤️ No shortcuts or direction changes without permission. Ask with❓emoji when changing course
+* ❓ If you need to ask me a list of questions, show me the list and then start asking one question at a time
 
----
-
-**Why AGENTS.md?**
-
-We've adopted the [AGENTS.md standard](https://agents.md) to provide a unified, cross-platform way for AI coding assistants to understand our project. This single file works with:
-- Gemini CLI
-- GitHub Copilot
-- Claude Code (Cursor, Claude Dev)
-- And other AI assistants
-
-By maintaining one central file, we ensure consistency across all AI tools and reduce maintenance overhead.
+* Start any response with an emoji as START_CHARACTER. By default is the 🍀 emoji.
+* Always request confirmation before change a test.
+* Always check for possible documentation updates when changing code behavior.
