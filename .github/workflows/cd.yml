@@ -4,6 +4,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   qa:
     uses: ./.github/workflows/ci.yml

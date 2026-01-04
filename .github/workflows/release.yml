@@ -3,6 +3,10 @@ on:
   release:
     types: [published]
 
+
+permissions:
+  contents: write
+
 jobs:
   qa:
     uses: ./.github/workflows/ci.yml
