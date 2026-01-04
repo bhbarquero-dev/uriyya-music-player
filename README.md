@@ -3,7 +3,7 @@
 Uriyya Music Player is a desktop music player built with React + TypeScript and packaged with Tauri. It provides a lightweight UI for playing local audio files and demonstrates integration between a modern web frontend and native desktop capabilities.
 
 ## Prerequisites
-- Tauri from https://v2.tauri.app/start/prerequisites/
+- [Tauri](https://v2.tauri.app/start/prerequisites/) 
 - pnpm
 
 ## Quick Start (Development)
