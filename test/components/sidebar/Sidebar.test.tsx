@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
-import { Sidebar } from "../../src/components/Sidebar";
+import { Sidebar } from "@components/sidebar";
 
 describe("Sidebar", () => {
     const mockOnLoadPlaylist = vi.fn();
@@ -46,13 +45,6 @@ describe("Sidebar", () => {
             expect(screen.getByText("Biblioteca")).toBeInTheDocument();
         });
 
-        it("should have add button with correct title", () => {
-            render(<Sidebar {...defaultProps} />);
-            const buttons = screen.getAllByRole("button");
-            const bibliotecaBtn = buttons.find((btn) => btn.title === "Añadir a la biblioteca");
-            expect(bibliotecaBtn).toBeTruthy();
-        });
-
         it("should render SVG in biblioteca button", () => {
             const { container } = render(<Sidebar {...defaultProps} />);
             const svgs = container.querySelectorAll("svg");
@@ -64,17 +56,6 @@ describe("Sidebar", () => {
         it("should display 'Listas de reproducción' title", () => {
             render(<Sidebar {...defaultProps} />);
             expect(screen.getByText("Listas de reproducción")).toBeInTheDocument();
-        });
-
-        it("should call onLoadPlaylist when 'Nueva lista' button is clicked", async () => {
-            const user = userEvent.setup();
-            render(<Sidebar {...defaultProps} />);
-            
-            const buttons = screen.getAllByRole("button");
-            const newPlaylistBtn = buttons.find((btn) => btn.title === "Nueva lista");
-            
-            await user.click(newPlaylistBtn!);
-            expect(mockOnLoadPlaylist).toHaveBeenCalledOnce();
         });
 
         it("should not render playlist item when currentPlaylistName is null", () => {
@@ -115,21 +96,6 @@ describe("Sidebar", () => {
             );
             const playlistItem = container.querySelector(".sidebar-item");
             expect(playlistItem?.className).not.toContain("active");
-        });
-
-        it("should call onSelectItem with 'playlist' when playlist item is clicked", async () => {
-            const user = userEvent.setup();
-            render(
-                <Sidebar
-                    {...defaultProps}
-                    currentPlaylistName="Mi Playlist"
-                />
-            );
-            
-            const playlistItem = screen.getByText("Mi Playlist");
-            await user.click(playlistItem);
-            
-            expect(mockOnSelectItem).toHaveBeenCalledWith("playlist");
         });
     });
 

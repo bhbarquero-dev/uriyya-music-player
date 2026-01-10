@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { ShortcutsFooter } from "../../src/components/ShortcutsFooter";
+import { ShortcutsFooter } from "@components/ShortcutsFooter";
 
 describe("ShortcutsFooter", () => {
     it("should render the footer element with correct class", () => {
