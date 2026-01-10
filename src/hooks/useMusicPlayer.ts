@@ -21,6 +21,9 @@ export function useMusicPlayer() {
     const playlistManagerRef = useRef(new PlaylistManager());
     const fileServiceRef = useRef(new FileService());
 
+    // Ref to indicate we've recently ended/stopped playback so polling shouldn't overwrite resets
+    const endedOrStoppedRef = useRef(false);
+
     // Initialize AudioManager
     if (!audioManagerRef.current) {
         audioManagerRef.current = new AudioManager({
@@ -62,6 +65,9 @@ export function useMusicPlayer() {
         const tick = () => {
             const audio = audioManagerRef.current?.getActiveAudio();
             if (!audio) return;
+
+            // If we've recently ended/stopped, don't overwrite the reset
+            if (endedOrStoppedRef.current) return;
 
             // If audio is paused and we are not in playing state, keep times reset
             if (audio.paused && !isPlaying) {
@@ -117,6 +123,9 @@ export function useMusicPlayer() {
     const playSong = useCallback((song: string) => {
         if (!audioManagerRef.current) return;
 
+        // Clear any ended/stopped flag when starting playback
+        endedOrStoppedRef.current = false;
+
         const url = convertFileSrc(song);
         const currentAudio = audioManagerRef.current.getActiveAudio();
         if (currentAudio && currentAudio.src === url && isPlaying) {
@@ -153,6 +162,7 @@ export function useMusicPlayer() {
         setIsStopping(true);
         setCurrentTime(0);
         setDuration(null);
+        endedOrStoppedRef.current = true;
     }, []);
 
     const selectNextInList = useCallback(() => {
