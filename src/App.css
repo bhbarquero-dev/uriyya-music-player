@@ -362,6 +362,14 @@ body {
   font-weight: 500;
 }
 
+/* Evita la selección de texto al hacer doble clic sobre una fila de canción */
+.song-row {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .btn-load {
   background: var(--apple-accent);
   color: white;
