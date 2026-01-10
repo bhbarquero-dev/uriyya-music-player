@@ -23,10 +23,8 @@ function App() {
     pause,
     stop,
     selectNextInList,
-    selectPreviousInList
-    ,
+    selectPreviousInList,
     currentTime,
-    duration,
     remaining,
     playedPercent
   } = useMusicPlayer();
@@ -64,7 +62,6 @@ function App() {
         onPause={pause}
         onStop={stop}
         currentTime={currentTime}
-        duration={duration}
         remaining={remaining}
         playedPercent={playedPercent}
       />

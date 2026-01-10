@@ -6,12 +6,11 @@ interface PlayerProps {
     onPause: () => void;
     onStop: () => void;
     currentTime: number;
-    duration: number | null;
     remaining: number | null;
     playedPercent: number;
 }
 
-export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, onStop, currentTime, duration, remaining, playedPercent }: PlayerProps) {
+export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, onStop, currentTime, remaining, playedPercent }: PlayerProps) {
     const getFileName = (path: string) => path.split(/[\\\/]/).pop() || "Ninguna canción seleccionada";
 
     const formatTime = (secs: number | null) => {
