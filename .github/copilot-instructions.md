@@ -11,3 +11,4 @@
 * Start any response with an emoji as START_CHARACTER. By default is the 🍀 emoji.
 * Always request confirmation before change a test.
 * Always check for possible documentation updates when changing code behavior.
+* Use Conventional Commits style for commit messages.
