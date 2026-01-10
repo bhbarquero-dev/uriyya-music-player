@@ -13,16 +13,26 @@ export function useMusicPlayer() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isStopping, setIsStopping] = useState(false);
     const [activeSidebarItem, setActiveSidebarItem] = useState<string>("");
+    const [currentTime, setCurrentTime] = useState<number>(0);
+    const [duration, setDuration] = useState<number | null>(null);
 
     // Services (persisted across renders)
     const audioManagerRef = useRef<AudioManager | null>(null);
     const playlistManagerRef = useRef(new PlaylistManager());
     const fileServiceRef = useRef(new FileService());
 
+    // Ref to indicate we've recently ended/stopped playback so polling shouldn't overwrite resets
+    const endedOrStoppedRef = useRef(false);
+
     // Initialize AudioManager
     if (!audioManagerRef.current) {
         audioManagerRef.current = new AudioManager({
             onEnded: (id) => {
+                // Always reset timing info when any audio element fires 'ended'
+                setCurrentTime(0);
+                setDuration(null);
+
+                // Only clear playing state if the ended channel is the active one
                 if (id === audioManagerRef.current?.getActiveChannelId()) {
                     setIsPlaying(false);
                     setPlayingSong(null);
@@ -42,10 +52,54 @@ export function useMusicPlayer() {
                     setIsPlaying(false);
                     setPlayingSong(null);
                     setIsStopping(false);
+                    setCurrentTime(0);
+                    setDuration(null);
                 }
             }
         });
     }
+
+    // Poll active audio for time/duration updates. Avoid overwriting reset state when playback is stopped.
+    useEffect(() => {
+        let mounted = true;
+        const tick = () => {
+            const audio = audioManagerRef.current?.getActiveAudio();
+            if (!audio) return;
+
+            // If we've recently ended/stopped, don't overwrite the reset
+            if (endedOrStoppedRef.current) return;
+
+            // If audio is paused and we are not in playing state, keep times reset
+            if (audio.paused && !isPlaying) {
+                if (!mounted) return;
+                setCurrentTime(0);
+                setDuration(null);
+                return;
+            }
+
+            const ct = audio.currentTime || 0;
+            const d = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : null;
+            if (!mounted) return;
+            setCurrentTime(ct);
+            setDuration(d);
+        };
+
+        const interval = window.setInterval(() => {
+            try {
+                tick();
+            } catch (e) {
+                // ignore
+            }
+        }, 250);
+
+        // initial tick
+        tick();
+
+        return () => {
+            mounted = false;
+            clearInterval(interval);
+        };
+    }, [isPlaying]);
 
     const loadPlaylist = async () => {
         try {
@@ -68,6 +122,9 @@ export function useMusicPlayer() {
 
     const playSong = useCallback((song: string) => {
         if (!audioManagerRef.current) return;
+
+        // Clear any ended/stopped flag when starting playback
+        endedOrStoppedRef.current = false;
 
         const url = convertFileSrc(song);
         const currentAudio = audioManagerRef.current.getActiveAudio();
@@ -103,6 +160,9 @@ export function useMusicPlayer() {
         setIsPlaying(false);
         setPlayingSong(null);
         setIsStopping(true);
+        setCurrentTime(0);
+        setDuration(null);
+        endedOrStoppedRef.current = true;
     }, []);
 
     const selectNextInList = useCallback(() => {
@@ -142,5 +202,11 @@ export function useMusicPlayer() {
         stop,
         selectNextInList,
         selectPreviousInList
+        ,
+        // timing info
+        currentTime,
+        duration,
+        remaining: duration ? Math.max(0, duration - currentTime) : null,
+        playedPercent: duration ? (currentTime / duration) * 100 : 0
     };
 }

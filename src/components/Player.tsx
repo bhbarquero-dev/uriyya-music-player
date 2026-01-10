@@ -5,10 +5,25 @@ interface PlayerProps {
     onPlay: () => void;
     onPause: () => void;
     onStop: () => void;
+    currentTime: number;
+    remaining: number | null;
+    playedPercent: number;
 }
 
-export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, onStop }: PlayerProps) {
-    const getFileName = (path: string) => path.split(/[\\/]/).pop() || "Ninguna canción seleccionada";
+export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, onStop, currentTime, remaining, playedPercent }: PlayerProps) {
+    const getFileName = (path: string) => path.split(/[\\\/]/).pop() || "Ninguna canción seleccionada";
+
+    const formatTime = (secs: number | null) => {
+        if (secs === null || !isFinite(secs)) return "--:--";
+        const s = Math.floor(secs);
+        const m = Math.floor(s / 60);
+        const rem = s % 60;
+        return `${m}:${rem.toString().padStart(2, "0")}`;
+    };
+
+    const elapsed = formatTime(currentTime);
+    const remainingLabel = remaining !== null ? `-${formatTime(remaining)}` : "-:--";
+    const pct = Math.max(0, Math.min(100, Number.isFinite(playedPercent) ? playedPercent : 0));
 
     return (
         <header className="player-header">
@@ -54,8 +69,14 @@ export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, on
                         ? getFileName(playingSong)
                         : (isStopping ? "Deteniendo..." : "Sin reproducción")}
                 </div>
-                <div className="progress-container">
-                    <div className="progress-bar" style={{ width: "0%" }}></div>
+
+                <div className="progress-container" aria-hidden={false}>
+                    <div className="progress-bar" style={{ width: `${pct}%` }}></div>
+                </div>
+
+                <div className="time-labels" style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 12, color: "var(--apple-text-secondary)" }}>
+                    <div className="elapsed">{elapsed}</div>
+                    <div className="remaining">{remainingLabel}</div>
                 </div>
             </div>
         </header>

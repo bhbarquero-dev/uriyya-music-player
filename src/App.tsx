@@ -23,7 +23,10 @@ function App() {
     pause,
     stop,
     selectNextInList,
-    selectPreviousInList
+    selectPreviousInList,
+    currentTime,
+    remaining,
+    playedPercent
   } = useMusicPlayer();
 
   useEffect(() => {
@@ -58,6 +61,9 @@ function App() {
         onPlay={playCurrentSelected}
         onPause={pause}
         onStop={stop}
+        currentTime={currentTime}
+        remaining={remaining}
+        playedPercent={playedPercent}
       />
 
       <Sidebar
