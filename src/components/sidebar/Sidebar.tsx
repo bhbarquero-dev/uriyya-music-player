@@ -10,10 +10,14 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onLoadPlaylist, currentPlaylistName, activeItem, onSelectItem }: SidebarProps) {
+    const handleLibraryAddClick = () => {
+        window.alert("Funcionalidad de Biblioteca aún no está implementada.");
+    };
+
     return (
         <aside className="sidebar">
             <div className="sidebar-content">
-                <SidebarSection title="Biblioteca" onAddClick={() => {}}>
+                <SidebarSection title="Biblioteca" onAddClick={handleLibraryAddClick}>
                     {null}
                 </SidebarSection>
 

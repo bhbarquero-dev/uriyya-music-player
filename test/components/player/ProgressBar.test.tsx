@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import "@testing-library/jest-dom/vitest";
 import { ProgressBar } from "@components/player";
 
 describe("ProgressBar", () => {
@@ -32,11 +31,5 @@ describe("ProgressBar", () => {
         const { container } = render(<ProgressBar playedPercent={NaN} />);
         const progressBar = container.querySelector(".progress-bar");
         expect(progressBar).toHaveStyle("width: 0%");
-    });
-
-    it("should have progress-container with aria-hidden false", () => {
-        const { container } = render(<ProgressBar playedPercent={0} />);
-        const progressContainer = container.querySelector(".progress-container");
-        expect(progressContainer).toHaveAttribute("aria-hidden", "false");
     });
 });

@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom/vitest";
 import { Player } from "@components/player";
 
 describe("Player", () => {
@@ -119,7 +118,7 @@ describe("Player", () => {
             expect(progressBar).toHaveStyle("width: 50%");
         });
 
-        it("should correctly render playing and selected different songs", () => {
+        it("should render playing song with progress bar", () => {
             const { container } = render(
                 <Player
                     {...defaultProps}
