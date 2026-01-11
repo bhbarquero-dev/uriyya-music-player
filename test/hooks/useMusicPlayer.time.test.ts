@@ -7,8 +7,8 @@ vi.mock('@tauri-apps/api/core', () => ({
 }));
 
 // Mock the AudioManager BEFORE importing the hook
+let lastAM: any = null;
 vi.mock('../../src/logic/AudioManager', () => {
-  let last: any = null;
 
   class AudioManager {
     events: any;
@@ -17,7 +17,7 @@ vi.mock('../../src/logic/AudioManager', () => {
 
     constructor(events: any) {
       this.events = events;
-      last = this;
+      lastAM = this;
       this.audio = {
         currentTime: 0,
         duration: null,
@@ -40,7 +40,7 @@ vi.mock('../../src/logic/AudioManager', () => {
       return this.activeChannelId === 1 ? 2 : 1;
     }
 
-    play(src: string) {
+    play(_src: string) {
       this.audio.paused = false;
       return this.audio.play();
     }
@@ -77,12 +77,10 @@ vi.mock('../../src/logic/AudioManager', () => {
 
   return {
     AudioManager,
-    __getLast: () => last,
   };
 });
 
 import { useMusicPlayer } from '../../src/hooks/useMusicPlayer';
-import { __getLast } from '../../src/logic/AudioManager';
 
 describe('useMusicPlayer timing', () => {
   beforeEach(() => {
@@ -103,7 +101,7 @@ describe('useMusicPlayer timing', () => {
       result.current.playSong('a.mp3');
     });
 
-    const am = __getLast();
+    const am = lastAM;
     // set duration and time
     am.setDuration(120);
     am.setCurrentTime(5);
@@ -134,7 +132,7 @@ describe('useMusicPlayer timing', () => {
       result.current.playSong('b.mp3');
     });
 
-    const am = __getLast();
+    const am = lastAM;
     am.setDuration(60);
     am.setCurrentTime(40);
 
