@@ -1,3 +1,5 @@
+import { getFileName } from "../../utils/formatting";
+
 interface SongRowProps {
     song: string;
     isSelected: boolean;
@@ -7,7 +9,7 @@ interface SongRowProps {
 }
 
 export function SongRow({ song, isSelected, isPlaying, onSelect, onPlay }: SongRowProps) {
-    const getFileName = (path: string) => path.split(/[\\/]/).pop() || path;
+
 
     return (
         <tr
