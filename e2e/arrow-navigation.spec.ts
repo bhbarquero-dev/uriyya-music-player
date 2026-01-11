@@ -13,29 +13,12 @@ test.describe('Song Navigation with Arrow Keys', () => {
     // Verificar que la aplicación se ha cargado correctamente
     await expect(page.locator('.app-container')).toBeVisible();
     
-    // Buscar el botón de cargar playlist en la sidebar
-    const loadButton = page.locator('.sidebar .add-btn').first();
-    
-    // Verificar si hay un botón de carga de playlist
-    const hasLoadButton = await loadButton.count() > 0;
-    
-    if (hasLoadButton) {
-      // Si existe el botón, intentar cargar una playlist
-      // Nota: En un entorno e2e real, necesitarías preparar archivos de prueba
-      // Por ahora, verificaremos el comportamiento básico
-    }
-    
     // Verificar si hay canciones cargadas
     const songRows = page.locator('.song-row');
     const songCount = await songRows.count();
     
-    if (songCount === 0) {
-      // Si no hay canciones, esta prueba no puede ejecutarse completamente
-      // pero al menos verificamos que la estructura está presente
-      await expect(page.locator('.main-content')).toBeVisible();
-      console.log('No songs loaded - test skipped partially');
-      return;
-    }
+    // Skip test si no hay canciones cargadas
+    test.skip(songCount === 0, 'No songs loaded - test requires playlist data');
     
     // Si hay canciones, realizar la prueba completa
     // Obtener el contenedor con scroll
@@ -116,32 +99,28 @@ test.describe('Song Navigation with Arrow Keys', () => {
     const songRows = page.locator('.song-row');
     const songCount = await songRows.count();
     
-    if (songCount === 0) {
-      console.log('No songs loaded - test skipped');
-      return;
-    }
+    // Skip test si no hay suficientes canciones
+    test.skip(songCount <= 10, 'Test requires more than 10 songs to validate scrolling behavior');
     
     // Si hay suficientes canciones para hacer scroll
-    if (songCount > 10) {
-      const mainContent = page.locator('.main-content');
-      
-      // Obtener la posición de scroll inicial
-      const initialScrollTop = await mainContent.evaluate(el => el.scrollTop);
-      
-      // Navegar hacia abajo muchas veces para forzar el scroll
-      for (let i = 0; i < 10; i++) {
-        await page.keyboard.press('ArrowDown');
-        await page.waitForTimeout(200);
-      }
-      
-      // Verificar que el scroll ha cambiado
-      const newScrollTop = await mainContent.evaluate(el => el.scrollTop);
-      expect(newScrollTop).toBeGreaterThan(initialScrollTop);
-      
-      // Verificar que la fila seleccionada está visible
-      const selectedRow = page.locator('.song-row.selected');
-      await expect(selectedRow).toBeVisible();
+    const mainContent = page.locator('.main-content');
+    
+    // Obtener la posición de scroll inicial
+    const initialScrollTop = await mainContent.evaluate(el => el.scrollTop);
+    
+    // Navegar hacia abajo muchas veces para forzar el scroll
+    for (let i = 0; i < 10; i++) {
+      await page.keyboard.press('ArrowDown');
+      await page.waitForTimeout(200);
     }
+    
+    // Verificar que el scroll ha cambiado
+    const newScrollTop = await mainContent.evaluate(el => el.scrollTop);
+    expect(newScrollTop).toBeGreaterThan(initialScrollTop);
+    
+    // Verificar que la fila seleccionada está visible
+    const selectedRow = page.locator('.song-row.selected');
+    await expect(selectedRow).toBeVisible();
   });
 
   test('should handle keyboard navigation without songs loaded', async ({ page }) => {
