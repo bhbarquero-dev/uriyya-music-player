@@ -3,14 +3,14 @@ import { test, expect, Page } from '@playwright/test';
 // Helper function to inject mock playlist data into the page
 async function injectMockPlaylist(page: Page, songCount: number = 30) {
   await page.evaluate((count) => {
-    // Generar canciones de prueba
+    // Generate test songs
     const mockSongs = Array.from({ length: count }, (_, i) => 
       `/mock/path/to/Song ${String(i + 1).padStart(2, '0')}.mp3`
     );
     
     const mainContent = document.querySelector('.main-content');
     if (mainContent) {
-      // Crear tabla de canciones
+      // Create songs table
       const table = document.createElement('table');
       table.className = 'song-list-table';
       table.style.marginTop = '10px';
@@ -48,7 +48,7 @@ async function injectMockPlaylist(page: Page, songCount: number = 30) {
       
       table.appendChild(tbody);
       
-      // Reemplazar el contenido existente
+      // Replace existing content
       const existingContent = mainContent.querySelector('.song-list-table, p');
       if (existingContent) {
         existingContent.replaceWith(table);
@@ -58,7 +58,7 @@ async function injectMockPlaylist(page: Page, songCount: number = 30) {
     }
   }, songCount);
   
-  // Esperar a que las filas estén renderizadas
+  // Wait for rows to be rendered
   await page.waitForSelector('.song-row', { timeout: 5000 });
 }
 
@@ -71,7 +71,7 @@ async function navigateWithArrow(page: Page, direction: 'up' | 'down') {
     const currentSelected = document.querySelector('.song-row.selected');
     
     if (!currentSelected) {
-      // Si no hay nada seleccionado, seleccionar el primero
+      // If nothing is selected, select the first one
       if (rows.length > 0) {
         rows[0].classList.add('selected');
       }
@@ -88,12 +88,12 @@ async function navigateWithArrow(page: Page, direction: 'up' | 'down') {
     }
     
     if (nextIndex !== currentIndex) {
-      // Remover selección actual
+      // Remove current selection
       currentSelected.classList.remove('selected');
-      // Agregar selección a la nueva fila
+      // Add selection to new row
       rows[nextIndex].classList.add('selected');
       
-      // Hacer scroll suave al elemento
+      // Smooth scroll to element
       rows[nextIndex].scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
@@ -101,7 +101,7 @@ async function navigateWithArrow(page: Page, direction: 'up' | 'down') {
     }
   }, key);
   
-  await page.waitForTimeout(300); // Esperar animación de scroll
+  await page.waitForTimeout(300); // Wait for scroll animation
 }
 
 test.describe('Song Navigation with Arrow Keys', () => {
