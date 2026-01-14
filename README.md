@@ -40,11 +40,27 @@ Run unit tests with Vitest:
 pnpm test
 ```
 
+Run end-to-end tests with Playwright:
+
+```bash
+# Install Playwright browsers (first time only)
+pnpm exec playwright install chromium
+
+# Run e2e tests
+pnpm run test:e2e
+
+# Run e2e tests in UI mode (interactive)
+pnpm run test:e2e:ui
+```
+
+See the [e2e/README.md](e2e/README.md) for more details about e2e testing.
+
 ## Project Structure (high level)
 - `src/` — React app source (components, hooks, logic)
 - `public/` — static assets
 - `src-tauri/` — Tauri/Rust configuration and native code
 - `test/` — unit tests
+- `e2e/` — end-to-end tests with Playwright
 
 ## Notes & Troubleshooting
 - If Tauri commands fail, ensure the Rust toolchain is installed and up to date.
