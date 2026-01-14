@@ -179,6 +179,11 @@ export function useMusicPlayer() {
         }
     }, []);
 
+    const handleSelectSong = useCallback((song: string) => {
+        setSelectedSong(song);
+        playlistManagerRef.current.setCurrentSong(song);
+    }, []);
+
     useEffect(() => {
         return () => {
             audioManagerRef.current?.cleanup();
@@ -194,7 +199,7 @@ export function useMusicPlayer() {
         isStopping,
         activeSidebarItem,
         setActiveSidebarItem,
-        setSelectedSong,
+        setSelectedSong: handleSelectSong,
         loadPlaylist,
         playSong,
         playCurrentSelected,
