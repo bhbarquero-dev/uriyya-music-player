@@ -1,8 +1,10 @@
+import { Song } from "./Song";
+
 export class PlaylistManager {
-    private songs: string[] = [];
+    private songs: Song[] = [];
     private currentIndex: number = -1;
 
-    public setSongs(songs: string[]) {
+    public setSongs(songs: Song[]) {
         this.songs = songs;
         if (this.songs.length > 0 && this.currentIndex === -1) {
             this.currentIndex = 0;
@@ -11,22 +13,22 @@ export class PlaylistManager {
         }
     }
 
-    public getSongs(): string[] {
+    public getSongs(): Song[] {
         return this.songs;
     }
 
-    public setCurrentSong(song: string) {
+    public setCurrentSong(song: Song) {
         this.currentIndex = this.songs.indexOf(song);
     }
 
-    public getCurrentSong(): string | null {
+    public getCurrentSong(): Song | null {
         if (this.currentIndex >= 0 && this.currentIndex < this.songs.length) {
             return this.songs[this.currentIndex];
         }
         return null;
     }
 
-    public getNext(): string | null {
+    public getNext(): Song | null {
         if (this.songs.length === 0) return null;
         if (this.currentIndex < this.songs.length - 1) {
             this.currentIndex++;
@@ -35,7 +37,7 @@ export class PlaylistManager {
         return this.songs[this.currentIndex]; // Stay at end
     }
 
-    public getPrevious(): string | null {
+    public getPrevious(): Song | null {
         if (this.songs.length === 0) return null;
         if (this.currentIndex > 0) {
             this.currentIndex--;

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FileService } from "../../src/logic/FileService";
+import { Song } from "../../src/logic/Song";
 
 // Mock Tauri APIs
 vi.mock("@tauri-apps/plugin-dialog", () => ({
@@ -26,7 +27,7 @@ describe("FileService", () => {
         expect(result).toBeNull();
     });
 
-    it("should parse a playlist file correctly", async () => {
+    it("should parse a playlist file correctly and return Song objects", async () => {
         const { open } = await import("@tauri-apps/plugin-dialog");
         const { readTextFile } = await import("@tauri-apps/plugin-fs");
 
@@ -38,7 +39,11 @@ describe("FileService", () => {
         expect(result).not.toBeNull();
         if (result) {
             expect(result.name).toBe("my-playlist");
-            expect(result.songs).toEqual(["song1.mp3", "song2.MP3"]);
+            expect(result.songs).toHaveLength(2);
+            expect(result.songs[0]).toBeInstanceOf(Song);
+            expect(result.songs[1]).toBeInstanceOf(Song);
+            expect(result.songs[0].getDisplayName()).toBe("song1.mp3");
+            expect(result.songs[1].getDisplayName()).toBe("song2.MP3");
         }
     });
 
@@ -51,6 +56,8 @@ describe("FileService", () => {
 
         const result = await service.selectAndReadPlaylist();
         expect(result?.name).toBe("linux-playlist");
+        expect(result?.songs).toHaveLength(1);
+        expect(result?.songs[0]).toBeInstanceOf(Song);
     });
 
     it("should throw error if readTextFile fails", async () => {
