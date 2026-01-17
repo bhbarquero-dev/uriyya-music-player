@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Player } from "@components/player";
+import { Song } from "../../../src/logic/Song";
 
 describe("Player", () => {
     const mockOnPlay = vi.fn();
@@ -40,14 +41,14 @@ describe("Player", () => {
     describe("Song name display", () => {
         it("should display filename when playingSong is set", () => {
             render(
-                <Player {...defaultProps} playingSong="C:\\Music\\song.mp3" />
+                <Player {...defaultProps} playingSong={new Song("C:\\Music\\song.mp3")} />
             );
             expect(screen.getByText("song.mp3")).toBeInTheDocument();
         });
 
         it("should extract filename from unix path", () => {
             render(
-                <Player {...defaultProps} playingSong="/home/user/music.mp3" />
+                <Player {...defaultProps} playingSong={new Song("/home/user/music.mp3")} />
             );
             expect(screen.getByText("music.mp3")).toBeInTheDocument();
         });
@@ -78,7 +79,7 @@ describe("Player", () => {
             render(
                 <Player
                     {...defaultProps}
-                    playingSong="song.mp3"
+                    playingSong={new Song("song.mp3")}
                     isStopping={true}
                 />
             );
@@ -89,11 +90,12 @@ describe("Player", () => {
 
     describe("Complex scenarios", () => {
         it("should update progress while playing", () => {
+            const song = new Song("song.mp3");
             const { container, rerender } = render(
                 <Player
                     {...defaultProps}
                     isPlaying={true}
-                    playingSong="song.mp3"
+                    playingSong={song}
                     currentTime={0}
                     remaining={180}
                     playedPercent={0}
@@ -107,7 +109,7 @@ describe("Player", () => {
                 <Player
                     {...defaultProps}
                     isPlaying={true}
-                    playingSong="song.mp3"
+                    playingSong={song}
                     currentTime={90}
                     remaining={90}
                     playedPercent={50}
@@ -122,7 +124,7 @@ describe("Player", () => {
             const { container } = render(
                 <Player
                     {...defaultProps}
-                    playingSong="song.mp3"
+                    playingSong={new Song("song.mp3")}
                     isPlaying={true}
                     currentTime={0}
                     remaining={180}

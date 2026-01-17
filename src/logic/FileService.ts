@@ -1,8 +1,9 @@
 import { open } from "@tauri-apps/plugin-dialog";
 import { readTextFile } from "@tauri-apps/plugin-fs";
+import { Song } from "./Song";
 
 export interface PlaylistData {
-    songs: string[];
+    songs: Song[];
     name: string;
 }
 
@@ -25,7 +26,8 @@ export class FileService {
             const songs = content
                 .split(/\r?\n/)
                 .map((line) => line.trim())
-                .filter((line) => line.length > 0 && line.toLowerCase().endsWith(".mp3"));
+                .filter((line) => line.length > 0 && line.toLowerCase().endsWith(".mp3"))
+                .map((line) => new Song(line));
 
             return { songs, name };
         } catch (err) {

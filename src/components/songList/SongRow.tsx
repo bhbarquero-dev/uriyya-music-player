@@ -1,12 +1,12 @@
 import { forwardRef } from "react";
-import { getFileName } from "../../utils/formatting";
+import { Song } from "../../logic/Song";
 
 interface SongRowProps {
-    song: string;
+    song: Song;
     isSelected: boolean;
     isPlaying: boolean;
-    onSelect: (song: string) => void;
-    onPlay: (song: string) => void;
+    onSelect: (song: Song) => void;
+    onPlay: (song: Song) => void;
 }
 
 export const SongRow = forwardRef<HTMLTableRowElement, SongRowProps>(
@@ -29,7 +29,7 @@ export const SongRow = forwardRef<HTMLTableRowElement, SongRowProps>(
                                 </span>
                             )}
                         </div>
-                        <span>{getFileName(song)}</span>
+                        <span>{song.getDisplayName()}</span>
                     </div>
                 </td>
             </tr>

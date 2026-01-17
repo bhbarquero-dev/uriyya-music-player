@@ -1,10 +1,10 @@
 import { PlayerControls } from "./PlayerControls";
 import { ProgressBar } from "./ProgressBar";
 import { TimeDisplay } from "./TimeDisplay";
-import { getFileName } from "../../utils/formatting";
+import { Song } from "../../logic/Song";
 
 interface PlayerProps {
-    playingSong: string | null;
+    playingSong: Song | null;
     isPlaying: boolean;
     isStopping: boolean;
     onPlay: () => void;
@@ -23,7 +23,7 @@ export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, on
             <div className="player-info">
                 <div className="song-name">
                     {playingSong
-                        ? getFileName(playingSong)
+                        ? playingSong.getDisplayName()
                         : (isStopping ? "Deteniendo..." : "Sin reproducción")}
                 </div>
 
