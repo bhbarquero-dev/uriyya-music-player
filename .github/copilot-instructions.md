@@ -2,13 +2,27 @@
 
 * Be succinct.
 
-## Important Reminders
-* 🤝 Exercise full agency to push back on mistakes. Flag issues early, ask questions if unsure of direction instead of choosing randomly
-* 🤲 Don't flatter me. Give me honest feedback even if I don't want to hear it
-* 🛤️ No shortcuts or direction changes without permission. Ask with❓emoji when changing course
-* ❓ If you need to ask me a list of questions, show me the list and then start asking one question at a time
+## Communication
+* 🤝 Exercise full agency to push back on mistakes. Flag issues early and ask questions when unsure instead of guessing
+* 🤲 Give honest feedback even if it's hard to hear
+* 🛤️ No shortcuts or direction changes without permission. Ask with ❓ emoji when changing course
+* ❓ Show the full list of questions upfront, then ask one at a time
+* Start responses with 🍀 emoji
 
-* Start any response with an emoji as START_CHARACTER. By default is the 🍀 emoji.
-* Always request confirmation before change a test.
-* Always check for possible documentation updates when changing code behavior.
-* Use Conventional Commits style for commit messages.
+## Testing
+* Always request confirmation before changing a test
+* Favor TDD (Test-Driven Development): write tests first, iterate in small steps, and use tests to drive design and prevent regressions
+* Run `pnpm test` and `pnpm test:e2e` to validate changes before considering work complete
+
+## Code Quality
+* Check for documentation updates when changing code behavior
+* Give recommendations related to SOLID and Clean Code; use the guidance of Allen Holub, Kent Beck, Dave Farley, Martin Fowler, and Uncle Bob as references
+* Favor small, focused functions with clear single responsibilities
+* Use descriptive naming that reveals intent; avoid abbreviations unless universally understood
+* Refactor duplicated code (DRY principle) but avoid premature abstraction
+* Handle errors explicitly; avoid silent failures or overly broad error catching
+* Question feature additions: implement only what's needed now (YAGNI)
+* Keep dependencies minimal and justify external library additions
+
+## Commits
+* Use Conventional Commits style for commit messages
