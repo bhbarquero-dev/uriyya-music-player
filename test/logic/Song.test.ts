@@ -136,4 +136,47 @@ describe("Song", () => {
         });
     });
 
+    describe("equals", () => {
+        it("should return true for two Songs with the same path", () => {
+            const song1 = new Song("song.mp3");
+            const song2 = new Song("song.mp3");
+            expect(song1.equals(song2)).toBe(true);
+        });
+
+        it("should return true when comparing with itself", () => {
+            const song = new Song("song.mp3");
+            expect(song.equals(song)).toBe(true);
+        });
+
+        it("should return false for Songs with different paths", () => {
+            const song1 = new Song("song1.mp3");
+            const song2 = new Song("song2.mp3");
+            expect(song1.equals(song2)).toBe(false);
+        });
+
+        it("should return false when comparing with null", () => {
+            const song = new Song("song.mp3");
+            expect(song.equals(null)).toBe(false);
+        });
+
+        it("should return false when comparing with undefined", () => {
+            const song = new Song("song.mp3");
+            expect(song.equals(undefined)).toBe(false);
+        });
+
+        it("should be case-sensitive for path comparison", () => {
+            const song1 = new Song("Song.mp3");
+            const song2 = new Song("song.mp3");
+            expect(song1.equals(song2)).toBe(false);
+        });
+
+        it("should compare full paths correctly", () => {
+            const song1 = new Song("C:\\Music\\song.mp3");
+            const song2 = new Song("C:\\Music\\song.mp3");
+            const song3 = new Song("D:\\Music\\song.mp3");
+            expect(song1.equals(song2)).toBe(true);
+            expect(song1.equals(song3)).toBe(false);
+        });
+    });
+
 });

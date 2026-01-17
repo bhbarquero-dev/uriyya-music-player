@@ -23,4 +23,9 @@ export class Song {
     public getDisplayName(): string {
         return this.path.split(/[\\\/]/).pop() || this.path;
     }
+
+    public equals(other: Song | null | undefined): boolean {
+        if (!other) return false;
+        return this.path === other.getPath();
+    }
 }

@@ -32,8 +32,8 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, onSel
                 <table className="song-list-table" style={{ marginTop: "10px" }}>
                     <tbody>
                         {playlist.map((song) => {
-                            const isSelected = selectedSong === song;
-                            const isReallyPlaying = playingSong === song && isPlaying;
+                            const isSelected = song.equals(selectedSong);
+                            const isReallyPlaying = song.equals(playingSong) && isPlaying;
                             return (
                                 <SongRow
                                     key={song.getPath()}
