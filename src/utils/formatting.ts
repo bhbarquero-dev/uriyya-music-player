@@ -5,7 +5,3 @@ export const formatTime = (secs: number | null): string => {
     const rem = s % 60;
     return `${m}:${rem.toString().padStart(2, "0")}`;
 };
-
-export const getFileName = (path: string): string => {
-    return path.split(/[\\\/]/).pop() || path;
-};

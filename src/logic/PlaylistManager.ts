@@ -18,7 +18,7 @@ export class PlaylistManager {
     }
 
     public setCurrentSong(song: Song) {
-        this.currentIndex = this.songs.indexOf(song);
+        this.currentIndex = this.songs.findIndex(s => s.getPath() === song.getPath());
     }
 
     public getCurrentSong(): Song | null {

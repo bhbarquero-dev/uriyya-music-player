@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatTime, getFileName } from "../../src/utils/formatting";
+import { formatTime } from "../../src/utils/formatting";
 
 describe("formatTime", () => {
     it("should format 0 seconds as 0:00", () => {
@@ -24,23 +24,5 @@ describe("formatTime", () => {
 
     it("should show --:-- for NaN", () => {
         expect(formatTime(NaN)).toBe("--:--");
-    });
-});
-
-describe("getFileName", () => {
-    it("should extract filename from windows path", () => {
-        expect(getFileName("C:\\Music\\song.mp3")).toBe("song.mp3");
-    });
-
-    it("should extract filename from unix path", () => {
-        expect(getFileName("/home/user/music.mp3")).toBe("music.mp3");
-    });
-
-    it("should handle plain filename", () => {
-        expect(getFileName("song.mp3")).toBe("song.mp3");
-    });
-
-    it("should handle mixed path separators", () => {
-        expect(getFileName("C:/Music\\Audio/track.mp3")).toBe("track.mp3");
     });
 });
