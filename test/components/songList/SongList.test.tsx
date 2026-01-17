@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { SongList } from "@components/songList";
+import { Song } from "../../../src/logic/Song";
 
 describe("SongList", () => {
     const mockOnSelectSong = vi.fn();
@@ -35,7 +36,7 @@ describe("SongList", () => {
     describe("Playlist with songs", () => {
         it("should render table when playlist has songs", () => {
             const { container } = render(
-                <SongList {...defaultProps} playlist={["song1.mp3"]} />
+                <SongList {...defaultProps} playlist={[new Song("song1.mp3")]} />
             );
             const table = container.querySelector("table.song-list-table");
             expect(table).toBeTruthy();
@@ -45,7 +46,7 @@ describe("SongList", () => {
             const { container } = render(
                 <SongList
                     {...defaultProps}
-                    playlist={["song1.mp3", "song2.mp3", "song3.mp3"]}
+                    playlist={[new Song("song1.mp3"), new Song("song2.mp3"), new Song("song3.mp3")]}
                 />
             );
             const rows = container.querySelectorAll("tr.song-row");
@@ -54,7 +55,7 @@ describe("SongList", () => {
 
         it("should not render empty state when playlist has songs", () => {
             const { container } = render(
-                <SongList {...defaultProps} playlist={["song1.mp3"]} />
+                <SongList {...defaultProps} playlist={[new Song("song1.mp3")]} />
             );
             const emptyMessage = container.querySelector("p");
             expect(emptyMessage).not.toBeInTheDocument();
@@ -63,12 +64,14 @@ describe("SongList", () => {
 
     describe("Complex interactions", () => {
         it("should correctly render playing and selected different songs", () => {
+            const song1 = new Song("song1.mp3");
+            const song2 = new Song("song2.mp3");
             const { container } = render(
                 <SongList
                     {...defaultProps}
-                    playlist={["song1.mp3", "song2.mp3"]}
-                    selectedSong="song1.mp3"
-                    playingSong="song2.mp3"
+                    playlist={[song1, song2]}
+                    selectedSong={song1}
+                    playingSong={song2}
                     isPlaying={true}
                 />
             );

@@ -2,14 +2,14 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { AudioManager } from "../logic/AudioManager";
 import { PlaylistManager } from "../logic/PlaylistManager";
 import { FileService } from "../logic/FileService";
-import { convertFileSrc } from "@tauri-apps/api/core";
+import { Song } from "../logic/Song";
 
 export function useMusicPlayer() {
     // UI-facing state
-    const [playlist, setPlaylist] = useState<string[]>([]);
+    const [playlist, setPlaylist] = useState<Song[]>([]);
     const [currentPlaylistName, setCurrentPlaylistName] = useState<string | null>(null);
-    const [selectedSong, setSelectedSong] = useState<string | null>(null);
-    const [playingSong, setPlayingSong] = useState<string | null>(null);
+    const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+    const [playingSong, setPlayingSong] = useState<Song | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isStopping, setIsStopping] = useState(false);
     const [activeSidebarItem, setActiveSidebarItem] = useState<string>("");
@@ -120,13 +120,13 @@ export function useMusicPlayer() {
         }
     };
 
-    const playSong = useCallback((song: string) => {
+    const playSong = useCallback((song: Song) => {
         if (!audioManagerRef.current) return;
 
         // Clear any ended/stopped flag when starting playback
         endedOrStoppedRef.current = false;
 
-        const url = convertFileSrc(song);
+        const url = song.toMediaUrl();
         const currentAudio = audioManagerRef.current.getActiveAudio();
         if (currentAudio && currentAudio.src === url && isPlaying) {
             return;
@@ -137,7 +137,7 @@ export function useMusicPlayer() {
         setSelectedSong(song);
         setIsPlaying(true);
         setIsStopping(false);
-        audioManagerRef.current.play(url);
+        audioManagerRef.current.play(song);
     }, [isPlaying]);
 
     const playCurrentSelected = useCallback(() => {
@@ -179,7 +179,7 @@ export function useMusicPlayer() {
         }
     }, []);
 
-    const handleSelectSong = useCallback((song: string) => {
+    const handleSelectSong = useCallback((song: Song) => {
         setSelectedSong(song);
         playlistManagerRef.current.setCurrentSong(song);
     }, []);

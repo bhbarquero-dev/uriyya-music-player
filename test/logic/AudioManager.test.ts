@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { AudioManager } from "../../src/logic/AudioManager";
+import { Song } from "../../src/logic/Song";
 
 describe("AudioManager", () => {
     let audioManager: AudioManager;
@@ -33,7 +34,7 @@ describe("AudioManager", () => {
 
     it("should switch channels when playing a new src", () => {
         const firstChannel = audioManager.getInactiveChannelId();
-        audioManager.play("song1.mp3");
+        audioManager.play(new Song("song1.mp3"));
 
         // Active channel should now be the firstChannel
         expect(audioManager.getActiveAudio().src).toContain("song1.mp3");
@@ -41,18 +42,18 @@ describe("AudioManager", () => {
         const secondChannel = audioManager.getInactiveChannelId();
         expect(secondChannel).not.toBe(firstChannel);
 
-        audioManager.play("song2.mp3");
+        audioManager.play(new Song("song2.mp3"));
         expect(audioManager.getActiveAudio().src).toContain("song2.mp3");
     });
 
     it("should start a fade out on the old channel when playing a new one", () => {
         // First play something
-        audioManager.play("song1.mp3");
+        audioManager.play(new Song("song1.mp3"));
         const channel1 = audioManager.getActiveAudio();
         // Manually set as "playing" for the logic to trigger fade
         Object.defineProperty(channel1, 'paused', { value: false, configurable: true });
 
-        audioManager.play("song2.mp3");
+        audioManager.play(new Song("song2.mp3"));
 
         // Channel 1 should be fading (volume < 1 eventually)
         vi.advanceTimersByTime(200);
@@ -60,7 +61,7 @@ describe("AudioManager", () => {
     });
 
     it("should stop with fade when stopWithFade is called", () => {
-        audioManager.play("song1.mp3");
+        audioManager.play(new Song("song1.mp3"));
         const audio = audioManager.getActiveAudio();
         Object.defineProperty(audio, 'paused', { value: false, configurable: true });
 
@@ -76,7 +77,7 @@ describe("AudioManager", () => {
     });
 
     it("should cleanup both channels on cleanup()", () => {
-        audioManager.play("song1.mp3");
+        audioManager.play(new Song("song1.mp3"));
         audioManager.cleanup();
 
         // JSDOM might prepend origin, so we check if it's empty or just the origin/blank

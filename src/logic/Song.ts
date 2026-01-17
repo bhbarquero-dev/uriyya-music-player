@@ -12,6 +12,10 @@ export class Song {
         }
     }
 
+    public getPath(): string {
+        return this.path;
+    }
+
     public toMediaUrl(): string {
         return convertFileSrc(this.path);
     }

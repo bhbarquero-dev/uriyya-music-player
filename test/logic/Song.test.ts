@@ -1,11 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Song } from "../../src/logic/Song";
 
-// Mock Tauri API
-vi.mock("@tauri-apps/api/core", () => ({
-    convertFileSrc: vi.fn((path) => `asset://${path}`),
-}));
-
 describe("Song", () => {
     beforeEach(() => {
         vi.clearAllMocks();

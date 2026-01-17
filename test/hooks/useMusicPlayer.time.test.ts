@@ -1,11 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 
-// Mock Tauri APIs used by the hook
-vi.mock('@tauri-apps/api/core', () => ({
-  convertFileSrc: vi.fn((path) => `asset://${path}`),
-}));
-
 // Mock the AudioManager BEFORE importing the hook
 let lastAM: any = null;
 vi.mock('../../src/logic/AudioManager', () => {
@@ -81,6 +76,7 @@ vi.mock('../../src/logic/AudioManager', () => {
 });
 
 import { useMusicPlayer } from '../../src/hooks/useMusicPlayer';
+import { Song } from '../../src/logic/Song';
 
 describe('useMusicPlayer timing', () => {
   beforeEach(() => {
@@ -98,7 +94,7 @@ describe('useMusicPlayer timing', () => {
     const { result } = renderHook(() => useMusicPlayer());
 
     act(() => {
-      result.current.playSong('a.mp3');
+      result.current.playSong(new Song('a.mp3'));
     });
 
     const am = lastAM;
@@ -129,7 +125,7 @@ describe('useMusicPlayer timing', () => {
     const { result } = renderHook(() => useMusicPlayer());
 
     act(() => {
-      result.current.playSong('b.mp3');
+      result.current.playSong(new Song('b.mp3'));
     });
 
     const am = lastAM;
@@ -145,7 +141,7 @@ describe('useMusicPlayer timing', () => {
 
     // Play again, then stop via API and ensure reset
     act(() => {
-      result.current.playSong('c.mp3');
+      result.current.playSong(new Song('c.mp3'));
     });
     am.setDuration(90);
     am.setCurrentTime(10);

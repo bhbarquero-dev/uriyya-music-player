@@ -2,15 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FileService } from "../../src/logic/FileService";
 import { Song } from "../../src/logic/Song";
 
-// Mock Tauri APIs
-vi.mock("@tauri-apps/plugin-dialog", () => ({
-    open: vi.fn(),
-}));
-
-vi.mock("@tauri-apps/plugin-fs", () => ({
-    readTextFile: vi.fn(),
-}));
-
 describe("FileService", () => {
     let service: FileService;
 

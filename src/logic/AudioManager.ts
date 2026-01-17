@@ -1,3 +1,5 @@
+import { Song } from "./Song";
+
 export type AudioChannel = 1 | 2;
 
 export interface AudioManagerEvents {
@@ -41,7 +43,7 @@ export class AudioManager {
         return this.activeChannelId === 1 ? 2 : 1;
     }
 
-    public play(src: string) {
+    public play(song: Song) {
         const newChannelId = this.getInactiveChannelId();
         const newAudio = this.channels[newChannelId];
         const oldAudio = this.getActiveAudio();
@@ -50,7 +52,7 @@ export class AudioManager {
         this.clearFade(newChannelId);
 
         // Setup new audio
-        newAudio.src = src;
+        newAudio.src = song.toMediaUrl();
         newAudio.volume = 1.0;
         newAudio.currentTime = 0;
         newAudio.play().catch(e => this.events.onError(newChannelId, e));
