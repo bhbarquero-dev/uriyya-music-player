@@ -6,7 +6,7 @@ import { Song } from "../logic/Song";
 
 const TIME_POLL_INTERVAL_MS = 250;
 
-export function useMusicPlayer() {
+export function useMusicPlayer(fileService?: FileService) {
     // UI-facing state
     const [playlist, setPlaylist] = useState<Song[]>([]);
     const [currentPlaylistName, setCurrentPlaylistName] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export function useMusicPlayer() {
     // Services (persisted across renders)
     const audioManagerRef = useRef<AudioManager | null>(null);
     const playlistManagerRef = useRef(new PlaylistManager());
-    const fileServiceRef = useRef(new FileService());
+    const fileServiceRef = useRef(fileService ?? new FileService());
 
     // Ref to indicate we've recently ended/stopped playback so polling shouldn't overwrite resets
     const endedOrStoppedRef = useRef(false);

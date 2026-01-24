@@ -1,7 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useMusicPlayer } from "../../src/hooks/useMusicPlayer";
+import { FileService } from "../../src/logic/FileService";
 import { Song } from "../../src/logic/Song";
+
+// Helper to create a mock FileService
+const createMockFileService = (playlistData: { songs: Song[]; name: string } | null = null) => {
+    const mockFileService: Partial<FileService> = {
+        selectAndReadPlaylist: vi.fn().mockResolvedValue(playlistData),
+    };
+    return mockFileService as FileService;
+};
 
 describe("useMusicPlayer", () => {
     beforeEach(() => {
@@ -56,40 +65,40 @@ describe("useMusicPlayer", () => {
     });
 
     it("should load a playlist and select the first song", async () => {
-        const { open } = await import("@tauri-apps/plugin-dialog");
-        const { readTextFile } = await import("@tauri-apps/plugin-fs");
+        const song1 = new Song("song1.mp3");
+        const song2 = new Song("song2.mp3");
+        const mockFileService = createMockFileService({
+            songs: [song1, song2],
+            name: "my-playlist",
+        });
 
-        vi.mocked(open).mockResolvedValue("my-playlist.txt");
-        vi.mocked(readTextFile).mockResolvedValue("song1.mp3\nsong2.mp3\n");
-
-        const { result } = renderHook(() => useMusicPlayer());
+        const { result } = renderHook(() => useMusicPlayer(mockFileService));
 
         await act(async () => {
             await result.current.loadPlaylist();
         });
 
         expect(result.current.playlist).toHaveLength(2);
-        expect(result.current.playlist[0]).toBeInstanceOf(Song);
-        expect(result.current.playlist[0].getDisplayName()).toBe("song1.mp3");
-        expect(result.current.playlist[1].getDisplayName()).toBe("song2.mp3");
-        expect(result.current.selectedSong).toBe(result.current.playlist[0]);
+        expect(result.current.playlist[0]).toBe(song1);
+        expect(result.current.playlist[1]).toBe(song2);
+        expect(result.current.selectedSong).toBe(song1);
         expect(result.current.currentPlaylistName).toBe("my-playlist");
     });
 
     it("should handle navigation (next/previous) correctly", async () => {
-        const { open } = await import("@tauri-apps/plugin-dialog");
-        const { readTextFile } = await import("@tauri-apps/plugin-fs");
+        const s1 = new Song("s1.mp3");
+        const s2 = new Song("s2.mp3");
+        const s3 = new Song("s3.mp3");
+        const mockFileService = createMockFileService({
+            songs: [s1, s2, s3],
+            name: "playlist",
+        });
 
-        vi.mocked(open).mockResolvedValue("playlist.txt");
-        vi.mocked(readTextFile).mockResolvedValue("s1.mp3\ns2.mp3\ns3.mp3\n");
-
-        const { result } = renderHook(() => useMusicPlayer());
+        const { result } = renderHook(() => useMusicPlayer(mockFileService));
 
         await act(async () => {
             await result.current.loadPlaylist();
         });
-
-        const [s1, s2, s3] = result.current.playlist;
 
         // Current is s1.mp3
         expect(result.current.selectedSong).toBe(s1);
@@ -202,13 +211,12 @@ describe("useMusicPlayer", () => {
     });
 
     it("should handle loading an empty playlist correctly", async () => {
-        const { open } = await import("@tauri-apps/plugin-dialog");
-        const { readTextFile } = await import("@tauri-apps/plugin-fs");
+        const mockFileService = createMockFileService({
+            songs: [],
+            name: "empty",
+        });
 
-        vi.mocked(open).mockResolvedValue("empty.txt");
-        vi.mocked(readTextFile).mockResolvedValue("\n  \n"); // Just whitespace
-
-        const { result } = renderHook(() => useMusicPlayer());
+        const { result } = renderHook(() => useMusicPlayer(mockFileService));
 
         await act(async () => {
             await result.current.loadPlaylist();
