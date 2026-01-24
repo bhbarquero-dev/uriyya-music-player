@@ -8,11 +8,3 @@ Element.prototype.scrollIntoView = vi.fn();
 vi.mock("@tauri-apps/api/core", () => ({
     convertFileSrc: vi.fn((path) => `asset://${path}`),
 }));
-
-vi.mock("@tauri-apps/plugin-dialog", () => ({
-    open: vi.fn(),
-}));
-
-vi.mock("@tauri-apps/plugin-fs", () => ({
-    readTextFile: vi.fn(),
-}));
