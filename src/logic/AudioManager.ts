@@ -1,5 +1,8 @@
 import { Song } from "./Song";
 
+const FADE_DURATION_MS = 6000;
+const FADE_STEP_INTERVAL_MS = 100;
+
 export type AudioChannel = 1 | 2;
 
 export interface AudioManagerEvents {
@@ -72,7 +75,7 @@ export class AudioManager {
         }
     }
 
-    public stopWithFade(durationMs: number = 6000) {
+    public stopWithFade(durationMs: number = FADE_DURATION_MS) {
         const id = this.activeChannelId;
         const audio = this.channels[id];
 
@@ -81,9 +84,9 @@ export class AudioManager {
         }
     }
 
-    private startFadeOut(id: AudioChannel, durationMs: number = 6000) {
+    private startFadeOut(id: AudioChannel, durationMs: number = FADE_DURATION_MS) {
         const audio = this.channels[id];
-        const steps = durationMs / 100;
+        const steps = durationMs / FADE_STEP_INTERVAL_MS;
         const fadeStep = 1.0 / steps;
 
         this.fadeIntervals[id] = window.setInterval(() => {
@@ -96,7 +99,7 @@ export class AudioManager {
                 audio.volume = 1.0;
                 this.events.onFadeFinished(id);
             }
-        }, 100);
+        }, FADE_STEP_INTERVAL_MS);
     }
 
     private clearFade(id: AudioChannel) {

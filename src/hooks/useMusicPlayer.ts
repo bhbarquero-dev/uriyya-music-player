@@ -4,6 +4,8 @@ import { PlaylistManager } from "../logic/PlaylistManager";
 import { FileService } from "../logic/FileService";
 import { Song } from "../logic/Song";
 
+const TIME_POLL_INTERVAL_MS = 250;
+
 export function useMusicPlayer() {
     // UI-facing state
     const [playlist, setPlaylist] = useState<Song[]>([]);
@@ -90,7 +92,7 @@ export function useMusicPlayer() {
             } catch (e) {
                 // ignore
             }
-        }, 250);
+        }, TIME_POLL_INTERVAL_MS);
 
         // initial tick
         tick();
