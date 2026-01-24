@@ -1,5 +1,7 @@
-import { open } from "@tauri-apps/plugin-dialog";
-import { readTextFile } from "@tauri-apps/plugin-fs";
+import { FileDialog } from "../abstractions/FileDialog";
+import { FileSystem } from "../abstractions/FileSystem";
+import { TauriFileDialog } from "./TauriFileDialog";
+import { TauriFileSystem } from "./TauriFileSystem";
 import { Song } from "./Song";
 
 export interface PlaylistData {
@@ -8,18 +10,26 @@ export interface PlaylistData {
 }
 
 export class FileService {
+    private fileDialog: FileDialog;
+    private fileSystem: FileSystem;
+
+    constructor(fileDialog?: FileDialog, fileSystem?: FileSystem) {
+        this.fileDialog = fileDialog ?? new TauriFileDialog();
+        this.fileSystem = fileSystem ?? new TauriFileSystem();
+    }
+
     public async selectAndReadPlaylist(): Promise<PlaylistData | null> {
         try {
-            const selected = await open({
+            const selected = await this.fileDialog.open({
                 multiple: false,
                 filters: [{ name: "Listas de reproducción", extensions: ["txt", "alb"] }],
             });
 
-            if (!selected || typeof selected !== "string") {
+            if (!selected) {
                 return null;
             }
 
-            const content = await readTextFile(selected);
+            const content = await this.fileSystem.readTextFile(selected);
             const fileNameWithExt = selected.split(/[\\/]/).pop() || "";
             const name = fileNameWithExt.replace(/\.[^/.]+$/, "");
 
