@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { SongList } from "@components/songList";
+import { SongList } from "@components/songList/SongList";
 import { Song } from "../../../src/logic/Song";
 
 describe("SongList", () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SidebarSection } from "@components/sidebar";
+import { SidebarSection } from "@components/sidebar/SidebarSection";
 
 describe("SidebarSection", () => {
     const mockOnAddClick = vi.fn();

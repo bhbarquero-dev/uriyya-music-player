@@ -13,10 +13,6 @@ export class PlaylistManager {
         }
     }
 
-    public getSongs(): Song[] {
-        return this.songs;
-    }
-
     public setCurrentSong(song: Song) {
         this.currentIndex = this.songs.findIndex(s => s.getPath() === song.getPath());
     }
@@ -48,14 +44,5 @@ export class PlaylistManager {
             return this.songs[0];
         }
         return this.songs[this.currentIndex]; // Stay at start
-    }
-
-    public clear() {
-        this.songs = [];
-        this.currentIndex = -1;
-    }
-
-    public isEmpty(): boolean {
-        return this.songs.length === 0;
     }
 }

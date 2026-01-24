@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { ProgressBar } from "@components/player";
+import { ProgressBar } from "@components/player/ProgressBar";
 
 describe("ProgressBar", () => {
     it("should render progress bar container", () => {

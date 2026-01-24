@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { Sidebar } from "@components/sidebar";
-import { Player } from "@components/player";
-import { SongList } from "@components/songList";
+import { Sidebar } from "@components/sidebar/Sidebar";
+import { Player } from "@components/player/Player";
+import { SongList } from "@components/songList/SongList";
 import { ShortcutsFooter } from "@components/ShortcutsFooter";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import "./App.css";
