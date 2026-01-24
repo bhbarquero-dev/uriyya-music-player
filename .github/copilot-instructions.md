@@ -12,7 +12,7 @@
 ## Testing
 * Always request confirmation before changing a test
 * Favor TDD (Test-Driven Development): write tests first, iterate in small steps, and use tests to drive design and prevent regressions
-* Run `pnpm test` and `pnpm test:e2e` to validate changes before considering work complete
+* Run `pnpm exec tsc --noEmit`, `pnpm test` and `pnpm test:e2e` to validate changes before considering work complete
 
 ## Code Quality
 * Check for documentation updates when changing code behavior
