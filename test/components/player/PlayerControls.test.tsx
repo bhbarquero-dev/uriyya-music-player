@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { PlayerControls } from "@components/player";
+import { PlayerControls } from "@components/player/PlayerControls";
 
 describe("PlayerControls", () => {
     const mockOnPlay = vi.fn();

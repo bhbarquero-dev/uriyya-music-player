@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { SidebarFooter } from "@components/sidebar";
+import { SidebarFooter } from "@components/sidebar/SidebarFooter";
 
 describe("SidebarFooter", () => {
     it("should display version", () => {

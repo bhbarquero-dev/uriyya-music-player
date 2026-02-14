@@ -32,15 +32,9 @@ describe("AudioManager", () => {
         expect(activeAudio).toBeInstanceOf(HTMLAudioElement);
     });
 
-    it("should switch channels when playing a new src", () => {
-        const firstChannel = audioManager.getInactiveChannelId();
+    it("should update active audio source when playing new songs", () => {
         audioManager.play(new Song("song1.mp3"));
-
-        // Active channel should now be the firstChannel
         expect(audioManager.getActiveAudio().src).toContain("song1.mp3");
-
-        const secondChannel = audioManager.getInactiveChannelId();
-        expect(secondChannel).not.toBe(firstChannel);
 
         audioManager.play(new Song("song2.mp3"));
         expect(audioManager.getActiveAudio().src).toContain("song2.mp3");

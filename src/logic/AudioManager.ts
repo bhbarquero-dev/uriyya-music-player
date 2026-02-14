@@ -42,7 +42,7 @@ export class AudioManager {
         return this.activeChannelId;
     }
 
-    public getInactiveChannelId(): AudioChannel {
+    private getInactiveChannelId(): AudioChannel {
         return this.activeChannelId === 1 ? 2 : 1;
     }
 

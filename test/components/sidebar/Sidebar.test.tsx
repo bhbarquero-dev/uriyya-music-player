@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Sidebar } from "@components/sidebar";
+import { Sidebar } from "@components/sidebar/Sidebar";
 
 describe("Sidebar", () => {
     const mockOnLoadPlaylist = vi.fn();

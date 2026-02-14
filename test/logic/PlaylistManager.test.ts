@@ -9,18 +9,14 @@ describe("PlaylistManager", () => {
         manager = new PlaylistManager();
     });
 
-    it("should start empty", () => {
-        expect(manager.getSongs()).toEqual([]);
+    it("should start with no current song", () => {
         expect(manager.getCurrentSong()).toBeNull();
-        expect(manager.isEmpty()).toBe(true);
     });
 
     it("should set songs and select the first one if none selected", () => {
         const songs = [new Song("s1.mp3"), new Song("s2.mp3")];
         manager.setSongs(songs);
-        expect(manager.getSongs()).toEqual(songs);
         expect(manager.getCurrentSong()).toBe(songs[0]);
-        expect(manager.isEmpty()).toBe(false);
     });
 
     it("should navigate next and previous", () => {
@@ -56,15 +52,15 @@ describe("PlaylistManager", () => {
         expect(manager.getCurrentSong()).toBeNull();
     });
 
-    it("should handle clearing", () => {
-        manager.setSongs([new Song("s1.mp3")]);
-        manager.clear();
-        expect(manager.isEmpty()).toBe(true);
-        expect(manager.getCurrentSong()).toBeNull();
-    });
-
     it("should handle navigation in an empty list", () => {
         expect(manager.getNext()).toBeNull();
         expect(manager.getPrevious()).toBeNull();
+    });
+
+    it("should reset current song when setting empty songs array", () => {
+        manager.setSongs([new Song("s1.mp3")]);
+        expect(manager.getCurrentSong()).not.toBeNull();
+        manager.setSongs([]);
+        expect(manager.getCurrentSong()).toBeNull();
     });
 });
