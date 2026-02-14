@@ -3,6 +3,7 @@ import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
 import { ShortcutsFooter } from "@components/ShortcutsFooter";
+import { ErrorNotification } from "@components/ErrorNotification";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import "./App.css";
 
@@ -15,6 +16,7 @@ function App() {
     isPlaying,
     isStopping,
     activeSidebarItem,
+    error,
     setActiveSidebarItem,
     setSelectedSong,
     loadPlaylist,
@@ -24,6 +26,7 @@ function App() {
     stop,
     selectNextInList,
     selectPreviousInList,
+    clearError,
     currentTime,
     remaining,
     playedPercent
@@ -54,6 +57,8 @@ function App() {
 
   return (
     <div className="app-container">
+      <ErrorNotification error={error} onDismiss={clearError} />
+
       <Player
         playingSong={playingSong}
         isPlaying={isPlaying}

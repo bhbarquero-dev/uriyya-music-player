@@ -3,6 +3,7 @@ import { AudioManager } from "../logic/AudioManager";
 import { PlaylistManager } from "../logic/PlaylistManager";
 import { FileService } from "../logic/FileService";
 import { Song } from "../logic/Song";
+import { getUserFriendlyError, type UserError } from "../utils/errorMessages";
 
 const TIME_POLL_INTERVAL_MS = 250;
 
@@ -17,6 +18,7 @@ export function useMusicPlayer(fileService?: FileService) {
     const [activeSidebarItem, setActiveSidebarItem] = useState<string>("");
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [duration, setDuration] = useState<number | null>(null);
+    const [error, setError] = useState<UserError | null>(null);
 
     // Services (persisted across renders)
     const audioManagerRef = useRef<AudioManager | null>(null);
@@ -47,6 +49,7 @@ export function useMusicPlayer(fileService?: FileService) {
                     setIsPlaying(false);
                     setPlayingSong(null);
                     setIsStopping(false);
+                    setError(getUserFriendlyError(err));
                 }
             },
             onFadeFinished: (id) => {
@@ -119,6 +122,7 @@ export function useMusicPlayer(fileService?: FileService) {
             }
         } catch (err) {
             console.error("Failed to load playlist:", err);
+            setError(getUserFriendlyError(err));
         }
     };
 
@@ -186,6 +190,10 @@ export function useMusicPlayer(fileService?: FileService) {
         playlistManagerRef.current.setCurrentSong(song);
     }, []);
 
+    const clearError = useCallback(() => {
+        setError(null);
+    }, []);
+
     useEffect(() => {
         return () => {
             audioManagerRef.current?.cleanup();
@@ -200,6 +208,7 @@ export function useMusicPlayer(fileService?: FileService) {
         isPlaying,
         isStopping,
         activeSidebarItem,
+        error,
         setActiveSidebarItem,
         setSelectedSong: handleSelectSong,
         loadPlaylist,
@@ -208,7 +217,8 @@ export function useMusicPlayer(fileService?: FileService) {
         pause,
         stop,
         selectNextInList,
-        selectPreviousInList
+        selectPreviousInList,
+        clearError
         ,
         // timing info
         currentTime,
