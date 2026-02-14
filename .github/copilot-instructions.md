@@ -10,13 +10,13 @@
 * Start responses with 🍀 emoji
 
 ## Testing
-* Always request confirmation before changing a test
+* **⚠️ CRITICAL: Always request confirmation before changing a test** - Never modify, delete, or refactor tests without explicit approval
 * Favor TDD (Test-Driven Development): write tests first, iterate in small steps, and use tests to drive design and prevent regressions
 * Run `pnpm exec tsc --noEmit`, `pnpm test` and `pnpm test:e2e` to validate changes before considering work complete
 
 ## Code Quality
+* **⚠️ CRITICAL: Give recommendations related to SOLID and Clean Code** - Use the guidance of Allen Holub, Kent Beck, Dave Farley, Martin Fowler, and Uncle Bob as references. Apply these principles actively in all code reviews and suggestions
 * Check for documentation updates when changing code behavior
-* Give recommendations related to SOLID and Clean Code; use the guidance of Allen Holub, Kent Beck, Dave Farley, Martin Fowler, and Uncle Bob as references
 * Favor small, focused functions with clear single responsibilities
 * Use descriptive naming that reveals intent; avoid abbreviations unless universally understood
 * Refactor duplicated code (DRY principle) but avoid premature abstraction

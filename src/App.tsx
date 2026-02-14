@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
@@ -7,6 +7,8 @@ import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import "./App.css";
 
 function App() {
+  const [activeSidebarItem, setActiveSidebarItem] = useState<string>("");
+  
   const {
     playlist,
     currentPlaylistName,
@@ -14,8 +16,6 @@ function App() {
     playingSong,
     isPlaying,
     isStopping,
-    activeSidebarItem,
-    setActiveSidebarItem,
     setSelectedSong,
     loadPlaylist,
     playSong,
@@ -67,7 +67,10 @@ function App() {
       />
 
       <Sidebar
-        onLoadPlaylist={loadPlaylist}
+        onLoadPlaylist={() => {
+          loadPlaylist();
+          setActiveSidebarItem("playlist");
+        }}
         currentPlaylistName={currentPlaylistName}
         activeItem={activeSidebarItem}
         onSelectItem={setActiveSidebarItem}

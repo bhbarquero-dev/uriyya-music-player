@@ -1,7 +1,7 @@
 import { Song } from "./Song";
+import { Channel } from "./Channel";
 
 const FADE_DURATION_MS = 6000;
-const FADE_STEP_INTERVAL_MS = 100;
 
 export type AudioChannel = 1 | 2;
 
@@ -12,109 +12,62 @@ export interface AudioManagerEvents {
 }
 
 export class AudioManager {
-    private channels: Record<AudioChannel, HTMLAudioElement>;
-    private fadeIntervals: Record<AudioChannel, number | null> = { 1: null, 2: null };
+    private channel1: Channel;
+    private channel2: Channel;
     private activeChannelId: AudioChannel = 1;
-    private events: AudioManagerEvents;
 
-    constructor(events: AudioManagerEvents) {
-        this.events = events;
-        this.channels = {
-            1: new Audio(),
-            2: new Audio()
-        };
-
-        this.setupListeners(1);
-        this.setupListeners(2);
+    constructor(events: AudioManagerEvents, channel1?: Channel, channel2?: Channel) {
+        this.channel1 = channel1 ?? new Channel(1, events);
+        this.channel2 = channel2 ?? new Channel(2, events);
     }
 
-    private setupListeners(id: AudioChannel) {
-        const audio = this.channels[id];
-        audio.addEventListener("ended", () => this.events.onEnded(id));
-        audio.addEventListener("error", (e) => this.events.onError(id, e));
+    private getActiveChannel(): Channel {
+        return this.activeChannelId === 1 ? this.channel1 : this.channel2;
+    }
+
+    private getInactiveChannel(): Channel {
+        return this.activeChannelId === 1 ? this.channel2 : this.channel1;
     }
 
     public getActiveAudio(): HTMLAudioElement {
-        return this.channels[this.activeChannelId];
+        return this.getActiveChannel().getAudioElement();
     }
 
     public getActiveChannelId(): AudioChannel {
         return this.activeChannelId;
     }
 
-    private getInactiveChannelId(): AudioChannel {
-        return this.activeChannelId === 1 ? 2 : 1;
-    }
-
     public play(song: Song) {
-        const newChannelId = this.getInactiveChannelId();
-        const newAudio = this.channels[newChannelId];
-        const oldAudio = this.getActiveAudio();
+        const newChannel = this.getInactiveChannel();
+        const oldChannel = this.getActiveChannel();
 
-        // Clear any existing fade on the new channel
-        this.clearFade(newChannelId);
+        // Setup and play on new channel
+        newChannel.play(song);
 
-        // Setup new audio
-        newAudio.src = song.toMediaUrl();
-        newAudio.volume = 1.0;
-        newAudio.currentTime = 0;
-        newAudio.play().catch(e => this.events.onError(newChannelId, e));
-
-        // Fade out old audio if it was playing
-        if (!oldAudio.paused && !this.fadeIntervals[this.activeChannelId]) {
-            this.startFadeOut(this.activeChannelId);
+        // Fade out old channel if it was playing
+        const oldAudio = oldChannel.getAudioElement();
+        if (!oldAudio.paused) {
+            oldChannel.startFadeOut();
         }
 
-        this.activeChannelId = newChannelId;
+        this.activeChannelId = newChannel.getId();
     }
 
     public pause() {
-        const audio = this.getActiveAudio();
-        if (audio && !audio.paused) {
-            audio.pause();
-        }
+        this.getActiveChannel().pause();
     }
 
     public stopWithFade(durationMs: number = FADE_DURATION_MS) {
-        const id = this.activeChannelId;
-        const audio = this.channels[id];
+        const activeChannel = this.getActiveChannel();
+        const audio = activeChannel.getAudioElement();
 
-        if (audio && !audio.paused && !this.fadeIntervals[id]) {
-            this.startFadeOut(id, durationMs);
-        }
-    }
-
-    private startFadeOut(id: AudioChannel, durationMs: number = FADE_DURATION_MS) {
-        const audio = this.channels[id];
-        const steps = durationMs / FADE_STEP_INTERVAL_MS;
-        const fadeStep = 1.0 / steps;
-
-        this.fadeIntervals[id] = window.setInterval(() => {
-            if (audio.volume > fadeStep) {
-                audio.volume -= fadeStep;
-            } else {
-                this.clearFade(id);
-                audio.pause();
-                audio.currentTime = 0;
-                audio.volume = 1.0;
-                this.events.onFadeFinished(id);
-            }
-        }, FADE_STEP_INTERVAL_MS);
-    }
-
-    private clearFade(id: AudioChannel) {
-        if (this.fadeIntervals[id] !== null) {
-            clearInterval(this.fadeIntervals[id]!);
-            this.fadeIntervals[id] = null;
+        if (!audio.paused) {
+            activeChannel.startFadeOut(durationMs);
         }
     }
 
     public cleanup() {
-        this.clearFade(1);
-        this.clearFade(2);
-        this.channels[1].pause();
-        this.channels[2].pause();
-        this.channels[1].src = "";
-        this.channels[2].src = "";
+        this.channel1.cleanup();
+        this.channel2.cleanup();
     }
 }
