@@ -4,6 +4,7 @@ import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
 import { ShortcutsFooter } from "@components/ShortcutsFooter";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
+import { SIDEBAR_ITEMS } from "./types/sidebar";
 import "./App.css";
 
 function App() {
@@ -69,7 +70,7 @@ function App() {
       <Sidebar
         onLoadPlaylist={() => {
           loadPlaylist();
-          setActiveSidebarItem("playlist");
+          setActiveSidebarItem(SIDEBAR_ITEMS.PLAYLIST);
         }}
         currentPlaylistName={currentPlaylistName}
         activeItem={activeSidebarItem}

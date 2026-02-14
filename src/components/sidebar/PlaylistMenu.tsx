@@ -1,3 +1,5 @@
+import { SIDEBAR_ITEMS } from "../../types/sidebar";
+
 interface PlaylistMenuProps {
     currentPlaylistName: string | null;
     activeItem: string;
@@ -9,8 +11,8 @@ export function PlaylistMenu({ currentPlaylistName, activeItem, onSelectItem }: 
         <>
             {currentPlaylistName && (
                 <li
-                    className={`sidebar-item ${activeItem === "playlist" ? "active" : ""}`}
-                    onClick={() => onSelectItem("playlist")}
+                    className={`sidebar-item ${activeItem === SIDEBAR_ITEMS.PLAYLIST ? "active" : ""}`}
+                    onClick={() => onSelectItem(SIDEBAR_ITEMS.PLAYLIST)}
                 >
                     {currentPlaylistName}
                 </li>
