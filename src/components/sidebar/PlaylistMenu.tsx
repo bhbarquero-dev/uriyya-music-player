@@ -1,9 +1,9 @@
-import { SIDEBAR_ITEMS } from "../../types/sidebar";
+import { SIDEBAR_ITEMS, type SidebarItemId } from "../../types/sidebar";
 
 interface PlaylistMenuProps {
     currentPlaylistName: string | null;
-    activeItem: string;
-    onSelectItem: (id: string) => void;
+    activeItem: SidebarItemId | "";
+    onSelectItem: (id: SidebarItemId) => void;
 }
 
 export function PlaylistMenu({ currentPlaylistName, activeItem, onSelectItem }: PlaylistMenuProps) {

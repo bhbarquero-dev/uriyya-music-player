@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PlaylistMenu } from "@components/sidebar/PlaylistMenu";
+import { SIDEBAR_ITEMS } from "../../../src/types/sidebar";
 
 describe("PlaylistMenu", () => {
     const mockOnSelectItem = vi.fn();
@@ -37,7 +38,7 @@ describe("PlaylistMenu", () => {
         const { container } = render(
             <PlaylistMenu
                 currentPlaylistName="My Playlist"
-                activeItem="playlist"
+                activeItem={SIDEBAR_ITEMS.PLAYLIST}
                 onSelectItem={mockOnSelectItem}
             />
         );
@@ -49,7 +50,7 @@ describe("PlaylistMenu", () => {
         const { container } = render(
             <PlaylistMenu
                 currentPlaylistName="My Playlist"
-                activeItem="other"
+                activeItem=""
                 onSelectItem={mockOnSelectItem}
             />
         );

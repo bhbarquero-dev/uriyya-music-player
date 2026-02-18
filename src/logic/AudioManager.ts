@@ -1,7 +1,5 @@
 import { Song } from "./Song";
-import { Channel } from "./Channel";
-
-const FADE_DURATION_MS = 6000;
+import { Channel, FADE_DURATION_MS } from "./Channel";
 
 export type AudioChannel = 1 | 2;
 

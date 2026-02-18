@@ -39,7 +39,7 @@ export function useMusicPlayer(fileService?: FileService) {
 
     // Coordination functions that bridge between different domain hooks
 
-    const loadPlaylist = async () => {
+    const loadPlaylist = useCallback(async () => {
         try {
             const result = await loadPlaylistFiles();
             if (result) {
@@ -49,7 +49,7 @@ export function useMusicPlayer(fileService?: FileService) {
         } catch (err) {
             console.error("Failed to load playlist:", err);
         }
-    };
+    }, [loadPlaylistFiles, setPlaylistState]);
 
     const playSong = useCallback((song: Song) => {
         // Update playlist selection and play audio

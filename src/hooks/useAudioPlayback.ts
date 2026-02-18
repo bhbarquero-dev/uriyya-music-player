@@ -21,16 +21,14 @@ function createAudioEventHandlers(
 ) {
     return {
         onEnded: (id: AudioChannel) => {
-            // Always reset timing info when any audio element fires 'ended'
-            setState.setCurrentTime(0);
-            setState.setDuration(null);
-
-            // Only clear playing state if the ended channel is the active one
+            // Only reset timing and clear playing state if the ended channel is the active one
             const audioManager = getAudioManager();
             if (id === audioManager?.getActiveChannelId()) {
                 setState.setIsPlaying(false);
                 setState.setPlayingSong(null);
                 setState.setIsStopping(false);
+                setState.setCurrentTime(0);
+                setState.setDuration(null);
             }
         },
         onError: (id: AudioChannel, err: any) => {

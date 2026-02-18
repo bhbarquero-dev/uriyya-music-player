@@ -1,12 +1,13 @@
 import { SidebarSection } from "./SidebarSection";
 import { PlaylistMenu } from "./PlaylistMenu";
 import { SidebarFooter } from "./SidebarFooter";
+import type { SidebarItemId } from "../../types/sidebar";
 
 interface SidebarProps {
     onLoadPlaylist: () => void;
     currentPlaylistName: string | null;
-    activeItem: string;
-    onSelectItem: (id: string) => void;
+    activeItem: SidebarItemId | "";
+    onSelectItem: (id: SidebarItemId) => void;
 }
 
 export function Sidebar({ onLoadPlaylist, currentPlaylistName, activeItem, onSelectItem }: SidebarProps) {

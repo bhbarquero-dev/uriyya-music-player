@@ -12,12 +12,16 @@ export function usePlaylistState() {
         setPlaylistState(songs);
 
         // Auto-select first song if no song is selected and playlist is not empty
-        if (songs.length > 0 && !selectedSong) {
-            setSelectedSongState(songs[0]);
-        } else if (songs.length === 0) {
-            setSelectedSongState(null);
-        }
-    }, [selectedSong]);
+        // Use functional update to avoid stale closure
+        setSelectedSongState(prev => {
+            if (songs.length > 0 && !prev) {
+                return songs[0];
+            } else if (songs.length === 0) {
+                return null;
+            }
+            return prev;
+        });
+    }, []);
 
     const setSelectedSong = useCallback((song: Song | null) => {
         setSelectedSongState(song);
