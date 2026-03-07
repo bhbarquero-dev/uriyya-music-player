@@ -6,7 +6,7 @@ interface PlaylistBannerProps {
 }
 
 export function PlaylistBanner({ currentPlaylistName, songsCount = 0, onLoadPlaylist, onChangePlaylist }: PlaylistBannerProps) {
-    const songsLabel = songsCount === 1 ? "1 cancion" : `${songsCount} canciones`;
+    const songsLabel = songsCount === 1 ? "1 canción" : `${songsCount} canciones`;
 
     return (
         <div className="playlist-banner">
