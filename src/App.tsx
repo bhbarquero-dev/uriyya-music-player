@@ -1,15 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
 import { ShortcutsFooter } from "@components/ShortcutsFooter";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
-import { SIDEBAR_ITEMS, type SidebarItemId } from "./types/sidebar";
 import "./App.css";
 
 function App() {
-  const [activeSidebarItem, setActiveSidebarItem] = useState<SidebarItemId | "">("");
-  
   const {
     playlist,
     currentPlaylistName,
@@ -33,9 +30,7 @@ function App() {
   const handleLoadPlaylist = useCallback(async () => {
     try {
       await loadPlaylist();
-      setActiveSidebarItem(SIDEBAR_ITEMS.PLAYLIST);
     } catch (error) {
-      // Playlist load failed or was cancelled - don't change sidebar
       console.error("Failed to load playlist:", error);
     }
   }, [loadPlaylist]);
@@ -77,20 +72,17 @@ function App() {
         playedPercent={playedPercent}
       />
 
-      <Sidebar
-        onLoadPlaylist={handleLoadPlaylist}
-        currentPlaylistName={currentPlaylistName}
-        activeItem={activeSidebarItem}
-        onSelectItem={setActiveSidebarItem}
-      />
+      <Sidebar />
 
       <SongList
         playlist={playlist}
         selectedSong={selectedSong}
         playingSong={playingSong}
         isPlaying={isPlaying}
+        currentPlaylistName={currentPlaylistName}
         onSelectSong={setSelectedSong}
         onPlaySong={playSong}
+        onLoadPlaylist={handleLoadPlaylist}
       />
 
       <ShortcutsFooter />

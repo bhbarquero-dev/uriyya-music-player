@@ -291,6 +291,22 @@ body {
   color: white;
 }
 
+/* Playlist Banner */
+.playlist-banner {
+  display: flex;
+  align-items: center;
+  padding: 12px 48px;
+  border-bottom: 1px solid var(--apple-border);
+  background: var(--apple-main);
+  min-height: 48px;
+}
+
+.playlist-banner-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--apple-text);
+}
+
 /* Main Content Styles */
 .main-content {
   grid-area: main;

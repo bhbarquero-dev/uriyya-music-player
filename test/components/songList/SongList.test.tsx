@@ -6,14 +6,17 @@ import { Song } from "../../../src/logic/Song";
 describe("SongList", () => {
     const mockOnSelectSong = vi.fn();
     const mockOnPlaySong = vi.fn();
+    const mockOnLoadPlaylist = vi.fn();
 
     const defaultProps = {
         playlist: [],
         selectedSong: null,
         playingSong: null,
         isPlaying: false,
+        currentPlaylistName: null,
         onSelectSong: mockOnSelectSong,
         onPlaySong: mockOnPlaySong,
+        onLoadPlaylist: mockOnLoadPlaylist,
     };
 
     beforeEach(() => {
@@ -23,7 +26,7 @@ describe("SongList", () => {
     describe("Empty playlist", () => {
         it("should render empty state message when playlist is empty", () => {
             render(<SongList {...defaultProps} />);
-            expect(screen.getByText("No hay canciones cargadas. Usa la barra lateral para cargar una lista.")).toBeInTheDocument();
+            expect(screen.getByText("No hay canciones cargadas.")).toBeInTheDocument();
         });
 
         it("should not render table when playlist is empty", () => {
