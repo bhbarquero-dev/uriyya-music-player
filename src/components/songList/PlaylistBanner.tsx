@@ -19,9 +19,11 @@ export function PlaylistBanner({ currentPlaylistName, songsCount = 0, onLoadPlay
                                 <span className="playlist-banner-count">{songsLabel}</span>
                             </div>
                         </div>
-                        <button className="btn-change-playlist" onClick={onChangePlaylist}>
-                            Cambiar lista de reproducción
-                        </button>
+                        {onChangePlaylist && (
+                            <button className="btn-change-playlist" onClick={onChangePlaylist}>
+                                Cambiar lista de reproducción
+                            </button>
+                        )}
                     </div>
             ) : (
                 <button className="btn-load" onClick={onLoadPlaylist}>
