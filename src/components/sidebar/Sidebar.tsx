@@ -99,18 +99,20 @@ export function Sidebar() {
                     onAddClick={handleLibraryAddClick}
                     selectedItem={libraryPath ? getDirectoryName(libraryPath) : null}
                     onRefreshClick={libraryPath ? handleLibraryRefresh : undefined}
+                    searchComponent={
+                        libraryPath && !isScanningLibrary && librarySongs.length > 0 ? (
+                            <div className="sidebar-search">
+                                <input
+                                    type="text"
+                                    className="sidebar-search-input"
+                                    placeholder="Buscar canciones..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        ) : undefined
+                    }
                 >
-                    {libraryPath && !isScanningLibrary && librarySongs.length > 0 && (
-                        <div className="sidebar-search">
-                            <input
-                                type="text"
-                                className="sidebar-search-input"
-                                placeholder="Buscar canciones..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                    )}
                     {isScanningLibrary && <li className="sidebar-library-item">Buscando canciones...</li>}
                     {!isScanningLibrary && libraryPath && librarySongs.length === 0 && (
                         <li className="sidebar-library-item">No se encontraron archivos .mp3 o .wav</li>

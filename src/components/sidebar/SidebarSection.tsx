@@ -6,9 +6,10 @@ interface SidebarSectionProps {
     children: ReactNode;
     selectedItem?: string | null;
     onRefreshClick?: () => void;
+    searchComponent?: ReactNode;
 }
 
-export function SidebarSection({ title, onAddClick, children, selectedItem, onRefreshClick }: SidebarSectionProps) {
+export function SidebarSection({ title, onAddClick, children, selectedItem, onRefreshClick, searchComponent }: SidebarSectionProps) {
     const hasLibrary = !!selectedItem;
 
     return (
@@ -49,6 +50,7 @@ export function SidebarSection({ title, onAddClick, children, selectedItem, onRe
                     </div>
                 </div>
             )}
+            {searchComponent}
             <ul className="sidebar-menu">
                 {children}
             </ul>
