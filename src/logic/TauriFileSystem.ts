@@ -1,4 +1,4 @@
-import { readTextFile } from "@tauri-apps/plugin-fs";
+import { readTextFile, exists } from "@tauri-apps/plugin-fs";
 import { FileSystem } from "../abstractions/FileSystem";
 
 /**
@@ -8,5 +8,9 @@ import { FileSystem } from "../abstractions/FileSystem";
 export class TauriFileSystem implements FileSystem {
     public async readTextFile(path: string): Promise<string> {
         return await readTextFile(path);
+    }
+
+    public async exists(path: string): Promise<boolean> {
+        return await exists(path);
     }
 }

@@ -11,6 +11,7 @@ describe("FileService", () => {
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn(),
+            exists: vi.fn().mockResolvedValue(true),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
@@ -29,6 +30,7 @@ describe("FileService", () => {
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("song1.mp3\n  \n  song2.MP3\nnot-a-song.txt\n"),
+            exists: vi.fn().mockResolvedValue(true),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
@@ -52,6 +54,7 @@ describe("FileService", () => {
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("s1.mp3"),
+            exists: vi.fn().mockResolvedValue(true),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
@@ -68,6 +71,7 @@ describe("FileService", () => {
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockRejectedValue(new Error("Read error")),
+            exists: vi.fn().mockResolvedValue(true),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);

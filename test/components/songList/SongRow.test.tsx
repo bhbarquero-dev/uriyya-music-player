@@ -127,4 +127,52 @@ describe("SongRow", () => {
         );
         expect(screen.getByText("music.mp3")).toBeInTheDocument();
     });
+
+    it("should show invalid indicator for invalid songs", () => {
+        const invalidSong = new Song("missing.mp3", false);
+        const { container } = render(
+            <SongRow
+                song={invalidSong}
+                isSelected={false}
+                isPlaying={false}
+                onSelect={mockOnSelect}
+                onPlay={mockOnPlay}
+            />
+        );
+        const indicator = container.querySelector(".invalid-indicator");
+        expect(indicator).toBeTruthy();
+        expect(indicator?.getAttribute("title")).toBe("Archivo no encontrado");
+    });
+
+    it("should apply invalid class for invalid songs", () => {
+        const invalidSong = new Song("missing.mp3", false);
+        const { container } = render(
+            <SongRow
+                song={invalidSong}
+                isSelected={false}
+                isPlaying={false}
+                onSelect={mockOnSelect}
+                onPlay={mockOnPlay}
+            />
+        );
+        const row = container.querySelector("tr");
+        expect(row?.className).toContain("invalid");
+    });
+
+    it("should prioritize invalid indicator over playing indicator", () => {
+        const invalidSong = new Song("missing.mp3", false);
+        const { container } = render(
+            <SongRow
+                song={invalidSong}
+                isSelected={false}
+                isPlaying={true}
+                onSelect={mockOnSelect}
+                onPlay={mockOnPlay}
+            />
+        );
+        const invalidIndicator = container.querySelector(".invalid-indicator");
+        const playingIndicator = container.querySelector(".playing-indicator");
+        expect(invalidIndicator).toBeTruthy();
+        expect(playingIndicator).not.toBeInTheDocument();
+    });
 });
