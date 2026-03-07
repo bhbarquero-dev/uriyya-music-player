@@ -66,26 +66,6 @@ export function useMusicPlayer(fileService?: FileService) {
         }
     }, [selectedSong, isPlaying, playlist, playSong]);
 
-    const pause = useCallback(() => {
-        pauseAudio();
-    }, [pauseAudio]);
-
-    const stop = useCallback(() => {
-        stopAudio();
-    }, [stopAudio]);
-
-    const selectNextInList = useCallback(() => {
-        selectNext();
-    }, [selectNext]);
-
-    const selectPreviousInList = useCallback(() => {
-        selectPrevious();
-    }, [selectPrevious]);
-
-    const handleSelectSong = useCallback((song: Song) => {
-        setSelectedSongState(song);
-    }, [setSelectedSongState]);
-
     return {
         playlist,
         currentPlaylistName,
@@ -93,14 +73,14 @@ export function useMusicPlayer(fileService?: FileService) {
         playingSong,
         isPlaying,
         isStopping,
-        setSelectedSong: handleSelectSong,
+        setSelectedSong: setSelectedSongState,
         loadPlaylist,
         playSong,
         playCurrentSelected,
-        pause,
-        stop,
-        selectNextInList,
-        selectPreviousInList,
+        pause: pauseAudio,
+        stop: stopAudio,
+        selectNextInList: selectNext,
+        selectPreviousInList: selectPrevious,
         // timing info
         currentTime,
         duration,
