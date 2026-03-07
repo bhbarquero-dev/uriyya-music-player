@@ -294,17 +294,101 @@ body {
 /* Playlist Banner */
 .playlist-banner {
   display: flex;
-  align-items: center;
-  padding: 12px 48px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 48px;
   border-bottom: 1px solid var(--apple-border);
   background: var(--apple-main);
-  min-height: 48px;
+  min-height: 72px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.playlist-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.playlist-banner-main {
+  min-width: 0;
+}
+
+.playlist-banner-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.playlist-banner-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--apple-text-secondary);
+  margin-bottom: 4px;
+}
+
+.playlist-banner-count {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border: 1px solid var(--apple-border);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.03);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--apple-text-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .playlist-banner-count {
+    background: rgba(255, 255, 255, 0.06);
+  }
 }
 
 .playlist-banner-name {
-  font-size: 15px;
-  font-weight: 600;
+  display: block;
+  font-size: clamp(16px, 1.8vw, 20px);
+  font-weight: 700;
   color: var(--apple-text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-change-playlist {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--apple-border);
+  color: var(--apple-text);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+  white-space: nowrap;
+  margin-left: 16px;
+}
+
+.btn-change-playlist:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-change-playlist {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-change-playlist:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
 }
 
 /* Main Content Styles */
@@ -387,19 +471,30 @@ body {
 }
 
 .btn-load {
-  background: var(--apple-accent);
-  color: white;
-  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--apple-border);
+  color: var(--apple-text);
   padding: 8px 16px;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   font-size: 14px;
-  transition: opacity 0.2s;
+  transition: background 0.2s;
 }
 
 .btn-load:hover {
-  opacity: 0.9;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-load {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-load:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
 }
 
 @keyframes pulse {

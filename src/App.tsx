@@ -35,6 +35,14 @@ function App() {
     }
   }, [loadPlaylist]);
 
+  const handleChangePlaylist = useCallback(async () => {
+    try {
+      await loadPlaylist();
+    } catch (error) {
+      console.error("Failed to change playlist:", error);
+    }
+  }, [loadPlaylist]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
@@ -83,6 +91,7 @@ function App() {
         onSelectSong={setSelectedSong}
         onPlaySong={playSong}
         onLoadPlaylist={handleLoadPlaylist}
+        onChangePlaylist={handleChangePlaylist}
       />
 
       <ShortcutsFooter />

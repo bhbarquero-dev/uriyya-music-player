@@ -13,9 +13,10 @@ interface SongListProps {
     onSelectSong: (song: Song) => void;
     onPlaySong: (song: Song) => void;
     onLoadPlaylist: () => void;
+    onChangePlaylist?: () => void;
 }
 
-export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, onSelectSong, onPlaySong, onLoadPlaylist }: SongListProps) {
+export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist }: SongListProps) {
     const selectedRowRef = useRef<HTMLTableRowElement | null>(null);
 
     useEffect(() => {
@@ -29,7 +30,12 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
 
     return (
         <section className="main-content">
-            <PlaylistBanner currentPlaylistName={currentPlaylistName} onLoadPlaylist={onLoadPlaylist} />
+            <PlaylistBanner
+                currentPlaylistName={currentPlaylistName}
+                songsCount={playlist.length}
+                onLoadPlaylist={onLoadPlaylist}
+                onChangePlaylist={onChangePlaylist}
+            />
             {playlist.length === 0 ? (
                 <EmptyPlaylist />
             ) : (
