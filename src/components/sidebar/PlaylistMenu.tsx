@@ -1,7 +1,9 @@
+import { SIDEBAR_ITEMS, type SidebarItemId } from "../../types/sidebar";
+
 interface PlaylistMenuProps {
     currentPlaylistName: string | null;
-    activeItem: string;
-    onSelectItem: (id: string) => void;
+    activeItem: SidebarItemId | "";
+    onSelectItem: (id: SidebarItemId) => void;
 }
 
 export function PlaylistMenu({ currentPlaylistName, activeItem, onSelectItem }: PlaylistMenuProps) {
@@ -9,8 +11,8 @@ export function PlaylistMenu({ currentPlaylistName, activeItem, onSelectItem }: 
         <>
             {currentPlaylistName && (
                 <li
-                    className={`sidebar-item ${activeItem === "playlist" ? "active" : ""}`}
-                    onClick={() => onSelectItem("playlist")}
+                    className={`sidebar-item ${activeItem === SIDEBAR_ITEMS.PLAYLIST ? "active" : ""}`}
+                    onClick={() => onSelectItem(SIDEBAR_ITEMS.PLAYLIST)}
                 >
                     {currentPlaylistName}
                 </li>

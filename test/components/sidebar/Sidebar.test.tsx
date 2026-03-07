@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Sidebar } from "@components/sidebar/Sidebar";
+import { SIDEBAR_ITEMS } from "../../../src/types/sidebar";
 
 describe("Sidebar", () => {
     const mockOnLoadPlaylist = vi.fn();
@@ -9,7 +10,7 @@ describe("Sidebar", () => {
     const defaultProps = {
         onLoadPlaylist: mockOnLoadPlaylist,
         currentPlaylistName: null,
-        activeItem: "",
+        activeItem: "" as const,
         onSelectItem: mockOnSelectItem,
     };
 
@@ -78,7 +79,7 @@ describe("Sidebar", () => {
                 <Sidebar
                     {...defaultProps}
                     currentPlaylistName="Mi Playlist"
-                    activeItem="playlist"
+                    activeItem={SIDEBAR_ITEMS.PLAYLIST}
                 />
             );
             const playlistItem = container.querySelector(".sidebar-item");
@@ -90,7 +91,7 @@ describe("Sidebar", () => {
                 <Sidebar
                     {...defaultProps}
                     currentPlaylistName="Mi Playlist"
-                    activeItem="other"
+                    activeItem=""
                 />
             );
             const playlistItem = container.querySelector(".sidebar-item");

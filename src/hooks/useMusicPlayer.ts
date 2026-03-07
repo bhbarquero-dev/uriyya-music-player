@@ -1,196 +1,70 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { AudioManager } from "../logic/AudioManager";
-import { PlaylistManager } from "../logic/PlaylistManager";
+import { useCallback, useState } from "react";
 import { FileService } from "../logic/FileService";
 import { Song } from "../logic/Song";
+import { usePlaylistState } from "./usePlaylistState";
+import { useFileLoader } from "./useFileLoader";
+import { useAudioPlayback } from "./useAudioPlayback";
 
-const TIME_POLL_INTERVAL_MS = 250;
-
+/**
+ * Coordinator hook that composes domain-specific hooks to provide
+ * a unified interface for music player functionality.
+ */
 export function useMusicPlayer(fileService?: FileService) {
-    // UI-facing state
-    const [playlist, setPlaylist] = useState<Song[]>([]);
     const [currentPlaylistName, setCurrentPlaylistName] = useState<string | null>(null);
-    const [selectedSong, setSelectedSong] = useState<Song | null>(null);
-    const [playingSong, setPlayingSong] = useState<Song | null>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [isStopping, setIsStopping] = useState(false);
-    const [activeSidebarItem, setActiveSidebarItem] = useState<string>("");
-    const [currentTime, setCurrentTime] = useState<number>(0);
-    const [duration, setDuration] = useState<number | null>(null);
 
-    // Services (persisted across renders)
-    const audioManagerRef = useRef<AudioManager | null>(null);
-    const playlistManagerRef = useRef(new PlaylistManager());
-    const fileServiceRef = useRef(fileService ?? new FileService());
+    // Domain hooks
+    const {
+        playlist,
+        selectedSong,
+        setPlaylist: setPlaylistState,
+        setSelectedSong: setSelectedSongState,
+        selectNext,
+        selectPrevious
+    } = usePlaylistState();
 
-    // Ref to indicate we've recently ended/stopped playback so polling shouldn't overwrite resets
-    const endedOrStoppedRef = useRef(false);
+    const { loadPlaylist: loadPlaylistFiles } = useFileLoader(fileService);
 
-    // Initialize AudioManager
-    if (!audioManagerRef.current) {
-        audioManagerRef.current = new AudioManager({
-            onEnded: (id) => {
-                // Always reset timing info when any audio element fires 'ended'
-                setCurrentTime(0);
-                setDuration(null);
+    const {
+        playingSong,
+        isPlaying,
+        isStopping,
+        currentTime,
+        duration,
+        remaining,
+        playedPercent,
+        play: playAudio,
+        pause: pauseAudio,
+        stop: stopAudio
+    } = useAudioPlayback();
 
-                // Only clear playing state if the ended channel is the active one
-                if (id === audioManagerRef.current?.getActiveChannelId()) {
-                    setIsPlaying(false);
-                    setPlayingSong(null);
-                    setIsStopping(false);
-                }
-            },
-            onError: (id, err) => {
-                console.error(`Audio Error on channel ${id}:`, err);
-                if (id === audioManagerRef.current?.getActiveChannelId()) {
-                    setIsPlaying(false);
-                    setPlayingSong(null);
-                    setIsStopping(false);
-                }
-            },
-            onFadeFinished: (id) => {
-                if (id === audioManagerRef.current?.getActiveChannelId()) {
-                    setIsPlaying(false);
-                    setPlayingSong(null);
-                    setIsStopping(false);
-                    setCurrentTime(0);
-                    setDuration(null);
-                }
-            }
-        });
-    }
+    // Coordination functions that bridge between different domain hooks
 
-    // Poll active audio for time/duration updates. Avoid overwriting reset state when playback is stopped.
-    useEffect(() => {
-        let mounted = true;
-        const tick = () => {
-            const audio = audioManagerRef.current?.getActiveAudio();
-            if (!audio) return;
-
-            // If we've recently ended/stopped, don't overwrite the reset
-            if (endedOrStoppedRef.current) return;
-
-            // If audio is paused and we are not in playing state, keep times reset
-            if (audio.paused && !isPlaying) {
-                if (!mounted) return;
-                setCurrentTime(0);
-                setDuration(null);
-                return;
-            }
-
-            const ct = audio.currentTime || 0;
-            const d = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : null;
-            if (!mounted) return;
-            setCurrentTime(ct);
-            setDuration(d);
-        };
-
-        const interval = window.setInterval(() => {
-            try {
-                tick();
-            } catch (e) {
-                // ignore
-            }
-        }, TIME_POLL_INTERVAL_MS);
-
-        // initial tick
-        tick();
-
-        return () => {
-            mounted = false;
-            clearInterval(interval);
-        };
-    }, [isPlaying]);
-
-    const loadPlaylist = async () => {
+    const loadPlaylist = useCallback(async () => {
         try {
-            const result = await fileServiceRef.current.selectAndReadPlaylist();
+            const result = await loadPlaylistFiles();
             if (result) {
-                playlistManagerRef.current.setSongs(result.songs);
-                setPlaylist(result.songs);
+                setPlaylistState(result.songs);
                 setCurrentPlaylistName(result.name);
-                setActiveSidebarItem("playlist");
-
-                const first = playlistManagerRef.current.getCurrentSong();
-                if (first && !selectedSong) {
-                    setSelectedSong(first);
-                }
             }
         } catch (err) {
             console.error("Failed to load playlist:", err);
         }
-    };
+    }, [loadPlaylistFiles, setPlaylistState]);
 
     const playSong = useCallback((song: Song) => {
-        if (!audioManagerRef.current) return;
-
-        // Clear any ended/stopped flag when starting playback
-        endedOrStoppedRef.current = false;
-
-        const url = song.toMediaUrl();
-        const currentAudio = audioManagerRef.current.getActiveAudio();
-        if (currentAudio && currentAudio.src === url && isPlaying) {
-            return;
-        }
-
-        playlistManagerRef.current.setCurrentSong(song);
-        setPlayingSong(song);
-        setSelectedSong(song);
-        setIsPlaying(true);
-        setIsStopping(false);
-        audioManagerRef.current.play(song);
-    }, [isPlaying]);
+        // Update playlist selection and play audio
+        setSelectedSongState(song);
+        playAudio(song);
+    }, [setSelectedSongState, playAudio]);
 
     const playCurrentSelected = useCallback(() => {
         if (isPlaying) return;
         if (selectedSong) {
             playSong(selectedSong);
-        } else {
-            const first = playlistManagerRef.current.getCurrentSong();
-            if (first) playSong(first);
+        } else if (playlist.length > 0) {
+            playSong(playlist[0]);
         }
-    }, [selectedSong, isPlaying, playSong]);
-
-    const pause = useCallback(() => {
-        audioManagerRef.current?.pause();
-        setIsPlaying(false);
-    }, []);
-
-    const stop = useCallback(() => {
-        audioManagerRef.current?.stopWithFade();
-        setIsPlaying(false);
-        setPlayingSong(null);
-        setIsStopping(true);
-        setCurrentTime(0);
-        setDuration(null);
-        endedOrStoppedRef.current = true;
-    }, []);
-
-    const selectNextInList = useCallback(() => {
-        const next = playlistManagerRef.current.getNext();
-        if (next) {
-            setSelectedSong(next);
-        }
-    }, []);
-
-    const selectPreviousInList = useCallback(() => {
-        const prev = playlistManagerRef.current.getPrevious();
-        if (prev) {
-            setSelectedSong(prev);
-        }
-    }, []);
-
-    const handleSelectSong = useCallback((song: Song) => {
-        setSelectedSong(song);
-        playlistManagerRef.current.setCurrentSong(song);
-    }, []);
-
-    useEffect(() => {
-        return () => {
-            audioManagerRef.current?.cleanup();
-        };
-    }, []);
+    }, [selectedSong, isPlaying, playlist, playSong]);
 
     return {
         playlist,
@@ -199,21 +73,18 @@ export function useMusicPlayer(fileService?: FileService) {
         playingSong,
         isPlaying,
         isStopping,
-        activeSidebarItem,
-        setActiveSidebarItem,
-        setSelectedSong: handleSelectSong,
+        setSelectedSong: setSelectedSongState,
         loadPlaylist,
         playSong,
         playCurrentSelected,
-        pause,
-        stop,
-        selectNextInList,
-        selectPreviousInList
-        ,
+        pause: pauseAudio,
+        stop: stopAudio,
+        selectNextInList: selectNext,
+        selectPreviousInList: selectPrevious,
         // timing info
         currentTime,
         duration,
-        remaining: duration ? Math.max(0, duration - currentTime) : null,
-        playedPercent: duration ? (currentTime / duration) * 100 : 0
+        remaining,
+        playedPercent
     };
 }
