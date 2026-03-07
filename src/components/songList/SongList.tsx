@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { SongRow } from "./SongRow";
 import { EmptyPlaylist } from "./EmptyPlaylist";
+import { PlaylistBanner } from "./PlaylistBanner";
 import { Song } from "../../logic/Song";
 
 interface SongListProps {
@@ -8,11 +9,14 @@ interface SongListProps {
     selectedSong: Song | null;
     playingSong: Song | null;
     isPlaying: boolean;
+    currentPlaylistName: string | null;
     onSelectSong: (song: Song) => void;
     onPlaySong: (song: Song) => void;
+    onLoadPlaylist: () => void;
+    onChangePlaylist?: () => void;
 }
 
-export function SongList({ playlist, selectedSong, playingSong, isPlaying, onSelectSong, onPlaySong }: SongListProps) {
+export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist }: SongListProps) {
     const selectedRowRef = useRef<HTMLTableRowElement | null>(null);
 
     useEffect(() => {
@@ -26,6 +30,12 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, onSel
 
     return (
         <section className="main-content">
+            <PlaylistBanner
+                currentPlaylistName={currentPlaylistName}
+                songsCount={playlist.length}
+                onLoadPlaylist={onLoadPlaylist}
+                onChangePlaylist={onChangePlaylist}
+            />
             {playlist.length === 0 ? (
                 <EmptyPlaylist />
             ) : (

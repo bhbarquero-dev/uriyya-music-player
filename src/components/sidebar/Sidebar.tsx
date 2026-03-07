@@ -1,16 +1,7 @@
 import { SidebarSection } from "./SidebarSection";
-import { PlaylistMenu } from "./PlaylistMenu";
 import { SidebarFooter } from "./SidebarFooter";
-import type { SidebarItemId } from "../../types/sidebar";
 
-interface SidebarProps {
-    onLoadPlaylist: () => void;
-    currentPlaylistName: string | null;
-    activeItem: SidebarItemId | "";
-    onSelectItem: (id: SidebarItemId) => void;
-}
-
-export function Sidebar({ onLoadPlaylist, currentPlaylistName, activeItem, onSelectItem }: SidebarProps) {
+export function Sidebar() {
     const handleLibraryAddClick = () => {
         window.alert("Funcionalidad de Biblioteca aún no está implementada.");
     };
@@ -20,14 +11,6 @@ export function Sidebar({ onLoadPlaylist, currentPlaylistName, activeItem, onSel
             <div className="sidebar-content">
                 <SidebarSection title="Biblioteca" onAddClick={handleLibraryAddClick}>
                     {null}
-                </SidebarSection>
-
-                <SidebarSection title="Listas de reproducción" onAddClick={onLoadPlaylist}>
-                    <PlaylistMenu
-                        currentPlaylistName={currentPlaylistName}
-                        activeItem={activeItem}
-                        onSelectItem={onSelectItem}
-                    />
                 </SidebarSection>
             </div>
 
