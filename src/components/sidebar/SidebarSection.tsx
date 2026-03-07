@@ -4,19 +4,23 @@ interface SidebarSectionProps {
     title: string;
     onAddClick: () => void;
     children: ReactNode;
+    selectedItem?: string | null;
 }
 
-export function SidebarSection({ title, onAddClick, children }: SidebarSectionProps) {
+export function SidebarSection({ title, onAddClick, children, selectedItem }: SidebarSectionProps) {
     return (
         <div className="sidebar-section">
             <div className="sidebar-header">
                 <h3 className="sidebar-title">{title}</h3>
                 <button className="add-btn" onClick={onAddClick} title={`Añadir a ${title.toLowerCase()}`}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                    </svg>
+                    Agregar
                 </button>
             </div>
+            {selectedItem && (
+                <div className="sidebar-selected-item">
+                    {selectedItem}
+                </div>
+            )}
             <ul className="sidebar-menu">
                 {children}
             </ul>

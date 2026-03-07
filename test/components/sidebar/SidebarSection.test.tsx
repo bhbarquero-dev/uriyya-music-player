@@ -71,4 +71,23 @@ describe("SidebarSection", () => {
         const menu = container.querySelector(".sidebar-menu");
         expect(menu?.tagName).toBe("UL");
     });
+
+    it("should render selected item when provided", () => {
+        render(
+            <SidebarSection title="Test Section" onAddClick={mockOnAddClick} selectedItem="My Folder">
+                <li>Item 1</li>
+            </SidebarSection>
+        );
+        expect(screen.getByText("My Folder")).toBeInTheDocument();
+    });
+
+    it("should not render selected item div when not provided", () => {
+        const { container } = render(
+            <SidebarSection title="Test Section" onAddClick={mockOnAddClick}>
+                <li>Item 1</li>
+            </SidebarSection>
+        );
+        const selectedItemDiv = container.querySelector(".sidebar-selected-item");
+        expect(selectedItemDiv).toBeNull();
+    });
 });

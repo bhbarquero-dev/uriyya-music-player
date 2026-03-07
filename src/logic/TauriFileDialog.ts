@@ -17,4 +17,17 @@ export class TauriFileDialog implements FileDialog {
         
         return selected;
     }
+
+    public async openDirectory(): Promise<string | null> {
+        const selected = await open({
+            directory: true,
+            multiple: false
+        });
+
+        if (!selected || typeof selected !== "string") {
+            return null;
+        }
+
+        return selected;
+    }
 }

@@ -20,6 +20,7 @@ describe("useFileLoader", () => {
         it("should return null when no file is selected", async () => {
             const mockDialog: FileDialog = {
                 open: vi.fn().mockResolvedValue(null),
+                openDirectory: vi.fn().mockResolvedValue(null),
             };
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn(),
@@ -44,6 +45,7 @@ describe("useFileLoader", () => {
         it("should parse playlist file and return songs with name", async () => {
             const mockDialog: FileDialog = {
                 open: vi.fn().mockResolvedValue("C:\\Music\\my-playlist.txt"),
+                openDirectory: vi.fn().mockResolvedValue(null),
             };
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn().mockResolvedValue("song1.mp3\nsong2.mp3\n"),
@@ -69,6 +71,7 @@ describe("useFileLoader", () => {
         it("should handle file read errors", async () => {
             const mockDialog: FileDialog = {
                 open: vi.fn().mockResolvedValue("test.txt"),
+                openDirectory: vi.fn().mockResolvedValue(null),
             };
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn().mockRejectedValue(new Error("Read error")),
@@ -88,6 +91,7 @@ describe("useFileLoader", () => {
         it("should handle playlists with .alb extension", async () => {
             const mockDialog: FileDialog = {
                 open: vi.fn().mockResolvedValue("/home/user/playlist.alb"),
+                openDirectory: vi.fn().mockResolvedValue(null),
             };
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn().mockResolvedValue("track.mp3\n"),
@@ -109,6 +113,7 @@ describe("useFileLoader", () => {
         it("should filter out non-mp3 lines", async () => {
             const mockDialog: FileDialog = {
                 open: vi.fn().mockResolvedValue("C:\\playlist.txt"),
+                openDirectory: vi.fn().mockResolvedValue(null),
             };
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn().mockResolvedValue("song1.mp3\nnot-audio.txt\nsong2.MP3\n\n  \n"),
@@ -133,6 +138,7 @@ describe("useFileLoader", () => {
                 open: vi.fn()
                     .mockResolvedValueOnce("C:\\playlist1.txt")
                     .mockResolvedValueOnce("C:\\playlist2.txt"),
+                openDirectory: vi.fn().mockResolvedValue(null),
             };
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn()

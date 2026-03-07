@@ -8,6 +8,7 @@ describe("FileService", () => {
     it("should return null if no file is selected", async () => {
         const mockDialog: FileDialog = {
             open: vi.fn().mockResolvedValue(null),
+            openDirectory: vi.fn().mockResolvedValue(null),
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn(),
@@ -27,6 +28,7 @@ describe("FileService", () => {
     it("should parse a playlist file correctly and return Song objects", async () => {
         const mockDialog: FileDialog = {
             open: vi.fn().mockResolvedValue("C:\\Music\\my-playlist.txt"),
+            openDirectory: vi.fn().mockResolvedValue(null),
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("song1.mp3\n  \n  song2.MP3\nnot-a-song.txt\n"),
@@ -51,6 +53,7 @@ describe("FileService", () => {
     it("should handle mixed slashes in paths for name extraction", async () => {
         const mockDialog: FileDialog = {
             open: vi.fn().mockResolvedValue("/home/user/music/linux-playlist.alb"),
+            openDirectory: vi.fn().mockResolvedValue(null),
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("s1.mp3"),
@@ -68,6 +71,7 @@ describe("FileService", () => {
     it("should throw error if readTextFile fails", async () => {
         const mockDialog: FileDialog = {
             open: vi.fn().mockResolvedValue("path.txt"),
+            openDirectory: vi.fn().mockResolvedValue(null),
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockRejectedValue(new Error("Read error")),

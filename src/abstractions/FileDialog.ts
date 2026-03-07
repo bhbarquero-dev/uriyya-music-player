@@ -19,4 +19,10 @@ export interface FileDialog {
      * @returns Promise resolving to the selected file path, or null if cancelled
      */
     open(options: FileDialogOptions): Promise<string | null>;
+
+    /**
+     * Opens a directory dialog for the user to select a directory.
+     * @returns Promise resolving to the selected directory path, or null if cancelled
+     */
+    openDirectory(): Promise<string | null>;
 }
