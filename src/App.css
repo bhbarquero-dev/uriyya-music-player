@@ -80,6 +80,10 @@ body {
   height: 100vh;
 }
 
+.app-container.sidebar-compact-mode {
+  --sidebar-width: 56px;
+}
+
 /* Player Styles */
 .player-header {
   grid-area: player;
@@ -196,6 +200,39 @@ body {
   flex-direction: column;
   justify-content: space-between;
   overflow-y: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-compact {
+  padding: 16px 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 56px;
+}
+
+.sidebar-expand-btn {
+  background: none;
+  border: none;
+  color: var(--apple-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  margin: 0 8px;
+}
+
+.sidebar-expand-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--apple-accent);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebar-expand-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
 }
 
 .sidebar-content {
@@ -243,6 +280,7 @@ body {
   justify-content: space-between;
   margin-bottom: 12px;
   padding: 0 8px;
+  gap: 8px;
 }
 
 .sidebar-title {
@@ -251,6 +289,11 @@ body {
   color: var(--apple-text-secondary);
   text-transform: uppercase;
   margin-bottom: 0;
+  flex: 0 0 auto;
+}
+
+.collapse-btn {
+  margin-left: auto;
 }
 
 /* Base styles for icon buttons */

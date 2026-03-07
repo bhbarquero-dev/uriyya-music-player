@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
@@ -7,6 +7,7 @@ import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import "./App.css";
 
 function App() {
+  const [isSidebarCompact, setIsSidebarCompact] = useState(false);
   const {
     playlist,
     currentPlaylistName,
@@ -67,7 +68,7 @@ function App() {
   }, [playCurrentSelected, pause, stop, selectNextInList, selectPreviousInList]);
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isSidebarCompact ? 'sidebar-compact-mode' : ''}`}>
       <Player
         playingSong={playingSong}
         isPlaying={isPlaying}
@@ -80,7 +81,7 @@ function App() {
         playedPercent={playedPercent}
       />
 
-      <Sidebar />
+      <Sidebar onCompactChange={setIsSidebarCompact} />
 
       <SongList
         playlist={playlist}

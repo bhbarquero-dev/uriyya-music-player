@@ -7,15 +7,24 @@ interface SidebarSectionProps {
     selectedItem?: string | null;
     onRefreshClick?: () => void;
     searchComponent?: ReactNode;
+    onCollapseClick?: () => void;
 }
 
-export function SidebarSection({ title, onAddClick, children, selectedItem, onRefreshClick, searchComponent }: SidebarSectionProps) {
+export function SidebarSection({ title, onAddClick, children, selectedItem, onRefreshClick, searchComponent, onCollapseClick }: SidebarSectionProps) {
     const hasLibrary = !!selectedItem;
 
     return (
         <div className="sidebar-section">
             <div className="sidebar-header">
                 <h3 className="sidebar-title">{title}</h3>
+                {onCollapseClick && (
+                    <button className="icon-btn collapse-btn" onClick={onCollapseClick} title="Compactar sidebar">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="11 17 6 12 11 7"></polyline>
+                            <polyline points="18 17 13 12 18 7"></polyline>
+                        </svg>
+                    </button>
+                )}
                 {!hasLibrary && (
                     <button className="icon-btn add-icon-btn" onClick={onAddClick} title="Agregar biblioteca">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
