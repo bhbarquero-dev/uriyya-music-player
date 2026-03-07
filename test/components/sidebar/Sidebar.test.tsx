@@ -41,10 +41,10 @@ describe("Sidebar", () => {
             expect(screen.getByText("Biblioteca")).toBeInTheDocument();
         });
 
-        it("should render 'Agregar' text in biblioteca button", () => {
+        it("should render add library button when no library selected", () => {
             render(<Sidebar />);
-            const button = screen.getByRole("button", { name: "Agregar" });
-            expect(button).toHaveTextContent("Agregar");
+            const button = screen.getByRole("button", { name: "Agregar biblioteca" });
+            expect(button).toBeInTheDocument();
         });
     });
 

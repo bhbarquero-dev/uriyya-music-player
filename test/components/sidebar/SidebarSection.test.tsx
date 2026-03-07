@@ -19,14 +19,23 @@ describe("SidebarSection", () => {
         expect(screen.getByText("Test Section")).toBeInTheDocument();
     });
 
-    it("should render add button with correct title", () => {
+    it("should render add button when no library selected", () => {
         render(
             <SidebarSection title="Test Section" onAddClick={mockOnAddClick}>
                 <li>Item 1</li>
             </SidebarSection>
         );
-        const button = screen.getByRole("button");
-        expect(button).toHaveAttribute("title", "Añadir a test section");
+        const button = screen.getByRole("button", { name: "Agregar biblioteca" });
+        expect(button).toBeInTheDocument();
+    });
+
+    it("should render placeholder when no library selected", () => {
+        render(
+            <SidebarSection title="Test Section" onAddClick={mockOnAddClick}>
+                <li>Item 1</li>
+            </SidebarSection>
+        );
+        expect(screen.getByText("No hay biblioteca seleccionada")).toBeInTheDocument();
     });
 
     it("should call onAddClick when button is clicked", async () => {
@@ -79,6 +88,25 @@ describe("SidebarSection", () => {
             </SidebarSection>
         );
         expect(screen.getByText("My Folder")).toBeInTheDocument();
+    });
+
+    it("should render edit button when library selected", () => {
+        render(
+            <SidebarSection title="Test Section" onAddClick={mockOnAddClick} selectedItem="My Folder">
+                <li>Item 1</li>
+            </SidebarSection>
+        );
+        const editButton = screen.getByRole("button", { name: "Cambiar biblioteca" });
+        expect(editButton).toBeInTheDocument();
+    });
+
+    it("should not render placeholder when library selected", () => {
+        render(
+            <SidebarSection title="Test Section" onAddClick={mockOnAddClick} selectedItem="My Folder">
+                <li>Item 1</li>
+            </SidebarSection>
+        );
+        expect(screen.queryByText("No hay biblioteca seleccionada")).not.toBeInTheDocument();
     });
 
     it("should not render selected item div when not provided", () => {

@@ -246,31 +246,131 @@ body {
   margin-bottom: 0;
 }
 
-.add-btn {
+/* Base styles for icon buttons */
+.icon-btn {
   background: none;
   border: none;
-  color: var(--apple-accent);
+  color: var(--apple-text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
   border-radius: 4px;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
-.add-btn:hover {
+.icon-btn:hover {
   background: rgba(0, 0, 0, 0.05);
+  color: var(--apple-accent);
 }
 
 @media (prefers-color-scheme: dark) {
-  .add-btn:hover {
+  .icon-btn:hover {
     background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Add button in header */
+.add-icon-btn {
+  color: var(--apple-accent);
+}
+
+/* Placeholder when no library */
+.sidebar-placeholder {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--apple-text-secondary);
+  font-style: italic;
+}
+
+/* Selected library container */
+.sidebar-selected-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--apple-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebar-selected-item {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.sidebar-selected-item-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 8px;
+}
+
+/* Action buttons container */
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Search input container */
+.sidebar-search {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.sidebar-search-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--apple-text);
+  background: rgba(0, 0, 0, 0.03);
+  transition: all 0.2s;
+}
+
+.sidebar-search-input:focus {
+  outline: none;
+  border-color: var(--apple-accent);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-search-input::placeholder {
+  color: var(--apple-text-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebar-search-input {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .sidebar-search-input:focus {
+    background: rgba(255, 255, 255, 0.08);
   }
 }
 
 .sidebar-menu {
   list-style: none;
+}
+
+.sidebar-library-item {
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--apple-text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-item {

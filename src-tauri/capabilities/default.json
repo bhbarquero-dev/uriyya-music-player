@@ -10,6 +10,7 @@
     "opener:default",
     "fs:default",
     "dialog:default",
+    "store:default",
     "core:webview:allow-internal-toggle-devtools",
     {
       "identifier": "fs:allow-read",
