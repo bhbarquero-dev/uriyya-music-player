@@ -452,6 +452,14 @@ body {
   background: rgba(250, 36, 60, 0.1);
 }
 
+.song-row.invalid {
+  opacity: 0.5;
+}
+
+.song-row.invalid .song-title {
+  color: var(--apple-text-secondary);
+}
+
 .song-row td {
   padding: 12px 16px;
   font-size: 14px;

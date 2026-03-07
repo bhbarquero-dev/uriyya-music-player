@@ -18,6 +18,14 @@
           "path": "**"
         }
       ]
+    },
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
     }
   ]
 }

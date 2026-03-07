@@ -10,4 +10,11 @@ export interface FileSystem {
      * @throws Error if the file cannot be read
      */
     readTextFile(path: string): Promise<string>;
+
+    /**
+     * Checks if a file exists in the file system.
+     * @param path Absolute path to the file
+     * @returns Promise resolving to true if the file exists, false otherwise
+     */
+    exists(path: string): Promise<boolean>;
 }

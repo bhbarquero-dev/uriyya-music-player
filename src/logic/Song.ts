@@ -1,7 +1,10 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 
 export class Song {
-    constructor(private readonly path: string) {
+    constructor(
+        private readonly path: string,
+        private readonly valid: boolean = true
+    ) {
         if (!path || path.trim().length === 0) {
             throw new Error("Song path cannot be empty");
         }
@@ -14,6 +17,10 @@ export class Song {
 
     public getPath(): string {
         return this.path;
+    }
+
+    public isValid(): boolean {
+        return this.valid;
     }
 
     public toMediaUrl(): string {

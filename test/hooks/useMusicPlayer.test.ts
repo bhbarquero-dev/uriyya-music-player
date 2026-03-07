@@ -225,4 +225,43 @@ describe("useMusicPlayer", () => {
         expect(result.current.playlist).toEqual([]);
         expect(result.current.selectedSong).toBe(null);
     });
+
+    it("should not play invalid songs", () => {
+        const { result } = renderHook(() => useMusicPlayer());
+        const playSpy = vi.spyOn(window.HTMLMediaElement.prototype, 'play');
+
+        const invalidSong = new Song("missing.mp3", false);
+
+        act(() => {
+            result.current.playSong(invalidSong);
+        });
+
+        // Should not trigger HTML audio play
+        expect(playSpy).not.toHaveBeenCalled();
+        // Should not update playing state
+        expect(result.current.playingSong).toBe(null);
+        expect(result.current.isPlaying).toBe(false);
+    });
+
+    it("should not play invalid song when using playCurrentSelected", () => {
+        const mockFileService = createMockFileService({
+            songs: [new Song("invalid.mp3", false)],
+            name: "test",
+        });
+
+        const { result } = renderHook(() => useMusicPlayer(mockFileService));
+        const playSpy = vi.spyOn(window.HTMLMediaElement.prototype, 'play');
+
+        act(async () => {
+            await result.current.loadPlaylist();
+        });
+
+        // Try to play the current selected song (which is invalid)
+        act(() => {
+            result.current.playCurrentSelected();
+        });
+
+        expect(playSpy).not.toHaveBeenCalled();
+        expect(result.current.isPlaying).toBe(false);
+    });
 });

@@ -52,6 +52,11 @@ export function useMusicPlayer(fileService?: FileService) {
     }, [loadPlaylistFiles, setPlaylistState]);
 
     const playSong = useCallback((song: Song) => {
+        // Don't play invalid songs
+        if (!song.isValid()) {
+            return;
+        }
+
         // Update playlist selection and play audio
         setSelectedSongState(song);
         playAudio(song);
