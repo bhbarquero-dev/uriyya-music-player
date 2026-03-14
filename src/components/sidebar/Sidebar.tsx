@@ -114,8 +114,8 @@ export function Sidebar({ onCompactChange }: SidebarProps = {}) {
     return (
         <aside className={`sidebar ${isCompact ? 'sidebar-compact' : ''}`}>
             {isCompact ? (
-                <button className="sidebar-expand-btn" onClick={toggleCompact} title="Expandir sidebar">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <button className="sidebar-expand-btn" onClick={toggleCompact} title="Expandir sidebar" aria-label="Expandir sidebar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <line x1="8" y1="6" x2="21" y2="6"></line>
                         <line x1="8" y1="12" x2="21" y2="12"></line>
                         <line x1="8" y1="18" x2="21" y2="18"></line>
