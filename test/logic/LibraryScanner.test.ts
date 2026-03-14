@@ -83,6 +83,26 @@ describe("scanLibraryAudioFiles", () => {
         expect(result).toEqual(["/music/alpha.mp3", "/music/mango.wav", "/music/zebra.mp3"]);
     });
 
+    it("sorts alphabetically by file name across subdirectories, ignoring directory path", async () => {
+        mockedReadDir
+            .mockResolvedValueOnce([
+                { name: "ZootAlbum", isFile: false, isDirectory: true, isSymlink: false },
+                { name: "AAlbum", isFile: false, isDirectory: true, isSymlink: false },
+            ])
+            .mockResolvedValueOnce([
+                // AAlbum (popped first due to LIFO)
+                { name: "zebra.mp3", isFile: true, isDirectory: false, isSymlink: false },
+            ])
+            .mockResolvedValueOnce([
+                // ZootAlbum
+                { name: "alpha.mp3", isFile: true, isDirectory: false, isSymlink: false },
+            ]);
+
+        const result = await scanLibraryAudioFiles("/music");
+
+        expect(result).toEqual(["/music/ZootAlbum/alpha.mp3", "/music/AAlbum/zebra.mp3"]);
+    });
+
     it("skips unreadable directories and continues scanning siblings", async () => {
         // Stack is LIFO: "Readable" is pushed first, "Unreadable" is pushed second.
         // Popping order: "Unreadable" first (fails), then "Readable" (succeeds).

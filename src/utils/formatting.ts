@@ -1,3 +1,6 @@
+export const getFileName = (path: string): string =>
+    path.split(/[\\/]/).pop() || path;
+
 export const formatTime = (secs: number | null): string => {
     if (secs === null || !isFinite(secs)) return "--:--";
     const s = Math.floor(secs);

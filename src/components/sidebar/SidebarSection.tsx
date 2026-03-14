@@ -2,29 +2,24 @@ import { ReactNode } from "react";
 
 interface SidebarSectionProps {
     title: string;
+    icon?: ReactNode;
     onAddClick: () => void;
     children: ReactNode;
     selectedItem?: string | null;
     onRefreshClick?: () => void;
     searchComponent?: ReactNode;
-    onCollapseClick?: () => void;
 }
 
-export function SidebarSection({ title, onAddClick, children, selectedItem, onRefreshClick, searchComponent, onCollapseClick }: SidebarSectionProps) {
+export function SidebarSection({ title, icon, onAddClick, children, selectedItem, onRefreshClick, searchComponent }: SidebarSectionProps) {
     const hasLibrary = !!selectedItem;
 
     return (
         <div className="sidebar-section">
             <div className="sidebar-header">
-                <h3 className="sidebar-title">{title}</h3>
-                {onCollapseClick && (
-                    <button className="icon-btn collapse-btn" onClick={onCollapseClick} title="Compactar sidebar" aria-label="Compactar sidebar">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <polyline points="11 17 6 12 11 7"></polyline>
-                            <polyline points="18 17 13 12 18 7"></polyline>
-                        </svg>
-                    </button>
-                )}
+                <h3 className="sidebar-title">
+                    {icon && <span className="sidebar-title-icon" aria-hidden="true">{icon}</span>}
+                    {title}
+                </h3>
                 {!hasLibrary && (
                     <button className="icon-btn add-icon-btn" onClick={onAddClick} title="Agregar biblioteca" aria-label="Agregar biblioteca">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

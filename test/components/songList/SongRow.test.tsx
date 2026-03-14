@@ -175,4 +175,75 @@ describe("SongRow", () => {
         expect(invalidIndicator).toBeTruthy();
         expect(playingIndicator).not.toBeInTheDocument();
     });
+
+    describe("Context menu", () => {
+        it("should show context menu on right-click when onRevealInExplorer is provided", async () => {
+            const user = userEvent.setup();
+            render(
+                <SongRow
+                    song={new Song("song.mp3")}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRevealInExplorer={vi.fn()}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            expect(screen.getByText("Mostrar en el Explorador")).toBeInTheDocument();
+        });
+
+        it("should not show context menu on right-click when onRevealInExplorer is not provided", async () => {
+            const user = userEvent.setup();
+            render(
+                <SongRow
+                    song={new Song("song.mp3")}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            expect(screen.queryByText("Mostrar en el Explorador")).not.toBeInTheDocument();
+        });
+
+        it("should dismiss context menu after clicking an option", async () => {
+            const user = userEvent.setup();
+            render(
+                <SongRow
+                    song={new Song("song.mp3")}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRevealInExplorer={vi.fn()}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            await user.click(screen.getByText("Mostrar en el Explorador"));
+            expect(screen.queryByText("Mostrar en el Explorador")).not.toBeInTheDocument();
+        });
+
+        it("should show a disabled reveal option when song is invalid", async () => {
+            const user = userEvent.setup();
+            const { container } = render(
+                <SongRow
+                    song={new Song("missing.mp3", false)}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRevealInExplorer={vi.fn()}
+                />
+            );
+            const row = container.querySelector("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            const item = screen.getByText("Mostrar en el Explorador").closest("li");
+            expect(item?.className).toContain("disabled");
+        });
+    });
 });
