@@ -7,6 +7,7 @@ describe("FileService - Song validation", () => {
     it("should mark songs as invalid when they don't exist on disk", async () => {
         const mockDialog: FileDialog = {
             open: vi.fn().mockResolvedValue("C:\\Music\\playlist.txt"),
+            openDirectory: vi.fn().mockResolvedValue(null),
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("existing.mp3\nmissing.mp3\n"),
@@ -34,6 +35,7 @@ describe("FileService - Song validation", () => {
     it("should mark all songs as valid when all files exist", async () => {
         const mockDialog: FileDialog = {
             open: vi.fn().mockResolvedValue("C:\\Music\\playlist.txt"),
+            openDirectory: vi.fn().mockResolvedValue(null),
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("song1.mp3\nsong2.mp3\nsong3.mp3\n"),
@@ -52,6 +54,7 @@ describe("FileService - Song validation", () => {
     it("should mark all songs as invalid when no files exist", async () => {
         const mockDialog: FileDialog = {
             open: vi.fn().mockResolvedValue("C:\\Music\\playlist.txt"),
+            openDirectory: vi.fn().mockResolvedValue(null),
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("missing1.mp3\nmissing2.mp3\n"),

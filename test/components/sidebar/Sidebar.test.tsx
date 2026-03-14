@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Sidebar } from "@components/sidebar/Sidebar";
 
+vi.mock("../../../src/logic/TauriFileDialog", () => ({
+    TauriFileDialog: class {
+        openDirectory = vi.fn().mockResolvedValue(null);
+        open = vi.fn().mockResolvedValue(null);
+    }
+}));
+
 describe("Sidebar", () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -34,10 +41,10 @@ describe("Sidebar", () => {
             expect(screen.getByText("Biblioteca")).toBeInTheDocument();
         });
 
-        it("should render SVG in biblioteca button", () => {
-            const { container } = render(<Sidebar />);
-            const svgs = container.querySelectorAll("svg");
-            expect(svgs.length).toBeGreaterThanOrEqual(1);
+        it("should render add library button when no library selected", () => {
+            render(<Sidebar />);
+            const button = screen.getByRole("button", { name: "Agregar biblioteca" });
+            expect(button).toBeInTheDocument();
         });
     });
 

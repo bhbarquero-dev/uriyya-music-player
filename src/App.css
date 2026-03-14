@@ -80,6 +80,10 @@ body {
   height: 100vh;
 }
 
+.app-container.sidebar-compact-mode {
+  --sidebar-width: 56px;
+}
+
 /* Player Styles */
 .player-header {
   grid-area: player;
@@ -196,11 +200,47 @@ body {
   flex-direction: column;
   justify-content: space-between;
   overflow-y: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-compact {
+  padding: 16px 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 56px;
+}
+
+.sidebar-expand-btn {
+  background: none;
+  border: none;
+  color: var(--apple-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  margin: 0 8px;
+}
+
+.sidebar-expand-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--apple-accent);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebar-expand-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
 }
 
 .sidebar-content {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .sidebar-footer {
@@ -228,6 +268,10 @@ body {
 
 .sidebar-section {
   margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .sidebar-header {
@@ -236,6 +280,7 @@ body {
   justify-content: space-between;
   margin-bottom: 12px;
   padding: 0 8px;
+  gap: 8px;
 }
 
 .sidebar-title {
@@ -244,33 +289,141 @@ body {
   color: var(--apple-text-secondary);
   text-transform: uppercase;
   margin-bottom: 0;
+  flex: 0 0 auto;
 }
 
-.add-btn {
+.collapse-btn {
+  margin-left: auto;
+}
+
+/* Base styles for icon buttons */
+.icon-btn {
   background: none;
   border: none;
-  color: var(--apple-accent);
+  color: var(--apple-text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
   border-radius: 4px;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
-.add-btn:hover {
+.icon-btn:hover {
   background: rgba(0, 0, 0, 0.05);
+  color: var(--apple-accent);
 }
 
 @media (prefers-color-scheme: dark) {
-  .add-btn:hover {
+  .icon-btn:hover {
     background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Add button in header */
+.add-icon-btn {
+  color: var(--apple-accent);
+}
+
+/* Placeholder when no library */
+.sidebar-placeholder {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--apple-text-secondary);
+  font-style: italic;
+}
+
+/* Selected library container */
+.sidebar-selected-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--apple-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebar-selected-item {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.sidebar-selected-item-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 8px;
+}
+
+/* Action buttons container */
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Search input container */
+.sidebar-search {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.sidebar-search-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--apple-text);
+  background: rgba(0, 0, 0, 0.03);
+  transition: all 0.2s;
+}
+
+.sidebar-search-input:focus {
+  outline: none;
+  border-color: var(--apple-accent);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-search-input::placeholder {
+  color: var(--apple-text-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebar-search-input {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .sidebar-search-input:focus {
+    background: rgba(255, 255, 255, 0.08);
   }
 }
 
 .sidebar-menu {
   list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebar-library-item {
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--apple-text);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-item {
@@ -503,7 +656,7 @@ body {
     background: rgba(255, 255, 255, 0.08);
   }
 }
-}
+
 
 @keyframes pulse {
   0% {
