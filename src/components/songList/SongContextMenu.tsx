@@ -1,15 +1,19 @@
 import { useEffect, useRef } from "react";
-import { Song } from "../../logic/Song";
+
+export interface ContextMenuItem {
+    label: string;
+    onClick: () => void;
+    disabled?: boolean;
+}
 
 interface SongContextMenuProps {
-    song: Song;
     x: number;
     y: number;
-    onRevealInExplorer: (song: Song) => void;
+    items: ContextMenuItem[];
     onClose: () => void;
 }
 
-export function SongContextMenu({ song, x, y, onRevealInExplorer, onClose }: SongContextMenuProps) {
+export function SongContextMenu({ x, y, items, onClose }: SongContextMenuProps) {
     const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -32,15 +36,19 @@ export function SongContextMenu({ song, x, y, onRevealInExplorer, onClose }: Son
     return (
         <div ref={menuRef} className="context-menu" style={{ top: y, left: x }}>
             <ul className="context-menu-list">
-                <li
-                    className="context-menu-item"
-                    onClick={() => {
-                        onRevealInExplorer(song);
-                        onClose();
-                    }}
-                >
-                    Mostrar en el Explorador
-                </li>
+                {items.map((item) => (
+                    <li
+                        key={item.label}
+                        className={`context-menu-item${item.disabled ? " disabled" : ""}`}
+                        onClick={() => {
+                            if (item.disabled) return;
+                            item.onClick();
+                            onClose();
+                        }}
+                    >
+                        {item.label}
+                    </li>
+                ))}
             </ul>
         </div>
     );

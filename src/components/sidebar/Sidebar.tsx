@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { SidebarSection } from "./SidebarSection";
 import { SidebarFooter } from "./SidebarFooter";
+import { LibrarySongItem } from "./LibrarySongItem";
 import { TauriFileDialog } from "../../logic/TauriFileDialog";
 import { getLibraryPathFromSettings, saveLibraryPathToSettings } from "../../logic/UserSettingsStore";
 import { scanLibraryAudioFiles } from "../../logic/LibraryScanner";
@@ -156,9 +157,7 @@ export function Sidebar({ onCompactChange }: SidebarProps = {}) {
                             )}
                             {!isScanningLibrary &&
                                 filteredSongs.map((songPath) => (
-                                    <li key={songPath} className="sidebar-library-item" title={songPath}>
-                                        {getFileName(songPath)}
-                                    </li>
+                                    <LibrarySongItem key={songPath} path={songPath} />
                                 ))}
                         </SidebarSection>
                     </div>

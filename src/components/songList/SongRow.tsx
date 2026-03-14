@@ -55,10 +55,9 @@ export const SongRow = forwardRef<HTMLTableRowElement, SongRowProps>(
             </tr>
             {contextMenuPos && onRevealInExplorer && createPortal(
                 <SongContextMenu
-                    song={song}
                     x={contextMenuPos.x}
                     y={contextMenuPos.y}
-                    onRevealInExplorer={onRevealInExplorer}
+                    items={[{ label: "Mostrar en el Explorador", disabled: isInvalid, onClick: () => onRevealInExplorer(song) }]}
                     onClose={() => setContextMenuPos(null)}
                 />,
                 document.body

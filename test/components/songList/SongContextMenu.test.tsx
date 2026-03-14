@@ -2,52 +2,51 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { SongContextMenu } from "@components/songList/SongContextMenu";
-import { Song } from "../../../src/logic/Song";
 
 describe("SongContextMenu", () => {
-    it("should render the reveal in explorer option", () => {
+    it("should render all provided items", () => {
         render(
             <SongContextMenu
-                song={new Song("C:\\Music\\song.mp3")}
                 x={100}
                 y={200}
-                onRevealInExplorer={vi.fn()}
+                items={[
+                    { label: "Opción A", onClick: vi.fn() },
+                    { label: "Opción B", onClick: vi.fn() },
+                ]}
                 onClose={vi.fn()}
             />
         );
-        expect(screen.getByText("Mostrar en el Explorador")).toBeInTheDocument();
+        expect(screen.getByText("Opción A")).toBeInTheDocument();
+        expect(screen.getByText("Opción B")).toBeInTheDocument();
     });
 
-    it("should call onRevealInExplorer with the song when option is clicked", async () => {
+    it("should call item onClick when clicked", async () => {
         const user = userEvent.setup();
-        const song = new Song("C:\\Music\\song.mp3");
-        const onRevealInExplorer = vi.fn();
+        const onClick = vi.fn();
         render(
             <SongContextMenu
-                song={song}
-                x={100}
-                y={200}
-                onRevealInExplorer={onRevealInExplorer}
+                x={0}
+                y={0}
+                items={[{ label: "Acción", onClick }]}
                 onClose={vi.fn()}
             />
         );
-        await user.click(screen.getByText("Mostrar en el Explorador"));
-        expect(onRevealInExplorer).toHaveBeenCalledWith(song);
+        await user.click(screen.getByText("Acción"));
+        expect(onClick).toHaveBeenCalled();
     });
 
-    it("should call onClose after clicking an option", async () => {
+    it("should call onClose after clicking an item", async () => {
         const user = userEvent.setup();
         const onClose = vi.fn();
         render(
             <SongContextMenu
-                song={new Song("song.mp3")}
                 x={0}
                 y={0}
-                onRevealInExplorer={vi.fn()}
+                items={[{ label: "Acción", onClick: vi.fn() }]}
                 onClose={onClose}
             />
         );
-        await user.click(screen.getByText("Mostrar en el Explorador"));
+        await user.click(screen.getByText("Acción"));
         expect(onClose).toHaveBeenCalled();
     });
 
@@ -56,10 +55,9 @@ describe("SongContextMenu", () => {
         const onClose = vi.fn();
         render(
             <SongContextMenu
-                song={new Song("song.mp3")}
                 x={0}
                 y={0}
-                onRevealInExplorer={vi.fn()}
+                items={[{ label: "Acción", onClick: vi.fn() }]}
                 onClose={onClose}
             />
         );
@@ -73,10 +71,9 @@ describe("SongContextMenu", () => {
         render(
             <div>
                 <SongContextMenu
-                    song={new Song("song.mp3")}
                     x={0}
                     y={0}
-                    onRevealInExplorer={vi.fn()}
+                    items={[{ label: "Acción", onClick: vi.fn() }]}
                     onClose={onClose}
                 />
                 <button>Outside</button>
@@ -84,5 +81,50 @@ describe("SongContextMenu", () => {
         );
         await user.click(screen.getByText("Outside"));
         expect(onClose).toHaveBeenCalled();
+    });
+
+    describe("Disabled items", () => {
+        it("should apply disabled class to a disabled item", () => {
+            const { container } = render(
+                <SongContextMenu
+                    x={0}
+                    y={0}
+                    items={[{ label: "Acción", onClick: vi.fn(), disabled: true }]}
+                    onClose={vi.fn()}
+                />
+            );
+            const item = container.querySelector(".context-menu-item");
+            expect(item?.className).toContain("disabled");
+        });
+
+        it("should not call onClick when a disabled item is clicked", async () => {
+            const user = userEvent.setup();
+            const onClick = vi.fn();
+            render(
+                <SongContextMenu
+                    x={0}
+                    y={0}
+                    items={[{ label: "Acción", onClick, disabled: true }]}
+                    onClose={vi.fn()}
+                />
+            );
+            await user.click(screen.getByText("Acción"));
+            expect(onClick).not.toHaveBeenCalled();
+        });
+
+        it("should not call onClose when a disabled item is clicked", async () => {
+            const user = userEvent.setup();
+            const onClose = vi.fn();
+            render(
+                <SongContextMenu
+                    x={0}
+                    y={0}
+                    items={[{ label: "Acción", onClick: vi.fn(), disabled: true }]}
+                    onClose={onClose}
+                />
+            );
+            await user.click(screen.getByText("Acción"));
+            expect(onClose).not.toHaveBeenCalled();
+        });
     });
 });

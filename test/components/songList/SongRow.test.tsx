@@ -227,5 +227,23 @@ describe("SongRow", () => {
             await user.click(screen.getByText("Mostrar en el Explorador"));
             expect(screen.queryByText("Mostrar en el Explorador")).not.toBeInTheDocument();
         });
+
+        it("should show a disabled reveal option when song is invalid", async () => {
+            const user = userEvent.setup();
+            const { container } = render(
+                <SongRow
+                    song={new Song("missing.mp3", false)}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRevealInExplorer={vi.fn()}
+                />
+            );
+            const row = container.querySelector("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            const item = screen.getByText("Mostrar en el Explorador").closest("li");
+            expect(item?.className).toContain("disabled");
+        });
     });
 });
