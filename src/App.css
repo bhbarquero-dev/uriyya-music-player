@@ -267,7 +267,6 @@ body {
 }
 
 .sidebar-section {
-  margin-bottom: 24px;
   display: flex;
   flex-direction: column;
   flex: 1;
