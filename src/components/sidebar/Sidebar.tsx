@@ -53,11 +53,15 @@ export function Sidebar({ onCompactChange }: SidebarProps = {}) {
             }
 
             setIsScanningLibrary(true);
-            const songs = await scanLibraryAudioFiles(libraryPath);
-
-            if (isMounted) {
-                setLibrarySongs(songs);
-                setIsScanningLibrary(false);
+            try {
+                const songs = await scanLibraryAudioFiles(libraryPath);
+                if (isMounted) {
+                    setLibrarySongs(songs);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsScanningLibrary(false);
+                }
             }
         };
 
@@ -78,11 +82,14 @@ export function Sidebar({ onCompactChange }: SidebarProps = {}) {
 
     const handleLibraryRefresh = async () => {
         if (!libraryPath) return;
-        
+
         setIsScanningLibrary(true);
-        const songs = await scanLibraryAudioFiles(libraryPath);
-        setLibrarySongs(songs);
-        setIsScanningLibrary(false);
+        try {
+            const songs = await scanLibraryAudioFiles(libraryPath);
+            setLibrarySongs(songs);
+        } finally {
+            setIsScanningLibrary(false);
+        }
     };
 
     const filteredSongs = useMemo(() => {

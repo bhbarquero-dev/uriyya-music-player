@@ -27,14 +27,14 @@ export async function scanLibraryAudioFiles(libraryRootPath: string): Promise<st
         }
 
         for (const entry of entries) {
-            const entryPath = await join(currentDirectory, entry.name);
-
-            if (entry.isDirectory) {
+            if (entry.isDirectory || (!entry.isFile && !isSupportedAudioFile(entry.name))) {
+                const entryPath = await join(currentDirectory, entry.name);
                 pendingDirectories.push(entryPath);
                 continue;
             }
 
-            if (entry.isFile && isSupportedAudioFile(entry.name)) {
+            if (isSupportedAudioFile(entry.name)) {
+                const entryPath = await join(currentDirectory, entry.name);
                 files.push(entryPath);
             }
         }
