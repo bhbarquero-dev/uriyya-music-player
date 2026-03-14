@@ -1,9 +1,11 @@
 import { useEffect, useCallback, useState } from "react";
+import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
 import { ShortcutsFooter } from "@components/ShortcutsFooter";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
+import { Song } from "./logic/Song";
 import "./App.css";
 
 function App() {
@@ -43,6 +45,14 @@ function App() {
       console.error("Failed to change playlist:", error);
     }
   }, [loadPlaylist]);
+
+  const handleRevealInExplorer = useCallback(async (song: Song) => {
+    try {
+      await revealItemInDir(song.getPath());
+    } catch (error) {
+      console.error("Failed to reveal in explorer:", error);
+    }
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -93,6 +103,7 @@ function App() {
         onPlaySong={playSong}
         onLoadPlaylist={handleLoadPlaylist}
         onChangePlaylist={handleChangePlaylist}
+        onRevealInExplorer={handleRevealInExplorer}
       />
 
       <ShortcutsFooter />

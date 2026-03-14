@@ -1,5 +1,7 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Song } from "../../logic/Song";
+import { SongContextMenu } from "./SongContextMenu";
 
 interface SongRowProps {
     song: Song;
@@ -7,18 +9,28 @@ interface SongRowProps {
     isPlaying: boolean;
     onSelect: (song: Song) => void;
     onPlay: (song: Song) => void;
+    onRevealInExplorer?: (song: Song) => void;
 }
 
 export const SongRow = forwardRef<HTMLTableRowElement, SongRowProps>(
-    ({ song, isSelected, isPlaying, onSelect, onPlay }, ref) => {
+    ({ song, isSelected, isPlaying, onSelect, onPlay, onRevealInExplorer }, ref) => {
         const isInvalid = !song.isValid();
+        const [contextMenuPos, setContextMenuPos] = useState<{ x: number; y: number } | null>(null);
+
+        const handleContextMenu = (e: React.MouseEvent) => {
+            if (!onRevealInExplorer) return;
+            e.preventDefault();
+            setContextMenuPos({ x: e.clientX, y: e.clientY });
+        };
 
         return (
+            <>
             <tr
                 ref={ref}
                 className={`song-row ${isSelected ? "selected" : ""} ${isInvalid ? "invalid" : ""}`}
                 onClick={() => onSelect(song)}
                 onDoubleClick={() => onPlay(song)}
+                onContextMenu={handleContextMenu}
             >
                 <td className="song-title">
                     <div style={{ display: "flex", alignItems: "center" }}>
@@ -41,6 +53,17 @@ export const SongRow = forwardRef<HTMLTableRowElement, SongRowProps>(
                     </div>
                 </td>
             </tr>
+            {contextMenuPos && onRevealInExplorer && createPortal(
+                <SongContextMenu
+                    song={song}
+                    x={contextMenuPos.x}
+                    y={contextMenuPos.y}
+                    onRevealInExplorer={onRevealInExplorer}
+                    onClose={() => setContextMenuPos(null)}
+                />,
+                document.body
+            )}
+            </>
         );
     }
 );

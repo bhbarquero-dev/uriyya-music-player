@@ -14,9 +14,10 @@ interface SongListProps {
     onPlaySong: (song: Song) => void;
     onLoadPlaylist: () => void;
     onChangePlaylist?: () => void;
+    onRevealInExplorer?: (song: Song) => void;
 }
 
-export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist }: SongListProps) {
+export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist, onRevealInExplorer }: SongListProps) {
     const selectedRowRef = useRef<HTMLTableRowElement | null>(null);
 
     useEffect(() => {
@@ -52,6 +53,7 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
                                     isPlaying={isReallyPlaying}
                                     onSelect={onSelectSong}
                                     onPlay={onPlaySong}
+                                    onRevealInExplorer={onRevealInExplorer}
                                     ref={isSelected ? selectedRowRef : null}
                                 />
                             );
