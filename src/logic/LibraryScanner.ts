@@ -40,5 +40,9 @@ export async function scanLibraryAudioFiles(libraryRootPath: string): Promise<st
         }
     }
 
-    return files.sort((a, b) => a.localeCompare(b));
+    return files.sort((a, b) => {
+        const nameA = a.split(/[\\/]/).pop() ?? a;
+        const nameB = b.split(/[\\/]/).pop() ?? b;
+        return nameA.localeCompare(nameB);
+    });
 }

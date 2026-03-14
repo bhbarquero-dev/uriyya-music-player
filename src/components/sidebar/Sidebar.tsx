@@ -15,15 +15,15 @@ function getFileName(path: string): string {
 }
 
 interface SidebarProps {
-    onCompactChange?: (isCompact: boolean) => void;
+    isCompact?: boolean;
+    onCollapse?: () => void;
 }
 
-export function Sidebar({ onCompactChange }: SidebarProps = {}) {
+export function Sidebar({ isCompact = false, onCollapse }: SidebarProps = {}) {
     const [libraryPath, setLibraryPath] = useState<string | null>(null);
     const [librarySongs, setLibrarySongs] = useState<string[]>([]);
     const [isScanningLibrary, setIsScanningLibrary] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [isCompact, setIsCompact] = useState(false);
     const fileDialog = useMemo(() => new TauriFileDialog(), []);
 
     useEffect(() => {
@@ -104,36 +104,44 @@ export function Sidebar({ onCompactChange }: SidebarProps = {}) {
         });
     }, [librarySongs, searchQuery]);
 
-    const toggleCompact = () => {
-        setIsCompact((prev) => {
-            const newValue = !prev;
-            onCompactChange?.(newValue);
-            return newValue;
-        });
-    };
+    const libraryIcon = (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+    );
 
     return (
         <aside className={`sidebar ${isCompact ? 'sidebar-compact' : ''}`}>
-            {isCompact ? (
-                <button className="sidebar-expand-btn" onClick={toggleCompact} title="Expandir sidebar" aria-label="Expandir sidebar">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <line x1="8" y1="6" x2="21" y2="6"></line>
-                        <line x1="8" y1="12" x2="21" y2="12"></line>
-                        <line x1="8" y1="18" x2="21" y2="18"></line>
-                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                    </svg>
-                </button>
-            ) : (
+            {isCompact && (
+                <>
+                    <div className="sidebar-compact-sections">
+                        <div className="sidebar-compact-section-icon" title="Biblioteca" aria-label="Biblioteca">
+                            {libraryIcon}
+                        </div>
+                    </div>
+                    <div className="sidebar-compact-bottom">
+                        {onCollapse && (
+                            <button className="sidebar-collapse-btn sidebar-collapse-btn--compact" onClick={onCollapse} title="Expandir sidebar" aria-label="Expandir sidebar">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <polyline points="13 17 18 12 13 7"></polyline>
+                                    <polyline points="6 17 11 12 6 7"></polyline>
+                                </svg>
+                            </button>
+                        )}
+                        <SidebarFooter isCompact />
+                    </div>
+                </>
+            )}
+            {!isCompact && (
                 <>
                     <div className="sidebar-content">
                         <SidebarSection
                             title="Biblioteca"
+                            icon={libraryIcon}
                             onAddClick={handleLibraryAddClick}
                             selectedItem={libraryPath ? getDirectoryName(libraryPath) : null}
                             onRefreshClick={libraryPath ? handleLibraryRefresh : undefined}
-                            onCollapseClick={toggleCompact}
                             searchComponent={
                                 libraryPath && !isScanningLibrary && librarySongs.length > 0 ? (
                                     <div className="sidebar-search">
@@ -161,6 +169,16 @@ export function Sidebar({ onCompactChange }: SidebarProps = {}) {
                                 ))}
                         </SidebarSection>
                     </div>
+
+                    {onCollapse && (
+                        <button className="sidebar-collapse-btn" onClick={onCollapse} title="Contraer sidebar" aria-label="Contraer sidebar">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <polyline points="11 17 6 12 11 7"></polyline>
+                                <polyline points="18 17 13 12 18 7"></polyline>
+                            </svg>
+                            Contraer
+                        </button>
+                    )}
 
                     <SidebarFooter />
                 </>

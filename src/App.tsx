@@ -54,6 +54,8 @@ function App() {
     }
   }, []);
 
+  const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
@@ -91,7 +93,7 @@ function App() {
         playedPercent={playedPercent}
       />
 
-      <Sidebar onCompactChange={setIsSidebarCompact} />
+      <Sidebar isCompact={isSidebarCompact} onCollapse={toggleSidebar} />
 
       <SongList
         playlist={playlist}
