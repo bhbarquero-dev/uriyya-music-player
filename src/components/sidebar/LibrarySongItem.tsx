@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
-import { SongContextMenu } from "../songList/SongContextMenu";
+import { ContextMenu } from "../common/ContextMenu";
+import { getFileName } from "../../utils/formatting";
 
 interface LibrarySongItemProps {
     path: string;
-}
-
-function getFileName(path: string): string {
-    return path.split(/[\\/]/).pop() || path;
 }
 
 export function LibrarySongItem({ path }: LibrarySongItemProps) {
@@ -29,7 +26,7 @@ export function LibrarySongItem({ path }: LibrarySongItemProps) {
                 {getFileName(path)}
             </li>
             {contextMenuPos && createPortal(
-                <SongContextMenu
+                <ContextMenu
                     x={contextMenuPos.x}
                     y={contextMenuPos.y}
                     items={[{

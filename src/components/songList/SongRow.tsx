@@ -1,7 +1,7 @@
 import { forwardRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Song } from "../../logic/Song";
-import { SongContextMenu } from "./SongContextMenu";
+import { ContextMenu } from "../common/ContextMenu";
 
 interface SongRowProps {
     song: Song;
@@ -54,7 +54,7 @@ export const SongRow = forwardRef<HTMLTableRowElement, SongRowProps>(
                 </td>
             </tr>
             {contextMenuPos && onRevealInExplorer && createPortal(
-                <SongContextMenu
+                <ContextMenu
                     x={contextMenuPos.x}
                     y={contextMenuPos.y}
                     items={[{ label: "Mostrar en el Explorador", disabled: isInvalid, onClick: () => onRevealInExplorer(song) }]}

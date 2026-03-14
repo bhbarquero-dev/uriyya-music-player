@@ -5,14 +5,7 @@ import { LibrarySongItem } from "./LibrarySongItem";
 import { TauriFileDialog } from "../../logic/TauriFileDialog";
 import { getLibraryPathFromSettings, saveLibraryPathToSettings } from "../../logic/UserSettingsStore";
 import { scanLibraryAudioFiles } from "../../logic/LibraryScanner";
-
-function getDirectoryName(path: string): string {
-    return path.split(/[\\/]/).pop() || path;
-}
-
-function getFileName(path: string): string {
-    return path.split(/[\\/]/).pop() || path;
-}
+import { getFileName } from "../../utils/formatting";
 
 interface SidebarProps {
     isCompact?: boolean;
@@ -140,7 +133,7 @@ export function Sidebar({ isCompact = false, onCollapse }: SidebarProps = {}) {
                             title="Biblioteca"
                             icon={libraryIcon}
                             onAddClick={handleLibraryAddClick}
-                            selectedItem={libraryPath ? getDirectoryName(libraryPath) : null}
+                            selectedItem={libraryPath ? getFileName(libraryPath) : null}
                             onRefreshClick={libraryPath ? handleLibraryRefresh : undefined}
                             searchComponent={
                                 libraryPath && !isScanningLibrary && librarySongs.length > 0 ? (
