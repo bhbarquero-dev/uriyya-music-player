@@ -33,6 +33,9 @@ function App() {
     playCurrentSelected,
     pause,
     stop,
+    addSong,
+    addSongAtStart,
+    insertSongAfter,
     moveSong,
     removeSong,
     selectNextInList,
@@ -101,6 +104,19 @@ function App() {
     removeSong(song);
   }, [removeSong]);
 
+  const handleAddLibrarySong = useCallback((path: string) => {
+    addSong(new Song(path));
+  }, [addSong]);
+
+  const handleAddLibrarySongAtStart = useCallback((path: string) => {
+    addSongAtStart(new Song(path));
+  }, [addSongAtStart]);
+
+  const handleAddLibrarySongAfterSelected = useCallback((path: string) => {
+    if (!selectedSong) return;
+    insertSongAfter(selectedSong, new Song(path));
+  }, [insertSongAfter, selectedSong]);
+
   const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
 
   useEffect(() => {
@@ -134,7 +150,20 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const isTypingInTextField = (target: EventTarget | null) => {
+      if (!(target instanceof HTMLElement)) {
+        return false;
+      }
+
+      const tagName = target.tagName.toLowerCase();
+      return tagName === "input" || tagName === "textarea";
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isTypingInTextField(e.target)) {
+        return;
+      }
+
       const key = e.key.toLowerCase();
       if (key === "p") {
         playCurrentSelected();
@@ -170,7 +199,13 @@ function App() {
         playedPercent={playedPercent}
       />
 
-      <Sidebar isCompact={isSidebarCompact} onCollapse={toggleSidebar} />
+      <Sidebar
+        isCompact={isSidebarCompact}
+        onCollapse={toggleSidebar}
+        onAddToPlaylist={currentPlaylistPath ? handleAddLibrarySong : undefined}
+        onAddToStart={currentPlaylistPath ? handleAddLibrarySongAtStart : undefined}
+        onAddAfterSelected={selectedSong ? handleAddLibrarySongAfterSelected : undefined}
+      />
 
       <SongList
         playlist={playlist}

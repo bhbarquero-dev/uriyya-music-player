@@ -1,11 +1,9 @@
 import { join } from "@tauri-apps/api/path";
 import { readDir } from "@tauri-apps/plugin-fs";
-
-const SUPPORTED_AUDIO_EXTENSIONS = [".mp3", ".wav"];
+import { isSupportedAudioPath } from "./audioFormats";
 
 function isSupportedAudioFile(fileName: string): boolean {
-    const lowerName = fileName.toLowerCase();
-    return SUPPORTED_AUDIO_EXTENSIONS.some((extension) => lowerName.endsWith(extension));
+    return isSupportedAudioPath(fileName);
 }
 
 export async function scanLibraryAudioFiles(libraryRootPath: string): Promise<string[]> {

@@ -3,6 +3,7 @@ import { FileSystem } from "../abstractions/FileSystem";
 import { TauriFileDialog } from "./TauriFileDialog";
 import { TauriFileSystem } from "./TauriFileSystem";
 import { Song } from "./Song";
+import { isSupportedAudioPath } from "./audioFormats";
 
 export interface PlaylistData {
     songs: Song[];
@@ -37,7 +38,7 @@ export class FileService {
             const songPaths = content
                 .split(/\r?\n/)
                 .map((line) => line.trim())
-                .filter((line) => line.length > 0 && line.toLowerCase().endsWith(".mp3"));
+                .filter((line) => line.length > 0 && isSupportedAudioPath(line));
 
             // Validate each song file exists
             const songs = await Promise.all(

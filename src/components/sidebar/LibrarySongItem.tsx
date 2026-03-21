@@ -6,15 +6,43 @@ import { getFileName } from "../../utils/formatting";
 
 interface LibrarySongItemProps {
     path: string;
+    onAddToPlaylist?: (path: string) => void;
+    onAddToStart?: (path: string) => void;
+    onAddAfterSelected?: (path: string) => void;
 }
 
-export function LibrarySongItem({ path }: LibrarySongItemProps) {
+export function LibrarySongItem({ path, onAddToPlaylist, onAddToStart, onAddAfterSelected }: LibrarySongItemProps) {
     const [contextMenuPos, setContextMenuPos] = useState<{ x: number; y: number } | null>(null);
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
         setContextMenuPos({ x: e.clientX, y: e.clientY });
     };
+
+    const contextMenuItems = [
+        ...(onAddToPlaylist ? [{
+            label: "Agregar al final",
+            onClick: () => onAddToPlaylist(path),
+        }] : []),
+        ...(onAddToStart ? [{
+            label: "Agregar al inicio",
+            onClick: () => onAddToStart(path),
+        }] : []),
+        ...(onAddAfterSelected ? [{
+            label: "Agregar después de seleccionada",
+            onClick: () => onAddAfterSelected(path),
+        }] : []),
+        {
+            label: "Mostrar en el Explorador",
+            onClick: async () => {
+                try {
+                    await revealItemInDir(path);
+                } catch (error) {
+                    console.error("Failed to reveal in explorer:", error);
+                }
+            },
+        }
+    ];
 
     return (
         <>
@@ -29,16 +57,7 @@ export function LibrarySongItem({ path }: LibrarySongItemProps) {
                 <ContextMenu
                     x={contextMenuPos.x}
                     y={contextMenuPos.y}
-                    items={[{
-                        label: "Mostrar en el Explorador",
-                        onClick: async () => {
-                            try {
-                                await revealItemInDir(path);
-                            } catch (error) {
-                                console.error("Failed to reveal in explorer:", error);
-                            }
-                        },
-                    }]}
+                    items={contextMenuItems}
                     onClose={() => setContextMenuPos(null)}
                 />,
                 document.body
