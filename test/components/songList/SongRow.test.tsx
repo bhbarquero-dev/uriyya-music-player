@@ -228,6 +228,25 @@ describe("SongRow", () => {
             expect(screen.queryByText("Mostrar en el Explorador")).not.toBeInTheDocument();
         });
 
+        it("should disable 'Mostrar en el Explorador' when song is invalid", async () => {
+            const user = userEvent.setup();
+            const invalidSong = new Song("missing.mp3", false);
+            render(
+                <SongRow
+                    song={invalidSong}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRevealInExplorer={vi.fn()}
+                />
+            );
+            const row = screen.getByText("missing.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            const item = screen.getByText("Mostrar en el Explorador").closest("li");
+            expect(item?.className).toContain("disabled");
+        });
+
         it("should show context menu with 'Eliminar de la lista' when onRemoveSong is provided", async () => {
             const user = userEvent.setup();
             render(
