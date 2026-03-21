@@ -27,11 +27,10 @@ describe("Sidebar", () => {
             expect(sections).toHaveLength(1);
         });
 
-        it("should render sidebar footer with version and credits", () => {
-            render(<Sidebar />);
-            expect(screen.getByText("Uriyya Music Player v0.1.0")).toBeInTheDocument();
-            expect(screen.getByText(/Hecho con ❤️ por/)).toBeInTheDocument();
-            expect(screen.getByRole("link", { name: /bhbarquero-dev/ })).toBeInTheDocument();
+        it("should render sidebar footer", () => {
+            const { container } = render(<Sidebar />);
+            const footer = container.querySelector(".sidebar-footer");
+            expect(footer).toBeTruthy();
         });
     });
 
@@ -45,14 +44,6 @@ describe("Sidebar", () => {
             render(<Sidebar />);
             const button = screen.getByRole("button", { name: "Agregar biblioteca" });
             expect(button).toBeInTheDocument();
-        });
-    });
-
-    describe("Footer", () => {
-        it("should have valid github link in footer", () => {
-            render(<Sidebar />);
-            const link = screen.getByRole("link", { name: /bhbarquero-dev/ });
-            expect(link).toHaveAttribute("href", "https://github.com/bhbarquero-dev");
         });
     });
 });

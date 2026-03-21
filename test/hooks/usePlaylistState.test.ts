@@ -26,7 +26,7 @@ describe("usePlaylistState", () => {
             expect(result.current.playlist).toHaveLength(2);
         });
 
-        it("should auto-select first song when loading non-empty playlist", () => {
+        it("should have null selection after loading playlist", () => {
             const { result } = renderHook(() => usePlaylistState());
             const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
 
@@ -34,10 +34,10 @@ describe("usePlaylistState", () => {
                 result.current.setPlaylist(songs);
             });
 
-            expect(result.current.selectedSong).toBe(songs[0]);
+            expect(result.current.selectedSong).toBeNull();
         });
 
-        it("should not auto-select if a song is already selected", () => {
+        it("should clear selected song even if one was already selected", () => {
             const { result } = renderHook(() => usePlaylistState());
             const song1 = new Song("song1.mp3");
             const song2 = new Song("song2.mp3");
@@ -47,7 +47,7 @@ describe("usePlaylistState", () => {
                 result.current.setPlaylist([song1, song2]);
             });
 
-            expect(result.current.selectedSong).toBe(song1);
+            expect(result.current.selectedSong).toBeNull();
         });
 
         it("should handle empty playlist", () => {
@@ -109,9 +109,8 @@ describe("usePlaylistState", () => {
 
             act(() => {
                 result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
             });
-
-            expect(result.current.selectedSong).toBe(songs[0]);
 
             act(() => {
                 result.current.selectNext();
@@ -154,9 +153,8 @@ describe("usePlaylistState", () => {
 
             act(() => {
                 result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
             });
-
-            expect(result.current.selectedSong).toBe(songs[0]);
 
             act(() => {
                 result.current.selectPrevious();
@@ -334,12 +332,153 @@ describe("usePlaylistState", () => {
             const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
 
             act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.setSelectedSong(songs[0]); });
             act(() => { result.current.removeSong(songs[0]); });
             act(() => { result.current.markAsSaved(); });
 
             expect(result.current.playlist).toHaveLength(1);
             expect(result.current.playlist[0]).toBe(songs[1]);
             expect(result.current.selectedSong).toBe(songs[1]);
+        });
+    });
+
+    describe("moving songs", () => {
+        let songs: Song[];
+
+        beforeEach(() => {
+            songs = [
+                new Song("song1.mp3"),
+                new Song("song2.mp3"),
+                new Song("song3.mp3"),
+            ];
+        });
+
+        it("should move a song from one position to another", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.moveSong(0, 2); });
+
+            expect(result.current.playlist[0]).toBe(songs[1]);
+            expect(result.current.playlist[1]).toBe(songs[2]);
+            expect(result.current.playlist[2]).toBe(songs[0]);
+        });
+
+        it("should move a song forward in the list", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.moveSong(0, 1); });
+
+            expect(result.current.playlist[0]).toBe(songs[1]);
+            expect(result.current.playlist[1]).toBe(songs[0]);
+            expect(result.current.playlist[2]).toBe(songs[2]);
+        });
+
+        it("should move a song backward in the list", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.moveSong(2, 0); });
+
+            expect(result.current.playlist[0]).toBe(songs[2]);
+            expect(result.current.playlist[1]).toBe(songs[0]);
+            expect(result.current.playlist[2]).toBe(songs[1]);
+        });
+
+        it("should set hasUnsavedChanges to true after moving a song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.moveSong(0, 2); });
+
+            expect(result.current.hasUnsavedChanges).toBe(true);
+        });
+
+        it("should preserve selectedSong when moving a different song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => {
+                result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
+            });
+
+            act(() => { result.current.moveSong(1, 2); });
+
+            expect(result.current.selectedSong).toBe(songs[0]);
+        });
+
+        it("should preserve selectedSong when moving the selected song itself", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => {
+                result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
+            });
+
+            act(() => { result.current.moveSong(0, 2); });
+
+            expect(result.current.selectedSong).toBe(songs[0]);
+        });
+
+        it("should do nothing when fromIndex equals toIndex", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.moveSong(1, 1); });
+
+            expect(result.current.playlist).toEqual(songs);
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
+        it("should do nothing when fromIndex is out of bounds", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.moveSong(5, 0); });
+
+            expect(result.current.playlist).toEqual(songs);
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
+        it("should do nothing when toIndex is out of bounds", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.moveSong(0, 5); });
+
+            expect(result.current.playlist).toEqual(songs);
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
+        it("should clear hasUnsavedChanges when moves result in the original order", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+
+            // [song1, song2, song3] → move song1 to end → [song2, song3, song1]
+            act(() => { result.current.moveSong(0, 2); });
+            expect(result.current.hasUnsavedChanges).toBe(true);
+
+            // [song2, song3, song1] → move song1 back to start → [song1, song2, song3]
+            act(() => { result.current.moveSong(2, 0); });
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
+        it("should maintain correct navigation after moving a song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => {
+                result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
+            });
+
+            act(() => { result.current.moveSong(0, 2); });
+
+            // playlist is now [song2, song3, song1], selected = song1 (index 2 — last)
+            act(() => { result.current.selectNext(); });
+
+            expect(result.current.selectedSong).toBe(songs[0]);
         });
     });
 
@@ -360,8 +499,8 @@ describe("usePlaylistState", () => {
                 result.current.setPlaylist(newSongs);
             });
 
-            // Should keep old selection when loading new playlist
-            expect(result.current.selectedSong).toBe(oldSongs[1]);
+            // Should clear selection when loading new playlist
+            expect(result.current.selectedSong).toBeNull();
         });
 
         it("should handle loading playlist multiple times", () => {

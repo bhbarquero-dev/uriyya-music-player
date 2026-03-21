@@ -13,12 +13,18 @@ function resolveSelectionAfterRemoval(
     return updated[Math.min(removedIndex, updated.length - 1)];
 }
 
+function isPlaylistOrderEqual(a: Song[], b: Song[]): boolean {
+    if (a.length !== b.length) return false;
+    return a.every((song, i) => song.equals(b[i]));
+}
+
 export function usePlaylistState() {
     const [playlist, setPlaylistState] = useState<Song[]>([]);
     const [selectedSong, setSelectedSongState] = useState<Song | null>(null);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const playlistManagerRef = useRef(new PlaylistManager());
     const playlistRef = useRef<Song[]>([]);
+    const originalPlaylistRef = useRef<Song[]>([]);
     const selectedSongRef = useRef<Song | null>(null);
 
     const updateSelectedSong = useCallback((song: Song | null) => {
@@ -28,17 +34,32 @@ export function usePlaylistState() {
 
     const setPlaylist = useCallback((songs: Song[]) => {
         playlistRef.current = songs;
+        originalPlaylistRef.current = songs;
         playlistManagerRef.current.setSongs(songs);
         setPlaylistState(songs);
         setHasUnsavedChanges(false);
-
-        const prev = selectedSongRef.current;
-        if (songs.length > 0 && !prev) {
-            updateSelectedSong(songs[0]);
-        } else if (songs.length === 0) {
-            updateSelectedSong(null);
-        }
+        updateSelectedSong(null);
     }, [updateSelectedSong]);
+
+    const moveSong = useCallback((fromIndex: number, toIndex: number) => {
+        const currentPlaylist = playlistRef.current;
+        if (fromIndex === toIndex) return;
+        if (fromIndex < 0 || fromIndex >= currentPlaylist.length) return;
+        if (toIndex < 0 || toIndex >= currentPlaylist.length) return;
+
+        const reordered = [...currentPlaylist];
+        const [moved] = reordered.splice(fromIndex, 1);
+        reordered.splice(toIndex, 0, moved);
+
+        playlistRef.current = reordered;
+        playlistManagerRef.current.setSongs(reordered);
+        if (selectedSongRef.current) {
+            playlistManagerRef.current.setCurrentSong(selectedSongRef.current);
+        }
+
+        setPlaylistState(reordered);
+        setHasUnsavedChanges(!isPlaylistOrderEqual(reordered, originalPlaylistRef.current));
+    }, []);
 
     const removeSong = useCallback((song: Song) => {
         const currentPlaylist = playlistRef.current;
@@ -54,7 +75,7 @@ export function usePlaylistState() {
 
         setPlaylistState(updated);
         updateSelectedSong(newSelection);
-        setHasUnsavedChanges(true);
+        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
     }, [updateSelectedSong]);
 
     const setSelectedSong = useCallback((song: Song | null) => {
@@ -83,6 +104,7 @@ export function usePlaylistState() {
     }, []);
 
     const markAsSaved = useCallback(() => {
+        originalPlaylistRef.current = playlistRef.current;
         setHasUnsavedChanges(false);
     }, []);
 
@@ -92,6 +114,7 @@ export function usePlaylistState() {
         hasUnsavedChanges,
         setPlaylist,
         setSelectedSong,
+        moveSong,
         removeSong,
         markAsSaved,
         selectNext,
