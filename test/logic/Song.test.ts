@@ -136,11 +136,30 @@ describe("Song", () => {
         });
     });
 
-    describe("equals", () => {
-        it("should return true for two Songs with the same path", () => {
+    describe("getId", () => {
+        it("should return a non-empty string", () => {
+            const song = new Song("song.mp3");
+            expect(typeof song.getId()).toBe("string");
+            expect(song.getId().length).toBeGreaterThan(0);
+        });
+
+        it("should return a unique id per instance", () => {
             const song1 = new Song("song.mp3");
             const song2 = new Song("song.mp3");
-            expect(song1.equals(song2)).toBe(true);
+            expect(song1.getId()).not.toBe(song2.getId());
+        });
+
+        it("should return the same id on repeated calls", () => {
+            const song = new Song("song.mp3");
+            expect(song.getId()).toBe(song.getId());
+        });
+    });
+
+    describe("equals", () => {
+        it("should return false for different instances with the same path", () => {
+            const song1 = new Song("song.mp3");
+            const song2 = new Song("song.mp3");
+            expect(song1.equals(song2)).toBe(false);
         });
 
         it("should return true when comparing with itself", () => {
@@ -170,12 +189,13 @@ describe("Song", () => {
             expect(song1.equals(song2)).toBe(false);
         });
 
-        it("should compare full paths correctly", () => {
+        it("should compare by instance identity, not path", () => {
             const song1 = new Song("C:\\Music\\song.mp3");
             const song2 = new Song("C:\\Music\\song.mp3");
             const song3 = new Song("D:\\Music\\song.mp3");
-            expect(song1.equals(song2)).toBe(true);
+            expect(song1.equals(song2)).toBe(false);
             expect(song1.equals(song3)).toBe(false);
+            expect(song1.equals(song1)).toBe(true);
         });
     });
 

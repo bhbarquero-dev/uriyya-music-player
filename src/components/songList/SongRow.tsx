@@ -29,7 +29,7 @@ export function SongRow({ song, isSelected, isPlaying, isPlayingSong, onSelect, 
         transform,
         transition,
         isDragging,
-    } = useSortable({ id: song.getPath() });
+    } = useSortable({ id: song.getId() });
 
     const style = {
         transform: CSS.Transform.toString(transform),

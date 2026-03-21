@@ -55,14 +55,14 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         if (!over || active.id === over.id || !onMoveSong) return;
-        const fromIndex = playlist.findIndex(s => s.getPath() === active.id);
-        const toIndex = playlist.findIndex(s => s.getPath() === over.id);
+        const fromIndex = playlist.findIndex(s => s.getId() === String(active.id));
+        const toIndex = playlist.findIndex(s => s.getId() === String(over.id));
         if (fromIndex !== -1 && toIndex !== -1) {
             onMoveSong(fromIndex, toIndex);
         }
     };
 
-    const songIds = playlist.map(s => s.getPath());
+    const songIds = playlist.map(s => s.getId());
 
     return (
         <section className="main-content" ref={containerRef}>
@@ -91,7 +91,7 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
                                     const isReallyPlaying = isLoadedSong && isPlaying;
                                     return (
                                         <SongRow
-                                            key={song.getPath()}
+                                            key={song.getId()}
                                             song={song}
                                             isSelected={isSelected}
                                             isPlaying={isReallyPlaying}

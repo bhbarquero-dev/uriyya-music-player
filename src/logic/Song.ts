@@ -1,6 +1,8 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 
 export class Song {
+    private readonly id: string;
+
     constructor(
         private readonly path: string,
         private readonly valid: boolean = true
@@ -13,6 +15,12 @@ export class Song {
         if (!lowerPath.endsWith(".mp3")) {
             throw new Error(`Invalid song format: ${path}. Only .mp3 files are supported.`);
         }
+
+        this.id = crypto.randomUUID();
+    }
+
+    public getId(): string {
+        return this.id;
     }
 
     public getPath(): string {
@@ -33,6 +41,6 @@ export class Song {
 
     public equals(other: Song | null | undefined): boolean {
         if (!other) return false;
-        return this.path === other.getPath();
+        return this.id === other.id;
     }
 }
