@@ -18,7 +18,14 @@ export function PlaylistBanner({ currentPlaylistName, songsCount = 0, hasUnsaved
                             <div className="playlist-banner-name-row">
                                 <span className="playlist-banner-name" title={currentPlaylistName}>{currentPlaylistName}</span>
                                 {hasUnsavedChanges && (
-                                    <span className="unsaved-dot" title="Cambios sin guardar">●</span>
+                                    <span
+                                        className="unsaved-dot"
+                                        title="Cambios sin guardar"
+                                        role="img"
+                                        aria-label="Cambios sin guardar"
+                                    >
+                                        ●
+                                    </span>
                                 )}
                                 <span className="playlist-banner-count">{songsLabel}</span>
                             </div>

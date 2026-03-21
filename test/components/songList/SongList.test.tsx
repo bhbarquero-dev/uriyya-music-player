@@ -65,6 +65,27 @@ describe("SongList", () => {
         });
     });
 
+    describe("Remove song", () => {
+        it("should disable 'Eliminar de la lista' for the loaded song even when playback is paused", async () => {
+            const { default: userEvent } = await import("@testing-library/user-event");
+            const user = userEvent.setup();
+            const song = new Song("song.mp3");
+            render(
+                <SongList
+                    {...defaultProps}
+                    playlist={[song]}
+                    playingSong={song}
+                    isPlaying={false}
+                    onRemoveSong={vi.fn()}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            const item = screen.getByText("Eliminar de la lista").closest("li");
+            expect(item?.className).toContain("disabled");
+        });
+    });
+
     describe("Complex interactions", () => {
         it("should correctly render playing and selected different songs", () => {
             const song1 = new Song("song1.mp3");
