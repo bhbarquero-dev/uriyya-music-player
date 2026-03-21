@@ -95,6 +95,10 @@ function App() {
     }
   }, []);
 
+  const handleRemoveSong = useCallback((song: Song) => {
+    removeSong(song);
+  }, [removeSong]);
+
   const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
 
   // Intercept window close when there are unsaved changes
@@ -165,7 +169,7 @@ function App() {
         onLoadPlaylist={handleLoadPlaylist}
         onChangePlaylist={handleChangePlaylist}
         onRevealInExplorer={handleRevealInExplorer}
-        onRemoveSong={removeSong}
+        onRemoveSong={handleRemoveSong}
       />
 
       {dialogConfig && (
