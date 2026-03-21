@@ -11,9 +11,11 @@ interface SidebarProps {
     isCompact?: boolean;
     onCollapse?: () => void;
     onAddToPlaylist?: (path: string) => void;
+    onAddToStart?: (path: string) => void;
+    onAddAfterSelected?: (path: string) => void;
 }
 
-export function Sidebar({ isCompact = false, onCollapse, onAddToPlaylist }: SidebarProps = {}) {
+export function Sidebar({ isCompact = false, onCollapse, onAddToPlaylist, onAddToStart, onAddAfterSelected }: SidebarProps = {}) {
     const [libraryPath, setLibraryPath] = useState<string | null>(null);
     const [librarySongs, setLibrarySongs] = useState<string[]>([]);
     const [isScanningLibrary, setIsScanningLibrary] = useState(false);
@@ -159,7 +161,13 @@ export function Sidebar({ isCompact = false, onCollapse, onAddToPlaylist }: Side
                             )}
                             {!isScanningLibrary &&
                                 filteredSongs.map((songPath) => (
-                                    <LibrarySongItem key={songPath} path={songPath} onAddToPlaylist={onAddToPlaylist} />
+                                    <LibrarySongItem
+                                        key={songPath}
+                                        path={songPath}
+                                        onAddToPlaylist={onAddToPlaylist}
+                                        onAddToStart={onAddToStart}
+                                        onAddAfterSelected={onAddAfterSelected}
+                                    />
                                 ))}
                         </SidebarSection>
                     </div>

@@ -34,6 +34,8 @@ function App() {
     pause,
     stop,
     addSong,
+    addSongAtStart,
+    insertSongAfter,
     moveSong,
     removeSong,
     selectNextInList,
@@ -105,6 +107,15 @@ function App() {
   const handleAddLibrarySong = useCallback((path: string) => {
     addSong(new Song(path));
   }, [addSong]);
+
+  const handleAddLibrarySongAtStart = useCallback((path: string) => {
+    addSongAtStart(new Song(path));
+  }, [addSongAtStart]);
+
+  const handleAddLibrarySongAfterSelected = useCallback((path: string) => {
+    if (!selectedSong) return;
+    insertSongAfter(selectedSong, new Song(path));
+  }, [insertSongAfter, selectedSong]);
 
   const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
 
@@ -179,6 +190,8 @@ function App() {
         isCompact={isSidebarCompact}
         onCollapse={toggleSidebar}
         onAddToPlaylist={currentPlaylistPath ? handleAddLibrarySong : undefined}
+        onAddToStart={currentPlaylistPath ? handleAddLibrarySongAtStart : undefined}
+        onAddAfterSelected={selectedSong ? handleAddLibrarySongAfterSelected : undefined}
       />
 
       <SongList

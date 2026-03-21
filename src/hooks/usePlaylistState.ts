@@ -74,6 +74,37 @@ export function usePlaylistState() {
         setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
     }, []);
 
+    const addSongAtStart = useCallback((song: Song) => {
+        const updated = [song, ...playlistRef.current];
+
+        playlistRef.current = updated;
+        playlistManagerRef.current.setSongs(updated);
+        if (selectedSongRef.current) {
+            playlistManagerRef.current.setCurrentSong(selectedSongRef.current);
+        }
+
+        setPlaylistState(updated);
+        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
+    }, []);
+
+    const insertSongAfter = useCallback((referenceSong: Song, songToInsert: Song) => {
+        const currentPlaylist = playlistRef.current;
+        const referenceIndex = currentPlaylist.findIndex((song) => song.equals(referenceSong));
+        if (referenceIndex === -1) return;
+
+        const updated = [...currentPlaylist];
+        updated.splice(referenceIndex + 1, 0, songToInsert);
+
+        playlistRef.current = updated;
+        playlistManagerRef.current.setSongs(updated);
+        if (selectedSongRef.current) {
+            playlistManagerRef.current.setCurrentSong(selectedSongRef.current);
+        }
+
+        setPlaylistState(updated);
+        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
+    }, []);
+
     const removeSong = useCallback((song: Song) => {
         const currentPlaylist = playlistRef.current;
         const songIndex = currentPlaylist.findIndex(s => s.equals(song));
@@ -128,6 +159,8 @@ export function usePlaylistState() {
         setPlaylist,
         setSelectedSong,
         addSong,
+        addSongAtStart,
+        insertSongAfter,
         moveSong,
         removeSong,
         markAsSaved,

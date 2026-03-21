@@ -7,9 +7,11 @@ import { getFileName } from "../../utils/formatting";
 interface LibrarySongItemProps {
     path: string;
     onAddToPlaylist?: (path: string) => void;
+    onAddToStart?: (path: string) => void;
+    onAddAfterSelected?: (path: string) => void;
 }
 
-export function LibrarySongItem({ path, onAddToPlaylist }: LibrarySongItemProps) {
+export function LibrarySongItem({ path, onAddToPlaylist, onAddToStart, onAddAfterSelected }: LibrarySongItemProps) {
     const [contextMenuPos, setContextMenuPos] = useState<{ x: number; y: number } | null>(null);
 
     const handleContextMenu = (e: React.MouseEvent) => {
@@ -21,6 +23,14 @@ export function LibrarySongItem({ path, onAddToPlaylist }: LibrarySongItemProps)
         ...(onAddToPlaylist ? [{
             label: "Agregar al final",
             onClick: () => onAddToPlaylist(path),
+        }] : []),
+        ...(onAddToStart ? [{
+            label: "Agregar al inicio",
+            onClick: () => onAddToStart(path),
+        }] : []),
+        ...(onAddAfterSelected ? [{
+            label: "Agregar después de seleccionada",
+            onClick: () => onAddAfterSelected(path),
         }] : []),
         {
             label: "Mostrar en el Explorador",
