@@ -25,7 +25,7 @@ export function useMusicPlayer(fileService?: FileService) {
 
     const { loadPlaylist: loadPlaylistFiles } = useFileLoader(fileService);
 
-    const handleSongNaturallyEnded = useCallback(() => {
+    const selectNextSongOnEnd = useCallback(() => {
         const nextSong = peekNextSong();
         if (nextSong) {
             setSelectedSongState(nextSong);
@@ -44,7 +44,7 @@ export function useMusicPlayer(fileService?: FileService) {
         pause: pauseAudio,
         stop: stopAudio,
         getAudioElement
-    } = useAudioPlayback(handleSongNaturallyEnded);
+    } = useAudioPlayback(selectNextSongOnEnd);
 
     // Coordination functions that bridge between different domain hooks
 
