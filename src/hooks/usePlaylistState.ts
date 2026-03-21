@@ -19,7 +19,6 @@ export function usePlaylistState() {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const playlistManagerRef = useRef(new PlaylistManager());
     const playlistRef = useRef<Song[]>([]);
-    // Ref mirrors selectedSong state to allow synchronous reads inside callbacks (avoids stale closures)
     const selectedSongRef = useRef<Song | null>(null);
 
     const updateSelectedSong = useCallback((song: Song | null) => {

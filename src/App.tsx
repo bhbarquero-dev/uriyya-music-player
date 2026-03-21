@@ -42,10 +42,10 @@ function App() {
     playedPercent
   } = useMusicPlayer();
 
-  // Ref lets the close-event handler always read the latest hasUnsavedChanges
-  // without needing to re-register the listener on every change.
   const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
   hasUnsavedChangesRef.current = hasUnsavedChanges;
+
+  const showUnsavedChangesDialogRef = useRef<((onProceed: () => Promise<void> | void) => void) | null>(null);
 
   const showUnsavedChangesDialog = useCallback((onProceed: () => Promise<void> | void) => {
     setDialogConfig({
@@ -60,6 +60,7 @@ function App() {
       },
     });
   }, [saveCurrentPlaylist]);
+  showUnsavedChangesDialogRef.current = showUnsavedChangesDialog;
 
   const handleLoadPlaylist = useCallback(async () => {
     try {
@@ -101,22 +102,35 @@ function App() {
 
   const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
 
-  // Intercept window close when there are unsaved changes
   useEffect(() => {
-    const win = getCurrentWindow();
     let unlisten: (() => void) | null = null;
+    let cancelled = false;
 
-    win.onCloseRequested((event) => {
-      if (hasUnsavedChangesRef.current) {
-        event.preventDefault();
-        showUnsavedChangesDialog(async () => {
-          await win.destroy();
-        });
-      }
-    }).then(fn => { unlisten = fn; });
+    try {
+      const win = getCurrentWindow();
+      win.onCloseRequested((event) => {
+        if (hasUnsavedChangesRef.current) {
+          event.preventDefault();
+          showUnsavedChangesDialogRef.current?.(async () => {
+            await win.destroy();
+          });
+        }
+      }).then(fn => {
+        if (cancelled) {
+          fn();
+        } else {
+          unlisten = fn;
+        }
+      });
+    } catch {
+      // Not running in a Tauri context (e.g., browser-based e2e tests)
+    }
 
-    return () => { unlisten?.(); };
-  }, [showUnsavedChangesDialog]);
+    return () => {
+      cancelled = true;
+      unlisten?.();
+    };
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
