@@ -36,24 +36,27 @@ export function usePlaylistState() {
         playlistRef.current = updated;
         setPlaylistState(updated);
 
-        setSelectedSongState(currentSelected => {
-            if (!currentSelected?.equals(song)) {
-                // Not removing the selected song; restore PlaylistManager position
-                playlistManagerRef.current.setSongs(updated);
-                if (currentSelected) playlistManagerRef.current.setCurrentSong(currentSelected);
-                return currentSelected;
-            }
+        const currentSelected = selectedSong;
+        let newSelected: Song | null = currentSelected;
 
+        if (currentSelected?.equals(song)) {
             // Removing the selected song; pick the song at the same index (or last)
-            playlistManagerRef.current.setSongs(updated);
-            if (updated.length === 0) return null;
-            const newSong = updated[Math.min(songIndex, updated.length - 1)];
-            playlistManagerRef.current.setCurrentSong(newSong);
-            return newSong;
-        });
+            if (updated.length === 0) {
+                newSelected = null;
+            } else {
+                newSelected = updated[Math.min(songIndex, updated.length - 1)];
+            }
+        }
 
+        // Keep PlaylistManager in sync with the updated playlist and selection
+        playlistManagerRef.current.setSongs(updated);
+        if (newSelected) {
+            playlistManagerRef.current.setCurrentSong(newSelected);
+        }
+
+        setSelectedSongState(newSelected);
         setHasUnsavedChanges(true);
-    }, []);
+    }, [selectedSong]);
 
     const setSelectedSong = useCallback((song: Song | null) => {
         setSelectedSongState(song);
