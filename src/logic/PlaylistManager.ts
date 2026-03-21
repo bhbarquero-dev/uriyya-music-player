@@ -33,6 +33,14 @@ export class PlaylistManager {
         return this.songs[this.currentIndex]; // Stay at end
     }
 
+    /** Returns the next song without advancing the index. Returns null if already at the last song. */
+    public peekNext(): Song | null {
+        if (this.currentIndex < this.songs.length - 1) {
+            return this.songs[this.currentIndex + 1];
+        }
+        return null;
+    }
+
     public getPrevious(): Song | null {
         if (this.songs.length === 0) return null;
         if (this.currentIndex > 0) {

@@ -19,10 +19,18 @@ export function useMusicPlayer(fileService?: FileService) {
         setPlaylist: setPlaylistState,
         setSelectedSong: setSelectedSongState,
         selectNext,
-        selectPrevious
+        selectPrevious,
+        peekNextSong
     } = usePlaylistState();
 
     const { loadPlaylist: loadPlaylistFiles } = useFileLoader(fileService);
+
+    const handleSongNaturallyEnded = useCallback(() => {
+        const nextSong = peekNextSong();
+        if (nextSong) {
+            setSelectedSongState(nextSong);
+        }
+    }, [peekNextSong, setSelectedSongState]);
 
     const {
         playingSong,
@@ -34,8 +42,9 @@ export function useMusicPlayer(fileService?: FileService) {
         playedPercent,
         play: playAudio,
         pause: pauseAudio,
-        stop: stopAudio
-    } = useAudioPlayback();
+        stop: stopAudio,
+        getAudioElement
+    } = useAudioPlayback(handleSongNaturallyEnded);
 
     // Coordination functions that bridge between different domain hooks
 
@@ -86,6 +95,7 @@ export function useMusicPlayer(fileService?: FileService) {
         stop: stopAudio,
         selectNextInList: selectNext,
         selectPreviousInList: selectPrevious,
+        getAudioElement,
         // timing info
         currentTime,
         duration,

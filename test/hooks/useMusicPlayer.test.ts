@@ -243,6 +243,69 @@ describe("useMusicPlayer", () => {
         expect(result.current.isPlaying).toBe(false);
     });
 
+    describe("auto-advance on natural song end", () => {
+        it("should select the next song (without playing) when the current one ends naturally", async () => {
+            const s1 = new Song("s1.mp3");
+            const s2 = new Song("s2.mp3");
+            const mockFileService = createMockFileService({ songs: [s1, s2], name: "pl" });
+            const { result } = renderHook(() => useMusicPlayer(mockFileService));
+
+            await act(async () => { await result.current.loadPlaylist(); });
+
+            act(() => { result.current.playSong(s1); });
+            expect(result.current.playingSong).toBe(s1);
+
+            // Simulate natural end of s1
+            const audioElement = result.current.getAudioElement();
+            act(() => {
+                audioElement.dispatchEvent(new Event("ended"));
+            });
+
+            expect(result.current.isPlaying).toBe(false);
+            expect(result.current.playingSong).toBeNull();
+            expect(result.current.selectedSong).toBe(s2);
+        });
+
+        it("should stop playback when last song ends naturally (no auto-advance)", async () => {
+            const s1 = new Song("s1.mp3");
+            const s2 = new Song("s2.mp3");
+            const mockFileService = createMockFileService({ songs: [s1, s2], name: "pl" });
+            const { result } = renderHook(() => useMusicPlayer(mockFileService));
+
+            await act(async () => { await result.current.loadPlaylist(); });
+
+            act(() => { result.current.playSong(s2); });
+            expect(result.current.playingSong).toBe(s2);
+
+            // Simulate natural end of s2 (the last song)
+            const audioElement = result.current.getAudioElement();
+            act(() => {
+                audioElement.dispatchEvent(new Event("ended"));
+            });
+
+            expect(result.current.isPlaying).toBe(false);
+            expect(result.current.playingSong).toBeNull();
+        });
+
+        it("should stop playback when only one song in the playlist ends naturally", async () => {
+            const s1 = new Song("s1.mp3");
+            const mockFileService = createMockFileService({ songs: [s1], name: "pl" });
+            const { result } = renderHook(() => useMusicPlayer(mockFileService));
+
+            await act(async () => { await result.current.loadPlaylist(); });
+
+            act(() => { result.current.playSong(s1); });
+
+            const audioElement = result.current.getAudioElement();
+            act(() => {
+                audioElement.dispatchEvent(new Event("ended"));
+            });
+
+            expect(result.current.isPlaying).toBe(false);
+            expect(result.current.playingSong).toBeNull();
+        });
+    });
+
     it("should not play invalid song when using playCurrentSelected", () => {
         const mockFileService = createMockFileService({
             songs: [new Song("invalid.mp3", false)],

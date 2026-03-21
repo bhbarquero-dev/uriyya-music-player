@@ -11,12 +11,14 @@ const TIME_POLL_INTERVAL_MS = 250;
  */
 function createAudioEventHandlers(
     getAudioManager: () => AudioManager | null,
+    onNaturalEndRef: { current: (() => void) | undefined },
     setState: {
         setIsPlaying: (value: boolean) => void;
         setPlayingSong: (value: Song | null) => void;
         setIsStopping: (value: boolean) => void;
         setCurrentTime: (value: number) => void;
         setDuration: (value: number | null) => void;
+        markEndedOrStopped: () => void;
     }
 ) {
     return {
@@ -24,11 +26,13 @@ function createAudioEventHandlers(
             // Only reset timing and clear playing state if the ended channel is the active one
             const audioManager = getAudioManager();
             if (id === audioManager?.getActiveChannelId()) {
+                setState.markEndedOrStopped();
                 setState.setIsPlaying(false);
                 setState.setPlayingSong(null);
                 setState.setIsStopping(false);
                 setState.setCurrentTime(0);
                 setState.setDuration(null);
+                onNaturalEndRef.current?.();
             }
         },
         onError: (id: AudioChannel, err: any) => {
@@ -56,6 +60,7 @@ function createAudioEventHandlers(
 /**
  * Polls the active audio element for timing updates.
  * Avoids overwriting reset state when playback has ended or been stopped.
+ * Also acts as a fallback detector for natural song end when the 'ended' event is unreliable.
  */
 function createTimingTick(
     audioManager: AudioManager,
@@ -64,7 +69,8 @@ function createTimingTick(
     setState: {
         setCurrentTime: (value: number) => void;
         setDuration: (value: number | null) => void;
-    }
+    },
+    onNaturalEnd: () => void
 ) {
     return (mounted: { current: boolean }) => {
         const audio = audioManager.getActiveAudio();
@@ -72,6 +78,13 @@ function createTimingTick(
 
         // If we've recently ended/stopped, don't overwrite the reset
         if (endedOrStoppedRef.current) return;
+
+        // Fallback: detect natural end when the 'ended' event didn't fire (e.g. some WebViews)
+        if (audio.ended && isPlaying) {
+            if (!mounted.current) return;
+            onNaturalEnd();
+            return;
+        }
 
         // If audio is paused and we are not in playing state, keep times reset
         if (audio.paused && !isPlaying) {
@@ -89,7 +102,7 @@ function createTimingTick(
     };
 }
 
-export function useAudioPlayback() {
+export function useAudioPlayback(onNaturalEnd?: () => void) {
     const [playingSong, setPlayingSong] = useState<Song | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isStopping, setIsStopping] = useState(false);
@@ -99,12 +112,24 @@ export function useAudioPlayback() {
     // Ref to indicate we've recently ended/stopped playback so polling shouldn't overwrite resets
     const endedOrStoppedRef = useRef(false);
 
+    // Keep the external callback in a ref so handlers created once can always see the latest version
+    const onNaturalEndRef = useRef(onNaturalEnd);
+    useEffect(() => { onNaturalEndRef.current = onNaturalEnd; }, [onNaturalEnd]);
+
     // Initialize AudioManager with lazy initializer (proper React pattern)
     const [audioManager] = useState(() => {
         const audioManagerRef = { current: null as AudioManager | null };
         const handlers = createAudioEventHandlers(
             () => audioManagerRef.current,
-            { setIsPlaying, setPlayingSong, setIsStopping, setCurrentTime, setDuration }
+            onNaturalEndRef,
+            {
+                setIsPlaying,
+                setPlayingSong,
+                setIsStopping,
+                setCurrentTime,
+                setDuration,
+                markEndedOrStopped: () => { endedOrStoppedRef.current = true; }
+            }
         );
         const manager = new AudioManager(handlers);
         audioManagerRef.current = manager;
@@ -118,7 +143,16 @@ export function useAudioPlayback() {
             audioManager,
             endedOrStoppedRef,
             isPlaying,
-            { setCurrentTime, setDuration }
+            { setCurrentTime, setDuration },
+            () => {
+                endedOrStoppedRef.current = true;
+                setIsPlaying(false);
+                setPlayingSong(null);
+                setIsStopping(false);
+                setCurrentTime(0);
+                setDuration(null);
+                onNaturalEndRef.current?.();
+            }
         );
 
         const interval = window.setInterval(() => {

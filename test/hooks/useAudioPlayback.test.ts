@@ -258,6 +258,149 @@ describe("useAudioPlayback", () => {
         });
     });
 
+    describe("natural song end (audio 'ended' event)", () => {
+        it("should reset all state when audio fires 'ended' event", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => {
+                result.current.play(song);
+            });
+
+            expect(result.current.isPlaying).toBe(true);
+            expect(result.current.playingSong).toBe(song);
+
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'paused', { value: true, configurable: true });
+            Object.defineProperty(audioElement, 'ended', { value: true, configurable: true });
+            Object.defineProperty(audioElement, 'currentTime', { value: 180, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 180, configurable: true });
+
+            act(() => {
+                audioElement.dispatchEvent(new Event("ended"));
+            });
+
+            expect(result.current.isPlaying).toBe(false);
+            expect(result.current.playingSong).toBeNull();
+            expect(result.current.isStopping).toBe(false);
+            expect(result.current.currentTime).toBe(0);
+            expect(result.current.duration).toBeNull();
+        });
+
+        it("should not overwrite reset state after natural end (timer must not interfere)", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => {
+                result.current.play(song);
+            });
+
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'paused', { value: true, configurable: true });
+            Object.defineProperty(audioElement, 'ended', { value: true, configurable: true });
+            Object.defineProperty(audioElement, 'currentTime', { value: 180, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 180, configurable: true });
+
+            act(() => {
+                audioElement.dispatchEvent(new Event("ended"));
+            });
+
+            // Polling should NOT overwrite the reset
+            act(() => {
+                vi.advanceTimersByTime(500);
+            });
+
+            expect(result.current.isPlaying).toBe(false);
+            expect(result.current.playingSong).toBeNull();
+            expect(result.current.currentTime).toBe(0);
+            expect(result.current.duration).toBeNull();
+        });
+
+        it("should reset state via timer fallback when 'ended' event never fires", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => {
+                result.current.play(song);
+            });
+
+            // Simulate audio that has ended (audio.ended = true) but the 'ended' event
+            // never fired (edge case in some WebViews / Tauri)
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'paused', { value: true, configurable: true });
+            Object.defineProperty(audioElement, 'ended', { value: true, configurable: true });
+            Object.defineProperty(audioElement, 'currentTime', { value: 180, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 180, configurable: true });
+
+            // No dispatchEvent("ended") — only allow the timer to detect it
+            act(() => {
+                vi.advanceTimersByTime(250);
+            });
+
+            expect(result.current.isPlaying).toBe(false);
+            expect(result.current.playingSong).toBeNull();
+            expect(result.current.isStopping).toBe(false);
+            expect(result.current.currentTime).toBe(0);
+            expect(result.current.duration).toBeNull();
+        });
+    });
+
+    describe("onNaturalEnd callback", () => {
+        it("should invoke the callback when audio fires 'ended' event", () => {
+            const onNaturalEnd = vi.fn();
+            const { result } = renderHook(() => useAudioPlayback(onNaturalEnd));
+            const song = new Song("test.mp3");
+
+            act(() => {
+                result.current.play(song);
+            });
+
+            const audioElement = result.current.getAudioElement();
+            act(() => {
+                audioElement.dispatchEvent(new Event("ended"));
+            });
+
+            expect(onNaturalEnd).toHaveBeenCalledTimes(1);
+        });
+
+        it("should invoke the callback via timer fallback when 'ended' event never fires", () => {
+            const onNaturalEnd = vi.fn();
+            const { result } = renderHook(() => useAudioPlayback(onNaturalEnd));
+            const song = new Song("test.mp3");
+
+            act(() => {
+                result.current.play(song);
+            });
+
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'paused', { value: true, configurable: true });
+            Object.defineProperty(audioElement, 'ended', { value: true, configurable: true });
+
+            act(() => {
+                vi.advanceTimersByTime(250);
+            });
+
+            expect(onNaturalEnd).toHaveBeenCalledTimes(1);
+        });
+
+        it("should NOT invoke the callback when user explicitly stops playback", () => {
+            const onNaturalEnd = vi.fn();
+            const { result } = renderHook(() => useAudioPlayback(onNaturalEnd));
+            const song = new Song("test.mp3");
+
+            act(() => {
+                result.current.play(song);
+                result.current.stop();
+            });
+
+            act(() => {
+                vi.advanceTimersByTime(500);
+            });
+
+            expect(onNaturalEnd).not.toHaveBeenCalled();
+        });
+    });
+
     describe("channel switching and race conditions", () => {
         it("should handle rapid song switches", () => {
             const { result } = renderHook(() => useAudioPlayback());
