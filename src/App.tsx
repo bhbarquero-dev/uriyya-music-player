@@ -64,13 +64,12 @@ function App() {
   showUnsavedChangesDialogRef.current = showUnsavedChangesDialog;
 
   const handleLoadPlaylist = useCallback(async () => {
-    if (playingSong !== null) return;
     try {
       await loadPlaylist();
     } catch (error) {
       console.error("Failed to load playlist:", error);
     }
-  }, [playingSong, loadPlaylist]);
+  }, [loadPlaylist]);
 
   const handleChangePlaylist = useCallback(async () => {
     if (playingSong !== null) return;

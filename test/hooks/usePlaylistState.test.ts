@@ -26,7 +26,7 @@ describe("usePlaylistState", () => {
             expect(result.current.playlist).toHaveLength(2);
         });
 
-        it("should clear selected song when loading a non-empty playlist", () => {
+        it("should have null selection after loading playlist", () => {
             const { result } = renderHook(() => usePlaylistState());
             const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
 
