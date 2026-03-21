@@ -7,21 +7,28 @@ interface SongRowProps {
     song: Song;
     isSelected: boolean;
     isPlaying: boolean;
+    isPlayingSong?: boolean;
     onSelect: (song: Song) => void;
     onPlay: (song: Song) => void;
     onRevealInExplorer?: (song: Song) => void;
+    onRemoveSong?: (song: Song) => void;
 }
 
 export const SongRow = forwardRef<HTMLTableRowElement, SongRowProps>(
-    ({ song, isSelected, isPlaying, onSelect, onPlay, onRevealInExplorer }, ref) => {
+    ({ song, isSelected, isPlaying, isPlayingSong, onSelect, onPlay, onRevealInExplorer, onRemoveSong }, ref) => {
         const isInvalid = !song.isValid();
         const [contextMenuPos, setContextMenuPos] = useState<{ x: number; y: number } | null>(null);
 
         const handleContextMenu = (e: React.MouseEvent) => {
-            if (!onRevealInExplorer) return;
+            if (!onRevealInExplorer && !onRemoveSong) return;
             e.preventDefault();
             setContextMenuPos({ x: e.clientX, y: e.clientY });
         };
+
+        const contextMenuItems = [
+            ...(onRemoveSong ? [{ label: "Eliminar de la lista", disabled: isPlayingSong, onClick: () => onRemoveSong(song) }] : []),
+            ...(onRevealInExplorer ? [{ label: "Mostrar en el Explorador", disabled: isInvalid, onClick: () => onRevealInExplorer(song) }] : []),
+        ];
 
         return (
             <>
@@ -53,11 +60,11 @@ export const SongRow = forwardRef<HTMLTableRowElement, SongRowProps>(
                     </div>
                 </td>
             </tr>
-            {contextMenuPos && onRevealInExplorer && createPortal(
+            {contextMenuPos && createPortal(
                 <ContextMenu
                     x={contextMenuPos.x}
                     y={contextMenuPos.y}
-                    items={[{ label: "Mostrar en el Explorador", disabled: isInvalid, onClick: () => onRevealInExplorer(song) }]}
+                    items={contextMenuItems}
                     onClose={() => setContextMenuPos(null)}
                 />,
                 document.body

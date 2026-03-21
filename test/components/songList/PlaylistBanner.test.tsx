@@ -67,4 +67,49 @@ describe("PlaylistBanner", () => {
             expect(mockOnChangePlaylist).toHaveBeenCalledOnce();
         });
     });
+
+    describe("Unsaved changes indicator", () => {
+        it("should show an unsaved changes indicator when hasUnsavedChanges is true", () => {
+            render(
+                <PlaylistBanner
+                    currentPlaylistName="Mi Playlist"
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    hasUnsavedChanges={true}
+                />
+            );
+            expect(screen.getByTitle(/cambios sin guardar/i)).toBeInTheDocument();
+        });
+
+        it("should not show an unsaved changes indicator when hasUnsavedChanges is false", () => {
+            render(
+                <PlaylistBanner
+                    currentPlaylistName="Mi Playlist"
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    hasUnsavedChanges={false}
+                />
+            );
+            expect(screen.queryByTitle(/cambios sin guardar/i)).not.toBeInTheDocument();
+        });
+
+        it("should not show an unsaved changes indicator when hasUnsavedChanges is not provided", () => {
+            render(
+                <PlaylistBanner
+                    currentPlaylistName="Mi Playlist"
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                />
+            );
+            expect(screen.queryByTitle(/cambios sin guardar/i)).not.toBeInTheDocument();
+        });
+
+        it("should not show the indicator when there is no playlist loaded", () => {
+            render(
+                <PlaylistBanner
+                    currentPlaylistName={null}
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    hasUnsavedChanges={true}
+                />
+            );
+            expect(screen.queryByTitle(/cambios sin guardar/i)).not.toBeInTheDocument();
+        });
+    });
 });

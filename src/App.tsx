@@ -14,6 +14,7 @@ function App() {
     playlist,
     currentPlaylistName,
     selectedSong,
+    hasUnsavedChanges,
     playingSong,
     isPlaying,
     isStopping,
@@ -23,6 +24,7 @@ function App() {
     playCurrentSelected,
     pause,
     stop,
+    removeSong,
     selectNextInList,
     selectPreviousInList,
     currentTime,
@@ -53,6 +55,10 @@ function App() {
       console.error("Failed to reveal in explorer:", error);
     }
   }, []);
+
+  const handleRemoveSong = useCallback((song: Song) => {
+    removeSong(song);
+  }, [removeSong]);
 
   const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
 
@@ -101,11 +107,13 @@ function App() {
         playingSong={playingSong}
         isPlaying={isPlaying}
         currentPlaylistName={currentPlaylistName}
+        hasUnsavedChanges={hasUnsavedChanges}
         onSelectSong={setSelectedSong}
         onPlaySong={playSong}
         onLoadPlaylist={handleLoadPlaylist}
         onChangePlaylist={handleChangePlaylist}
         onRevealInExplorer={handleRevealInExplorer}
+        onRemoveSong={handleRemoveSong}
       />
 
       <ShortcutsFooter />

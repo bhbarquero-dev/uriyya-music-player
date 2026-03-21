@@ -228,22 +228,116 @@ describe("SongRow", () => {
             expect(screen.queryByText("Mostrar en el Explorador")).not.toBeInTheDocument();
         });
 
-        it("should show a disabled reveal option when song is invalid", async () => {
+        it("should show context menu with 'Eliminar de la lista' when onRemoveSong is provided", async () => {
             const user = userEvent.setup();
-            const { container } = render(
+            render(
                 <SongRow
-                    song={new Song("missing.mp3", false)}
+                    song={new Song("song.mp3")}
                     isSelected={false}
                     isPlaying={false}
                     onSelect={mockOnSelect}
                     onPlay={mockOnPlay}
+                    onRemoveSong={vi.fn()}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            expect(screen.getByText("Eliminar de la lista")).toBeInTheDocument();
+        });
+
+        it("should show context menu without onRevealInExplorer when only onRemoveSong is provided", async () => {
+            const user = userEvent.setup();
+            render(
+                <SongRow
+                    song={new Song("song.mp3")}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRemoveSong={vi.fn()}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            expect(screen.getByText("Eliminar de la lista")).toBeInTheDocument();
+            expect(screen.queryByText("Mostrar en el Explorador")).not.toBeInTheDocument();
+        });
+
+        it("should call onRemoveSong with the song when Eliminar option is clicked", async () => {
+            const user = userEvent.setup();
+            const mockOnRemoveSong = vi.fn();
+            const song = new Song("song.mp3");
+            render(
+                <SongRow
+                    song={song}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRemoveSong={mockOnRemoveSong}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            await user.click(screen.getByText("Eliminar de la lista"));
+            expect(mockOnRemoveSong).toHaveBeenCalledWith(song);
+        });
+
+        it("should disable 'Eliminar de la lista' when the song is currently playing", async () => {
+            const user = userEvent.setup();
+            render(
+                <SongRow
+                    song={new Song("song.mp3")}
+                    isSelected={false}
+                    isPlaying={false}
+                    isPlayingSong={true}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRemoveSong={vi.fn()}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            const item = screen.getByText("Eliminar de la lista").closest("li");
+            expect(item?.className).toContain("disabled");
+        });
+
+        it("should enable 'Eliminar de la lista' when the song is not playing", async () => {
+            const user = userEvent.setup();
+            render(
+                <SongRow
+                    song={new Song("song.mp3")}
+                    isSelected={false}
+                    isPlaying={false}
+                    isPlayingSong={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRemoveSong={vi.fn()}
+                />
+            );
+            const row = screen.getByText("song.mp3").closest("tr");
+            await user.pointer([{ keys: "[MouseRight]", target: row! }]);
+            const item = screen.getByText("Eliminar de la lista").closest("li");
+            expect(item?.className).not.toContain("disabled");
+        });
+
+        it("should show both options when both onRemoveSong and onRevealInExplorer are provided", async () => {
+            const user = userEvent.setup();
+            render(
+                <SongRow
+                    song={new Song("song.mp3")}
+                    isSelected={false}
+                    isPlaying={false}
+                    onSelect={mockOnSelect}
+                    onPlay={mockOnPlay}
+                    onRemoveSong={vi.fn()}
                     onRevealInExplorer={vi.fn()}
                 />
             );
-            const row = container.querySelector("tr");
+            const row = screen.getByText("song.mp3").closest("tr");
             await user.pointer([{ keys: "[MouseRight]", target: row! }]);
-            const item = screen.getByText("Mostrar en el Explorador").closest("li");
-            expect(item?.className).toContain("disabled");
+            expect(screen.getByText("Eliminar de la lista")).toBeInTheDocument();
+            expect(screen.getByText("Mostrar en el Explorador")).toBeInTheDocument();
         });
     });
 });
