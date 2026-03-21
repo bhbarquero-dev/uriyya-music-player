@@ -41,6 +41,17 @@ export function usePlaylistState() {
         updateSelectedSong(null);
     }, [updateSelectedSong]);
 
+    const applyPlaylistUpdate = useCallback((updated: Song[], currentSong: Song | null = selectedSongRef.current) => {
+        playlistRef.current = updated;
+        playlistManagerRef.current.setSongs(updated);
+        if (currentSong) {
+            playlistManagerRef.current.setCurrentSong(currentSong);
+        }
+
+        setPlaylistState(updated);
+        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
+    }, []);
+
     const moveSong = useCallback((fromIndex: number, toIndex: number) => {
         const currentPlaylist = playlistRef.current;
         if (fromIndex === toIndex) return;
@@ -51,41 +62,20 @@ export function usePlaylistState() {
         const [moved] = reordered.splice(fromIndex, 1);
         reordered.splice(toIndex, 0, moved);
 
-        playlistRef.current = reordered;
-        playlistManagerRef.current.setSongs(reordered);
-        if (selectedSongRef.current) {
-            playlistManagerRef.current.setCurrentSong(selectedSongRef.current);
-        }
-
-        setPlaylistState(reordered);
-        setHasUnsavedChanges(!isPlaylistOrderEqual(reordered, originalPlaylistRef.current));
-    }, []);
+        applyPlaylistUpdate(reordered);
+    }, [applyPlaylistUpdate]);
 
     const addSong = useCallback((song: Song) => {
         const updated = [...playlistRef.current, song];
 
-        playlistRef.current = updated;
-        playlistManagerRef.current.setSongs(updated);
-        if (selectedSongRef.current) {
-            playlistManagerRef.current.setCurrentSong(selectedSongRef.current);
-        }
-
-        setPlaylistState(updated);
-        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
-    }, []);
+        applyPlaylistUpdate(updated);
+    }, [applyPlaylistUpdate]);
 
     const addSongAtStart = useCallback((song: Song) => {
         const updated = [song, ...playlistRef.current];
 
-        playlistRef.current = updated;
-        playlistManagerRef.current.setSongs(updated);
-        if (selectedSongRef.current) {
-            playlistManagerRef.current.setCurrentSong(selectedSongRef.current);
-        }
-
-        setPlaylistState(updated);
-        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
-    }, []);
+        applyPlaylistUpdate(updated);
+    }, [applyPlaylistUpdate]);
 
     const insertSongAfter = useCallback((referenceSong: Song, songToInsert: Song) => {
         const currentPlaylist = playlistRef.current;
@@ -95,15 +85,8 @@ export function usePlaylistState() {
         const updated = [...currentPlaylist];
         updated.splice(referenceIndex + 1, 0, songToInsert);
 
-        playlistRef.current = updated;
-        playlistManagerRef.current.setSongs(updated);
-        if (selectedSongRef.current) {
-            playlistManagerRef.current.setCurrentSong(selectedSongRef.current);
-        }
-
-        setPlaylistState(updated);
-        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
-    }, []);
+        applyPlaylistUpdate(updated);
+    }, [applyPlaylistUpdate]);
 
     const removeSong = useCallback((song: Song) => {
         const currentPlaylist = playlistRef.current;
@@ -113,14 +96,9 @@ export function usePlaylistState() {
         const updated = currentPlaylist.filter(s => !s.equals(song));
         const newSelection = resolveSelectionAfterRemoval(updated, songIndex, selectedSongRef.current, song);
 
-        playlistRef.current = updated;
-        playlistManagerRef.current.setSongs(updated);
-        if (newSelection) playlistManagerRef.current.setCurrentSong(newSelection);
-
-        setPlaylistState(updated);
+        applyPlaylistUpdate(updated, newSelection);
         updateSelectedSong(newSelection);
-        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
-    }, [updateSelectedSong]);
+    }, [applyPlaylistUpdate, updateSelectedSong]);
 
     const setSelectedSong = useCallback((song: Song | null) => {
         updateSelectedSong(song);

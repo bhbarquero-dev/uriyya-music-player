@@ -3,21 +3,25 @@ import { isSupportedAudioPath, SUPPORTED_AUDIO_EXTENSIONS } from "./audioFormats
 
 export class Song {
     private readonly id: string;
+    private readonly path: string;
 
     constructor(
-        private readonly path: string,
+        path: string,
         private readonly valid: boolean = true
     ) {
-        if (!path || path.trim().length === 0) {
+        const normalizedPath = path.trim();
+
+        if (!normalizedPath) {
             throw new Error("Song path cannot be empty");
         }
 
-        if (!isSupportedAudioPath(path)) {
+        if (!isSupportedAudioPath(normalizedPath)) {
             throw new Error(
-                `Invalid song format: ${path}. Supported formats: ${SUPPORTED_AUDIO_EXTENSIONS.join(", ")}.`
+                `Invalid song format: ${normalizedPath}. Supported formats: ${SUPPORTED_AUDIO_EXTENSIONS.join(", ")}.`
             );
         }
 
+        this.path = normalizedPath;
         this.id = crypto.randomUUID();
     }
 

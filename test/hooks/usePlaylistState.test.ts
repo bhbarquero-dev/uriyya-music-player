@@ -319,6 +319,76 @@ describe("usePlaylistState", () => {
             expect(result.current.hasUnsavedChanges).toBe(true);
         });
 
+        it("should insert a song after the reference song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const firstSong = new Song("song1.mp3");
+            const referenceSong = new Song("song2.mp3");
+            const lastSong = new Song("song4.mp3");
+            const insertedSong = new Song("song3.wav");
+
+            act(() => {
+                result.current.setPlaylist([firstSong, referenceSong, lastSong]);
+            });
+
+            act(() => {
+                result.current.insertSongAfter(referenceSong, insertedSong);
+            });
+
+            expect(result.current.playlist).toEqual([firstSong, referenceSong, insertedSong, lastSong]);
+        });
+
+        it("should keep current selection after inserting a song after the selected one", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const firstSong = new Song("song1.mp3");
+            const selectedSong = new Song("song2.mp3");
+            const insertedSong = new Song("song3.wav");
+
+            act(() => {
+                result.current.setPlaylist([firstSong, selectedSong]);
+                result.current.setSelectedSong(selectedSong);
+            });
+
+            act(() => {
+                result.current.insertSongAfter(selectedSong, insertedSong);
+            });
+
+            expect(result.current.selectedSong).toBe(selectedSong);
+        });
+
+        it("should set hasUnsavedChanges to true after inserting a song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const firstSong = new Song("song1.mp3");
+            const referenceSong = new Song("song2.mp3");
+
+            act(() => {
+                result.current.setPlaylist([firstSong, referenceSong]);
+            });
+
+            act(() => {
+                result.current.insertSongAfter(referenceSong, new Song("song3.wav"));
+            });
+
+            expect(result.current.hasUnsavedChanges).toBe(true);
+        });
+
+        it("should do nothing when inserting after a song not in the playlist", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const firstSong = new Song("song1.mp3");
+            const referenceSong = new Song("song2.mp3");
+            const missingSong = new Song("missing.mp3");
+
+            act(() => {
+                result.current.setPlaylist([firstSong, referenceSong]);
+            });
+
+            act(() => {
+                result.current.insertSongAfter(missingSong, new Song("song3.wav"));
+            });
+
+            expect(result.current.playlist).toEqual([firstSong, referenceSong]);
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
         it("should reset hasUnsavedChanges when removing and re-adding the same last song", () => {
             const { result } = renderHook(() => usePlaylistState());
             const firstSong = new Song("song1.mp3");
