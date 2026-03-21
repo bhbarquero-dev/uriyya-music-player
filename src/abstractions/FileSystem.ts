@@ -17,4 +17,11 @@ export interface FileSystem {
      * @returns Promise resolving to true if the file exists, false otherwise
      */
     exists(path: string): Promise<boolean>;
+
+    /**
+     * Writes text content to a file, overwriting if it exists.
+     * @param path Absolute path to the file
+     * @param content Text content to write
+     */
+    writeTextFile(path: string, content: string): Promise<void>;
 }

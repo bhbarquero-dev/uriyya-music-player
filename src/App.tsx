@@ -1,18 +1,27 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
 import { ShortcutsFooter } from "@components/ShortcutsFooter";
+import { ConfirmDialog } from "@components/common/ConfirmDialog";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import { Song } from "./logic/Song";
 import "./App.css";
 
+type DialogConfig = {
+  onSave: () => void;
+  onDiscard: () => void;
+};
+
 function App() {
   const [isSidebarCompact, setIsSidebarCompact] = useState(false);
+  const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
   const {
     playlist,
     currentPlaylistName,
+    currentPlaylistPath,
     selectedSong,
     hasUnsavedChanges,
     playingSong,
@@ -20,6 +29,7 @@ function App() {
     isStopping,
     setSelectedSong,
     loadPlaylist,
+    saveCurrentPlaylist,
     playSong,
     playCurrentSelected,
     pause,
@@ -32,6 +42,26 @@ function App() {
     playedPercent
   } = useMusicPlayer();
 
+  const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
+  hasUnsavedChangesRef.current = hasUnsavedChanges;
+
+  const showUnsavedChangesDialogRef = useRef<((onProceed: () => Promise<void> | void) => void) | null>(null);
+
+  const showUnsavedChangesDialog = useCallback((onProceed: () => Promise<void> | void) => {
+    setDialogConfig({
+      onSave: async () => {
+        await saveCurrentPlaylist();
+        setDialogConfig(null);
+        await onProceed();
+      },
+      onDiscard: async () => {
+        setDialogConfig(null);
+        await onProceed();
+      },
+    });
+  }, [saveCurrentPlaylist]);
+  showUnsavedChangesDialogRef.current = showUnsavedChangesDialog;
+
   const handleLoadPlaylist = useCallback(async () => {
     try {
       await loadPlaylist();
@@ -41,12 +71,22 @@ function App() {
   }, [loadPlaylist]);
 
   const handleChangePlaylist = useCallback(async () => {
-    try {
-      await loadPlaylist();
-    } catch (error) {
-      console.error("Failed to change playlist:", error);
+    if (hasUnsavedChanges) {
+      showUnsavedChangesDialog(async () => {
+        try {
+          await loadPlaylist();
+        } catch (error) {
+          console.error("Failed to change playlist:", error);
+        }
+      });
+    } else {
+      try {
+        await loadPlaylist();
+      } catch (error) {
+        console.error("Failed to change playlist:", error);
+      }
     }
-  }, [loadPlaylist]);
+  }, [hasUnsavedChanges, loadPlaylist, showUnsavedChangesDialog]);
 
   const handleRevealInExplorer = useCallback(async (song: Song) => {
     try {
@@ -61,6 +101,36 @@ function App() {
   }, [removeSong]);
 
   const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
+
+  useEffect(() => {
+    let unlisten: (() => void) | null = null;
+    let cancelled = false;
+
+    try {
+      const win = getCurrentWindow();
+      win.onCloseRequested((event) => {
+        if (hasUnsavedChangesRef.current) {
+          event.preventDefault();
+          showUnsavedChangesDialogRef.current?.(async () => {
+            await win.destroy();
+          });
+        }
+      }).then(fn => {
+        if (cancelled) {
+          fn();
+        } else {
+          unlisten = fn;
+        }
+      });
+    } catch {
+      // Not running in a Tauri context (e.g., browser-based e2e tests)
+    }
+
+    return () => {
+      cancelled = true;
+      unlisten?.();
+    };
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -115,6 +185,17 @@ function App() {
         onRevealInExplorer={handleRevealInExplorer}
         onRemoveSong={handleRemoveSong}
       />
+
+      {dialogConfig && (
+        <ConfirmDialog
+          title="Cambios sin guardar"
+          message="Tienes cambios sin guardar en la lista de reproducción. ¿Qué deseas hacer antes de continuar?"
+          canSave={!!currentPlaylistPath}
+          onSave={dialogConfig.onSave}
+          onDiscard={dialogConfig.onDiscard}
+          onCancel={() => setDialogConfig(null)}
+        />
+      )}
 
       <ShortcutsFooter />
     </div>

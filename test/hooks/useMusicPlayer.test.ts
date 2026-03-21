@@ -5,9 +5,11 @@ import { FileService } from "../../src/logic/FileService";
 import { Song } from "../../src/logic/Song";
 
 // Helper to create a mock FileService
-const createMockFileService = (playlistData: { songs: Song[]; name: string } | null = null) => {
+const createMockFileService = (playlistData: { songs: Song[]; name: string; path?: string } | null = null) => {
+    const data = playlistData ? { path: "C:\\Music\\playlist.txt", ...playlistData } : null;
     const mockFileService: Partial<FileService> = {
-        selectAndReadPlaylist: vi.fn().mockResolvedValue(playlistData),
+        selectAndReadPlaylist: vi.fn().mockResolvedValue(data),
+        savePlaylist: vi.fn().mockResolvedValue(undefined),
     };
     return mockFileService as FileService;
 };
