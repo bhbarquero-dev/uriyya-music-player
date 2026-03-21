@@ -13,6 +13,7 @@ describe("FileService", () => {
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn(),
             exists: vi.fn().mockResolvedValue(true),
+            writeTextFile: vi.fn(),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
@@ -33,6 +34,7 @@ describe("FileService", () => {
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("song1.mp3\n  \n  song2.MP3\nnot-a-song.txt\n"),
             exists: vi.fn().mockResolvedValue(true),
+            writeTextFile: vi.fn(),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
@@ -41,6 +43,7 @@ describe("FileService", () => {
         expect(result).not.toBeNull();
         if (result) {
             expect(result.name).toBe("my-playlist");
+            expect(result.path).toBe("C:\\Music\\my-playlist.txt");
             expect(result.songs).toHaveLength(2);
             expect(result.songs[0]).toBeInstanceOf(Song);
             expect(result.songs[1]).toBeInstanceOf(Song);
@@ -58,12 +61,14 @@ describe("FileService", () => {
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("s1.mp3"),
             exists: vi.fn().mockResolvedValue(true),
+            writeTextFile: vi.fn(),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
         const result = await service.selectAndReadPlaylist();
 
         expect(result?.name).toBe("linux-playlist");
+        expect(result?.path).toBe("/home/user/music/linux-playlist.alb");
         expect(result?.songs).toHaveLength(1);
         expect(result?.songs[0]).toBeInstanceOf(Song);
     });
@@ -76,10 +81,49 @@ describe("FileService", () => {
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockRejectedValue(new Error("Read error")),
             exists: vi.fn().mockResolvedValue(true),
+            writeTextFile: vi.fn(),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
 
         await expect(service.selectAndReadPlaylist()).rejects.toThrow("Read error");
+    });
+
+    describe("savePlaylist", () => {
+        it("should write songs as one path per line to the given file", async () => {
+            const mockDialog: FileDialog = {
+                open: vi.fn(),
+                openDirectory: vi.fn(),
+            };
+            const mockFileSystem: FileSystem = {
+                readTextFile: vi.fn(),
+                exists: vi.fn(),
+                writeTextFile: vi.fn().mockResolvedValue(undefined),
+            };
+            const songs = [new Song("C:\\Music\\song1.mp3"), new Song("C:\\Music\\song2.mp3")];
+            const service = new FileService(mockDialog, mockFileSystem);
+
+            await service.savePlaylist("C:\\Music\\playlist.alb", songs);
+
+            expect(mockFileSystem.writeTextFile).toHaveBeenCalledWith(
+                "C:\\Music\\playlist.alb",
+                "C:\\Music\\song1.mp3\nC:\\Music\\song2.mp3"
+            );
+        });
+
+        it("should throw if writeTextFile fails", async () => {
+            const mockDialog: FileDialog = {
+                open: vi.fn(),
+                openDirectory: vi.fn(),
+            };
+            const mockFileSystem: FileSystem = {
+                readTextFile: vi.fn(),
+                exists: vi.fn(),
+                writeTextFile: vi.fn().mockRejectedValue(new Error("Write error")),
+            };
+            const service = new FileService(mockDialog, mockFileSystem);
+
+            await expect(service.savePlaylist("C:\\path\\playlist.alb", [])).rejects.toThrow("Write error");
+        });
     });
 });

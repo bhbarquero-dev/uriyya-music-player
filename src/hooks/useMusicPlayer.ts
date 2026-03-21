@@ -11,6 +11,7 @@ import { useAudioPlayback } from "./useAudioPlayback";
  */
 export function useMusicPlayer(fileService?: FileService) {
     const [currentPlaylistName, setCurrentPlaylistName] = useState<string | null>(null);
+    const [currentPlaylistPath, setCurrentPlaylistPath] = useState<string | null>(null);
 
     // Domain hooks
     const {
@@ -20,12 +21,13 @@ export function useMusicPlayer(fileService?: FileService) {
         setPlaylist: setPlaylistState,
         setSelectedSong: setSelectedSongState,
         removeSong,
+        markAsSaved,
         selectNext,
         selectPrevious,
         peekNextSong
     } = usePlaylistState();
 
-    const { loadPlaylist: loadPlaylistFiles } = useFileLoader(fileService);
+    const { loadPlaylist: loadPlaylistFiles, savePlaylist: savePlaylistFiles } = useFileLoader(fileService);
 
     const selectNextSongOnEnd = useCallback(() => {
         const nextSong = peekNextSong();
@@ -56,11 +58,18 @@ export function useMusicPlayer(fileService?: FileService) {
             if (result) {
                 setPlaylistState(result.songs);
                 setCurrentPlaylistName(result.name);
+                setCurrentPlaylistPath(result.path);
             }
         } catch (err) {
             console.error("Failed to load playlist:", err);
         }
     }, [loadPlaylistFiles, setPlaylistState]);
+
+    const saveCurrentPlaylist = useCallback(async () => {
+        if (!currentPlaylistPath) return;
+        await savePlaylistFiles(currentPlaylistPath, playlist);
+        markAsSaved();
+    }, [currentPlaylistPath, playlist, savePlaylistFiles, markAsSaved]);
 
     const playSong = useCallback((song: Song) => {
         // Don't play invalid songs
@@ -85,6 +94,7 @@ export function useMusicPlayer(fileService?: FileService) {
     return {
         playlist,
         currentPlaylistName,
+        currentPlaylistPath,
         selectedSong,
         hasUnsavedChanges,
         playingSong,
@@ -92,6 +102,7 @@ export function useMusicPlayer(fileService?: FileService) {
         isStopping,
         setSelectedSong: setSelectedSongState,
         loadPlaylist,
+        saveCurrentPlaylist,
         playSong,
         playCurrentSelected,
         pause: pauseAudio,

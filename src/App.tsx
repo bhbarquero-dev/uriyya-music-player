@@ -1,18 +1,27 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
 import { ShortcutsFooter } from "@components/ShortcutsFooter";
+import { ConfirmDialog } from "@components/common/ConfirmDialog";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import { Song } from "./logic/Song";
 import "./App.css";
 
+type DialogConfig = {
+  onSave: () => void;
+  onDiscard: () => void;
+};
+
 function App() {
   const [isSidebarCompact, setIsSidebarCompact] = useState(false);
+  const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
   const {
     playlist,
     currentPlaylistName,
+    currentPlaylistPath,
     selectedSong,
     hasUnsavedChanges,
     playingSong,
@@ -20,6 +29,7 @@ function App() {
     isStopping,
     setSelectedSong,
     loadPlaylist,
+    saveCurrentPlaylist,
     playSong,
     playCurrentSelected,
     pause,
@@ -32,6 +42,25 @@ function App() {
     playedPercent
   } = useMusicPlayer();
 
+  // Ref lets the close-event handler always read the latest hasUnsavedChanges
+  // without needing to re-register the listener on every change.
+  const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
+  hasUnsavedChangesRef.current = hasUnsavedChanges;
+
+  const showUnsavedChangesDialog = useCallback((onProceed: () => Promise<void> | void) => {
+    setDialogConfig({
+      onSave: async () => {
+        await saveCurrentPlaylist();
+        setDialogConfig(null);
+        await onProceed();
+      },
+      onDiscard: async () => {
+        setDialogConfig(null);
+        await onProceed();
+      },
+    });
+  }, [saveCurrentPlaylist]);
+
   const handleLoadPlaylist = useCallback(async () => {
     try {
       await loadPlaylist();
@@ -41,12 +70,22 @@ function App() {
   }, [loadPlaylist]);
 
   const handleChangePlaylist = useCallback(async () => {
-    try {
-      await loadPlaylist();
-    } catch (error) {
-      console.error("Failed to change playlist:", error);
+    if (hasUnsavedChanges) {
+      showUnsavedChangesDialog(async () => {
+        try {
+          await loadPlaylist();
+        } catch (error) {
+          console.error("Failed to change playlist:", error);
+        }
+      });
+    } else {
+      try {
+        await loadPlaylist();
+      } catch (error) {
+        console.error("Failed to change playlist:", error);
+      }
     }
-  }, [loadPlaylist]);
+  }, [hasUnsavedChanges, loadPlaylist, showUnsavedChangesDialog]);
 
   const handleRevealInExplorer = useCallback(async (song: Song) => {
     try {
@@ -56,11 +95,24 @@ function App() {
     }
   }, []);
 
-  const handleRemoveSong = useCallback((song: Song) => {
-    removeSong(song);
-  }, [removeSong]);
-
   const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
+
+  // Intercept window close when there are unsaved changes
+  useEffect(() => {
+    const win = getCurrentWindow();
+    let unlisten: (() => void) | null = null;
+
+    win.onCloseRequested((event) => {
+      if (hasUnsavedChangesRef.current) {
+        event.preventDefault();
+        showUnsavedChangesDialog(async () => {
+          await win.destroy();
+        });
+      }
+    }).then(fn => { unlisten = fn; });
+
+    return () => { unlisten?.(); };
+  }, [showUnsavedChangesDialog]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -113,8 +165,19 @@ function App() {
         onLoadPlaylist={handleLoadPlaylist}
         onChangePlaylist={handleChangePlaylist}
         onRevealInExplorer={handleRevealInExplorer}
-        onRemoveSong={handleRemoveSong}
+        onRemoveSong={removeSong}
       />
+
+      {dialogConfig && (
+        <ConfirmDialog
+          title="Cambios sin guardar"
+          message="Tienes cambios sin guardar en la lista de reproducción. ¿Qué deseas hacer antes de continuar?"
+          canSave={!!currentPlaylistPath}
+          onSave={dialogConfig.onSave}
+          onDiscard={dialogConfig.onDiscard}
+          onCancel={() => setDialogConfig(null)}
+        />
+      )}
 
       <ShortcutsFooter />
     </div>

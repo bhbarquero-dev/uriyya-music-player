@@ -25,6 +25,7 @@ describe("useFileLoader", () => {
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn(),
                 exists: vi.fn().mockResolvedValue(true),
+                writeTextFile: vi.fn(),
             };
             const mockFileService = new FileService(mockDialog, mockFileSystem);
 
@@ -50,6 +51,7 @@ describe("useFileLoader", () => {
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn().mockResolvedValue("song1.mp3\nsong2.mp3\n"),
                 exists: vi.fn().mockResolvedValue(true),
+                writeTextFile: vi.fn(),
             };
             const mockFileService = new FileService(mockDialog, mockFileSystem);
 
@@ -76,6 +78,7 @@ describe("useFileLoader", () => {
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn().mockRejectedValue(new Error("Read error")),
                 exists: vi.fn().mockResolvedValue(true),
+                writeTextFile: vi.fn(),
             };
             const mockFileService = new FileService(mockDialog, mockFileSystem);
 
@@ -96,6 +99,7 @@ describe("useFileLoader", () => {
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn().mockResolvedValue("track.mp3\n"),
                 exists: vi.fn().mockResolvedValue(true),
+                writeTextFile: vi.fn(),
             };
             const mockFileService = new FileService(mockDialog, mockFileSystem);
 
@@ -118,6 +122,7 @@ describe("useFileLoader", () => {
             const mockFileSystem: FileSystem = {
                 readTextFile: vi.fn().mockResolvedValue("song1.mp3\nnot-audio.txt\nsong2.MP3\n\n  \n"),
                 exists: vi.fn().mockResolvedValue(true),
+                writeTextFile: vi.fn(),
             };
             const mockFileService = new FileService(mockDialog, mockFileSystem);
 
@@ -145,6 +150,7 @@ describe("useFileLoader", () => {
                     .mockResolvedValueOnce("song1.mp3\n")
                     .mockResolvedValueOnce("song2.mp3\nsong3.mp3\n"),
                 exists: vi.fn().mockResolvedValue(true),
+                writeTextFile: vi.fn(),
             };
             const mockFileService = new FileService(mockDialog, mockFileSystem);
 

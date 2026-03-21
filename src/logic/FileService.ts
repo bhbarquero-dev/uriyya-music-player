@@ -7,6 +7,7 @@ import { Song } from "./Song";
 export interface PlaylistData {
     songs: Song[];
     name: string;
+    path: string;
 }
 
 export class FileService {
@@ -46,7 +47,17 @@ export class FileService {
                 })
             );
 
-            return { songs, name };
+            return { songs, name, path: selected };
+        } catch (err) {
+            console.error("FileService Error:", err);
+            throw err;
+        }
+    }
+
+    public async savePlaylist(path: string, songs: Song[]): Promise<void> {
+        try {
+            const content = songs.map(s => s.getPath()).join('\n');
+            await this.fileSystem.writeTextFile(path, content);
         } catch (err) {
             console.error("FileService Error:", err);
             throw err;

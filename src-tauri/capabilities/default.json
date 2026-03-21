@@ -12,6 +12,7 @@
     "dialog:default",
     "store:default",
     "core:webview:allow-internal-toggle-devtools",
+    "core:window:allow-destroy",
     {
       "identifier": "fs:allow-read",
       "allow": [
@@ -30,6 +31,14 @@
     },
     {
       "identifier": "fs:allow-exists",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-write-text-file",
       "allow": [
         {
           "path": "**"

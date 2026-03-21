@@ -14,6 +14,7 @@ describe("FileService - Song validation", () => {
             exists: vi.fn()
                 .mockResolvedValueOnce(true)   // existing.mp3 exists
                 .mockResolvedValueOnce(false), // missing.mp3 doesn't exist
+            writeTextFile: vi.fn(),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
@@ -40,6 +41,7 @@ describe("FileService - Song validation", () => {
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("song1.mp3\nsong2.mp3\nsong3.mp3\n"),
             exists: vi.fn().mockResolvedValue(true), // All files exist
+            writeTextFile: vi.fn(),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);
@@ -59,6 +61,7 @@ describe("FileService - Song validation", () => {
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue("missing1.mp3\nmissing2.mp3\n"),
             exists: vi.fn().mockResolvedValue(false), // No files exist
+            writeTextFile: vi.fn(),
         };
 
         const service = new FileService(mockDialog, mockFileSystem);

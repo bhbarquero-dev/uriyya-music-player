@@ -315,6 +315,34 @@ describe("usePlaylistState", () => {
         });
     });
 
+    describe("markAsSaved", () => {
+        it("should set hasUnsavedChanges to false", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.removeSong(songs[0]); });
+            expect(result.current.hasUnsavedChanges).toBe(true);
+
+            act(() => { result.current.markAsSaved(); });
+
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
+        it("should not affect songs or selected song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.removeSong(songs[0]); });
+            act(() => { result.current.markAsSaved(); });
+
+            expect(result.current.playlist).toHaveLength(1);
+            expect(result.current.playlist[0]).toBe(songs[1]);
+            expect(result.current.selectedSong).toBe(songs[1]);
+        });
+    });
+
     describe("edge cases", () => {
         it("should handle replacing playlist while song is selected", () => {
             const { result } = renderHook(() => usePlaylistState());
