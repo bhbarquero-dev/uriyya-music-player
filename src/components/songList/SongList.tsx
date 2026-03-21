@@ -1,4 +1,7 @@
 import { useRef, useEffect } from "react";
+import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { restrictToVerticalAxis, restrictToParentElement } from "@dnd-kit/modifiers";
 import { SongRow } from "./SongRow";
 import { EmptyPlaylist } from "./EmptyPlaylist";
 import { PlaylistBanner } from "./PlaylistBanner";
@@ -17,10 +20,15 @@ interface SongListProps {
     onChangePlaylist?: () => void;
     onRevealInExplorer?: (song: Song) => void;
     onRemoveSong?: (song: Song) => void;
+    onMoveSong?: (fromIndex: number, toIndex: number) => void;
 }
 
-export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, hasUnsavedChanges, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist, onRevealInExplorer, onRemoveSong }: SongListProps) {
+export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, hasUnsavedChanges, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist, onRevealInExplorer, onRemoveSong, onMoveSong }: SongListProps) {
     const selectedRowRef = useRef<HTMLTableRowElement | null>(null);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+    );
 
     useEffect(() => {
         if (selectedRowRef.current) {
@@ -30,6 +38,18 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
             });
         }
     }, [selectedSong]);
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id || !onMoveSong) return;
+        const fromIndex = playlist.findIndex(s => s.getPath() === active.id);
+        const toIndex = playlist.findIndex(s => s.getPath() === over.id);
+        if (fromIndex !== -1 && toIndex !== -1) {
+            onMoveSong(fromIndex, toIndex);
+        }
+    };
+
+    const songIds = playlist.map(s => s.getPath());
 
     return (
         <section className="main-content">
@@ -43,29 +63,37 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
             {playlist.length === 0 ? (
                 <EmptyPlaylist />
             ) : (
-                <table className="song-list-table" style={{ marginTop: "10px" }}>
-                    <tbody>
-                        {playlist.map((song) => {
-                            const isSelected = song.equals(selectedSong);
-                            const isLoadedSong = song.equals(playingSong);
-                            const isReallyPlaying = isLoadedSong && isPlaying;
-                            return (
-                                <SongRow
-                                    key={song.getPath()}
-                                    song={song}
-                                    isSelected={isSelected}
-                                    isPlaying={isReallyPlaying}
-                                    isPlayingSong={isLoadedSong}
-                                    onSelect={onSelectSong}
-                                    onPlay={onPlaySong}
-                                    onRevealInExplorer={onRevealInExplorer}
-                                    onRemoveSong={onRemoveSong}
-                                    ref={isSelected ? selectedRowRef : null}
-                                />
-                            );
-                        })}
-                    </tbody>
-                </table>
+                <DndContext
+                    sensors={sensors}
+                    modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+                    onDragEnd={handleDragEnd}
+                >
+                    <SortableContext items={songIds} strategy={verticalListSortingStrategy}>
+                        <table className="song-list-table" style={{ marginTop: "10px" }}>
+                            <tbody>
+                                {playlist.map((song) => {
+                                    const isSelected = song.equals(selectedSong);
+                                    const isLoadedSong = song.equals(playingSong);
+                                    const isReallyPlaying = isLoadedSong && isPlaying;
+                                    return (
+                                        <SongRow
+                                            key={song.getPath()}
+                                            song={song}
+                                            isSelected={isSelected}
+                                            isPlaying={isReallyPlaying}
+                                            isPlayingSong={isLoadedSong}
+                                            sortable={!!onMoveSong}
+                                            onSelect={onSelectSong}
+                                            onPlay={onPlaySong}
+                                            onRevealInExplorer={onRevealInExplorer}
+                                            onRemoveSong={onRemoveSong}
+                                        />
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </SortableContext>
+                </DndContext>
             )}
         </section>
     );

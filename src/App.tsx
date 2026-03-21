@@ -34,6 +34,7 @@ function App() {
     playCurrentSelected,
     pause,
     stop,
+    moveSong,
     removeSong,
     selectNextInList,
     selectPreviousInList,
@@ -184,6 +185,7 @@ function App() {
         onChangePlaylist={handleChangePlaylist}
         onRevealInExplorer={handleRevealInExplorer}
         onRemoveSong={handleRemoveSong}
+        onMoveSong={moveSong}
       />
 
       {dialogConfig && (

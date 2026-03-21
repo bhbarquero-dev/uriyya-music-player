@@ -734,6 +734,24 @@ body {
   user-select: none;
 }
 
+.drag-handle {
+  width: 20px;
+  text-align: center;
+  color: var(--apple-text-secondary);
+  cursor: grab;
+  opacity: 0;
+  padding: 12px 4px 12px 12px !important;
+  touch-action: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.song-row:hover .drag-handle {
+  opacity: 0.5;
+}
+
 .btn-load {
   background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--apple-border);
