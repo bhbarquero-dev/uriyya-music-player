@@ -4,7 +4,6 @@ import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
-import { ShortcutsFooter } from "@components/ShortcutsFooter";
 import { ConfirmDialog } from "@components/common/ConfirmDialog";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import { Song } from "./logic/Song";
@@ -200,7 +199,6 @@ function App() {
         />
       )}
 
-      <ShortcutsFooter />
     </div>
   );
 }

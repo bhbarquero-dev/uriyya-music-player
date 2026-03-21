@@ -15,9 +15,10 @@ interface SongRowProps {
     onRevealInExplorer?: (song: Song) => void;
     onRemoveSong?: (song: Song) => void;
     sortable?: boolean;
+    scrollRef?: (el: HTMLTableRowElement | null) => void;
 }
 
-export function SongRow({ song, isSelected, isPlaying, isPlayingSong, onSelect, onPlay, onRevealInExplorer, onRemoveSong, sortable }: SongRowProps) {
+export function SongRow({ song, isSelected, isPlaying, isPlayingSong, onSelect, onPlay, onRevealInExplorer, onRemoveSong, sortable, scrollRef }: SongRowProps) {
     const isInvalid = !song.isValid();
     const [contextMenuPos, setContextMenuPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -50,7 +51,7 @@ export function SongRow({ song, isSelected, isPlaying, isPlayingSong, onSelect, 
     return (
         <>
         <tr
-            ref={setNodeRef}
+            ref={(el) => { setNodeRef(el); scrollRef?.(el); }}
             style={style}
             className={`song-row ${isSelected ? "selected" : ""} ${isInvalid ? "invalid" : ""}`}
             onClick={() => onSelect(song)}

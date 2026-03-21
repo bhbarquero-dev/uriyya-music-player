@@ -26,16 +26,29 @@ interface SongListProps {
 export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, hasUnsavedChanges, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist, onRevealInExplorer, onRemoveSong, onMoveSong }: SongListProps) {
     const selectedRowRef = useRef<HTMLTableRowElement | null>(null);
 
+    const containerRef = useRef<HTMLElement | null>(null);
+
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
     );
 
     useEffect(() => {
-        if (selectedRowRef.current) {
-            selectedRowRef.current.scrollIntoView({
-                behavior: "smooth",
-                block: "nearest",
-            });
+        const row = selectedRowRef.current;
+        const container = containerRef.current;
+        if (!row || !container) return;
+
+        const banner = container.querySelector(".playlist-banner");
+        const bannerHeight = banner ? banner.getBoundingClientRect().height : 0;
+
+        const rowRect = row.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const visibleTop = containerRect.top + bannerHeight;
+        const visibleBottom = containerRect.bottom;
+
+        if (rowRect.top < visibleTop) {
+            container.scrollTop -= visibleTop - rowRect.top;
+        } else if (rowRect.bottom > visibleBottom) {
+            container.scrollTop += rowRect.bottom - visibleBottom;
         }
     }, [selectedSong]);
 
@@ -52,7 +65,7 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
     const songIds = playlist.map(s => s.getPath());
 
     return (
-        <section className="main-content">
+        <section className="main-content" ref={containerRef}>
             <PlaylistBanner
                 currentPlaylistName={currentPlaylistName}
                 songsCount={playlist.length}
@@ -88,6 +101,7 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
                                             onPlay={onPlaySong}
                                             onRevealInExplorer={onRevealInExplorer}
                                             onRemoveSong={onRemoveSong}
+                                            scrollRef={isSelected ? (el) => { selectedRowRef.current = el; } : undefined}
                                         />
                                     );
                                 })}

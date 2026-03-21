@@ -71,10 +71,9 @@ body {
   display: grid;
   grid-template-areas:
     "sidebar player"
-    "sidebar main"
-    "sidebar footer";
+    "sidebar main";
   grid-template-columns: var(--sidebar-width) 1fr;
-  grid-template-rows: var(--player-height) 1fr 50px;
+  grid-template-rows: var(--player-height) 1fr;
   box-sizing: border-box;
   background: var(--apple-bg);
   height: 100vh;
@@ -905,47 +904,6 @@ body {
   animation: pulse 1.5s infinite;
 }
 
-/* Footer & Shortcut Styles */
-.shortcuts-footer {
-  grid-area: footer;
-  background: var(--apple-main);
-  border-top: 1px solid var(--apple-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 48px;
-  gap: 32px;
-  z-index: 10;
-}
-
-.shortcut-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--apple-text-secondary);
-  font-weight: 500;
-}
-
-.key-cap {
-  background: var(--apple-bg);
-  border: 1px solid var(--apple-border);
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-  font-size: 10px;
-  color: var(--apple-text);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-  min-width: 18px;
-  text-align: center;
-}
-
-@media (prefers-color-scheme: dark) {
-  .key-cap {
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-}
 /* Context Menu */
 .context-menu {
   position: fixed;
