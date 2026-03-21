@@ -150,7 +150,20 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const isTypingInTextField = (target: EventTarget | null) => {
+      if (!(target instanceof HTMLElement)) {
+        return false;
+      }
+
+      const tagName = target.tagName.toLowerCase();
+      return tagName === "input" || tagName === "textarea";
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isTypingInTextField(e.target)) {
+        return;
+      }
+
       const key = e.key.toLowerCase();
       if (key === "p") {
         playCurrentSelected();
