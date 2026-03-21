@@ -1,4 +1,5 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { isSupportedAudioPath, SUPPORTED_AUDIO_EXTENSIONS } from "./audioFormats";
 
 export class Song {
     private readonly id: string;
@@ -11,9 +12,10 @@ export class Song {
             throw new Error("Song path cannot be empty");
         }
 
-        const lowerPath = path.toLowerCase();
-        if (!lowerPath.endsWith(".mp3")) {
-            throw new Error(`Invalid song format: ${path}. Only .mp3 files are supported.`);
+        if (!isSupportedAudioPath(path)) {
+            throw new Error(
+                `Invalid song format: ${path}. Supported formats: ${SUPPORTED_AUDIO_EXTENSIONS.join(", ")}.`
+            );
         }
 
         this.id = crypto.randomUUID();

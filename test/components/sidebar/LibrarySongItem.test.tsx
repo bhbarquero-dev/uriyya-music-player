@@ -35,6 +35,37 @@ describe("LibrarySongItem", () => {
         expect(screen.getByText("Mostrar en el Explorador")).toBeInTheDocument();
     });
 
+    it("should show 'Agregar al final' only when callback is provided", async () => {
+        const user = userEvent.setup();
+        const onAddToPlaylist = vi.fn();
+        render(
+            <ul>
+                <LibrarySongItem path={"C:\\Music\\song.mp3"} onAddToPlaylist={onAddToPlaylist} />
+            </ul>
+        );
+
+        await user.pointer([{ keys: "[MouseRight]", target: screen.getByText("song.mp3") }]);
+
+        expect(screen.getByText("Agregar al final")).toBeInTheDocument();
+        expect(screen.getByText("Mostrar en el Explorador")).toBeInTheDocument();
+    });
+
+    it("should call add callback with the path when 'Agregar al final' is clicked", async () => {
+        const user = userEvent.setup();
+        const onAddToPlaylist = vi.fn();
+        render(
+            <ul>
+                <LibrarySongItem path={"C:\\Music\\song.mp3"} onAddToPlaylist={onAddToPlaylist} />
+            </ul>
+        );
+
+        await user.pointer([{ keys: "[MouseRight]", target: screen.getByText("song.mp3") }]);
+        await user.click(screen.getByText("Agregar al final"));
+
+        expect(onAddToPlaylist).toHaveBeenCalledWith("C:\\Music\\song.mp3");
+        expect(screen.queryByText("Agregar al final")).not.toBeInTheDocument();
+    });
+
     it("should call revealItemInDir with the path when option is clicked", async () => {
         const user = userEvent.setup();
         render(

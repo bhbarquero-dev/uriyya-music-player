@@ -15,7 +15,7 @@ function resolveSelectionAfterRemoval(
 
 function isPlaylistOrderEqual(a: Song[], b: Song[]): boolean {
     if (a.length !== b.length) return false;
-    return a.every((song, i) => song.equals(b[i]));
+    return a.every((song, i) => song.getPath() === b[i].getPath());
 }
 
 export function usePlaylistState() {
@@ -59,6 +59,19 @@ export function usePlaylistState() {
 
         setPlaylistState(reordered);
         setHasUnsavedChanges(!isPlaylistOrderEqual(reordered, originalPlaylistRef.current));
+    }, []);
+
+    const addSong = useCallback((song: Song) => {
+        const updated = [...playlistRef.current, song];
+
+        playlistRef.current = updated;
+        playlistManagerRef.current.setSongs(updated);
+        if (selectedSongRef.current) {
+            playlistManagerRef.current.setCurrentSong(selectedSongRef.current);
+        }
+
+        setPlaylistState(updated);
+        setHasUnsavedChanges(!isPlaylistOrderEqual(updated, originalPlaylistRef.current));
     }, []);
 
     const removeSong = useCallback((song: Song) => {
@@ -114,6 +127,7 @@ export function usePlaylistState() {
         hasUnsavedChanges,
         setPlaylist,
         setSelectedSong,
+        addSong,
         moveSong,
         removeSong,
         markAsSaved,

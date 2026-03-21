@@ -27,6 +27,10 @@ describe("Song", () => {
             expect(() => new Song("/home/user/music/song.mp3")).not.toThrow();
         });
 
+        it("should accept valid .wav path", () => {
+            expect(() => new Song("song.wav")).not.toThrow();
+        });
+
         it("should throw on empty string", () => {
             expect(() => new Song("")).toThrow("Song path cannot be empty");
         });
@@ -35,16 +39,12 @@ describe("Song", () => {
             expect(() => new Song("   ")).toThrow("Song path cannot be empty");
         });
 
-        it("should throw on non-.mp3 extension (.txt)", () => {
+        it("should throw on unsupported extension (.txt)", () => {
             expect(() => new Song("song.txt")).toThrow("Invalid song format");
-            expect(() => new Song("song.txt")).toThrow("Only .mp3 files are supported");
+            expect(() => new Song("song.txt")).toThrow("Supported formats: .mp3, .wav");
         });
 
-        it("should throw on non-.mp3 extension (.wav)", () => {
-            expect(() => new Song("song.wav")).toThrow("Invalid song format");
-        });
-
-        it("should throw on non-.mp3 extension (.flac)", () => {
+        it("should throw on unsupported extension (.flac)", () => {
             expect(() => new Song("song.flac")).toThrow("Invalid song format");
         });
 

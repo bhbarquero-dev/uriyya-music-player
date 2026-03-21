@@ -256,6 +256,65 @@ describe("usePlaylistState", () => {
             expect(result.current.selectedSong).toBe(songs[1]);
         });
 
+        it("should append a song to the end of the playlist", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
+            const appendedSong = new Song("song3.wav");
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.addSong(appendedSong); });
+
+            expect(result.current.playlist).toHaveLength(3);
+            expect(result.current.playlist[2]).toBe(appendedSong);
+        });
+
+        it("should set hasUnsavedChanges to true after appending a song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3")];
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.addSong(new Song("song2.wav")); });
+
+            expect(result.current.hasUnsavedChanges).toBe(true);
+        });
+
+        it("should keep current selection after appending a song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
+
+            act(() => {
+                result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
+            });
+
+            act(() => { result.current.addSong(new Song("song3.wav")); });
+
+            expect(result.current.selectedSong).toBe(songs[0]);
+        });
+
+        it("should reset hasUnsavedChanges when removing and re-adding the same last song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const firstSong = new Song("song1.mp3");
+            const lastSong = new Song("song2.mp3");
+
+            act(() => {
+                result.current.setPlaylist([firstSong, lastSong]);
+            });
+
+            act(() => {
+                result.current.removeSong(lastSong);
+            });
+
+            expect(result.current.hasUnsavedChanges).toBe(true);
+
+            act(() => {
+                result.current.addSong(new Song("song2.mp3"));
+            });
+
+            expect(result.current.playlist.map((song) => song.getPath())).toEqual(["song1.mp3", "song2.mp3"]);
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
         it("should auto-select the previous song when removing the last song in the list", () => {
             const { result } = renderHook(() => usePlaylistState());
             const songs = [new Song("song1.mp3"), new Song("song2.mp3"), new Song("song3.mp3")];

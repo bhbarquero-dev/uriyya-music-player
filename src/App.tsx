@@ -33,6 +33,7 @@ function App() {
     playCurrentSelected,
     pause,
     stop,
+    addSong,
     moveSong,
     removeSong,
     selectNextInList,
@@ -100,6 +101,10 @@ function App() {
   const handleRemoveSong = useCallback((song: Song) => {
     removeSong(song);
   }, [removeSong]);
+
+  const handleAddLibrarySong = useCallback((path: string) => {
+    addSong(new Song(path));
+  }, [addSong]);
 
   const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
 
@@ -170,7 +175,11 @@ function App() {
         playedPercent={playedPercent}
       />
 
-      <Sidebar isCompact={isSidebarCompact} onCollapse={toggleSidebar} />
+      <Sidebar
+        isCompact={isSidebarCompact}
+        onCollapse={toggleSidebar}
+        onAddToPlaylist={currentPlaylistPath ? handleAddLibrarySong : undefined}
+      />
 
       <SongList
         playlist={playlist}
