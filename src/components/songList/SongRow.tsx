@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/react/sortable";
 import { Song } from "../../logic/Song";
 import { ContextMenu } from "../common/ContextMenu";
 
 interface SongRowProps {
     song: Song;
+    index?: number;
     isSelected: boolean;
     isPlaying: boolean;
     isPlayingSong?: boolean;
@@ -18,24 +18,19 @@ interface SongRowProps {
     scrollRef?: (el: HTMLTableRowElement | null) => void;
 }
 
-export function SongRow({ song, isSelected, isPlaying, isPlayingSong, onSelect, onPlay, onRevealInExplorer, onRemoveSong, sortable, scrollRef }: SongRowProps) {
+export function SongRow({ song, index = 0, isSelected, isPlaying, isPlayingSong, onSelect, onPlay, onRevealInExplorer, onRemoveSong, sortable, scrollRef }: SongRowProps) {
     const isInvalid = !song.isValid();
     const [contextMenuPos, setContextMenuPos] = useState<{ x: number; y: number } | null>(null);
 
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-    } = useSortable({ id: song.getId() });
+    const rowRef = useRef<HTMLTableRowElement | null>(null);
+    const { handleRef, isDragging } = useSortable({
+        id: song.getId(),
+        index,
+        element: rowRef,
+        disabled: !sortable,
+    });
 
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.4 : undefined,
-    };
+    const style = isDragging ? { opacity: 0.4 } : undefined;
 
     const handleContextMenu = (e: React.MouseEvent) => {
         if (!onRevealInExplorer && !onRemoveSong) return;
@@ -51,7 +46,7 @@ export function SongRow({ song, isSelected, isPlaying, isPlayingSong, onSelect, 
     return (
         <>
         <tr
-            ref={(el) => { setNodeRef(el); scrollRef?.(el); }}
+            ref={(el) => { rowRef.current = el; scrollRef?.(el); }}
             style={style}
             className={`song-row ${isSelected ? "selected" : ""} ${isInvalid ? "invalid" : ""}`}
             onClick={() => onSelect(song)}
@@ -59,7 +54,7 @@ export function SongRow({ song, isSelected, isPlaying, isPlayingSong, onSelect, 
             onContextMenu={handleContextMenu}
         >
             {sortable && (
-                <td className="drag-handle" {...attributes} {...listeners}>⠿</td>
+                <td className="drag-handle" ref={handleRef}>⠿</td>
             )}
             <td className="song-title">
                 <div style={{ display: "flex", alignItems: "center" }}>
