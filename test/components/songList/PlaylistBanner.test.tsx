@@ -112,4 +112,79 @@ describe("PlaylistBanner", () => {
             expect(screen.queryByTitle(/cambios sin guardar/i)).not.toBeInTheDocument();
         });
     });
+
+    describe("Disabled state (playback active)", () => {
+        it("should disable the load button when disabled is true", () => {
+            render(
+                <PlaylistBanner
+                    currentPlaylistName={null}
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    disabled={true}
+                />
+            );
+            expect(screen.getByRole("button", { name: /cargar lista de reproducción/i })).toBeDisabled();
+        });
+
+        it("should disable the change button when disabled is true", () => {
+            render(
+                <PlaylistBanner
+                    currentPlaylistName="Mi Playlist"
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    onChangePlaylist={mockOnChangePlaylist}
+                    disabled={true}
+                />
+            );
+            expect(screen.getByRole("button", { name: /cambiar lista de reproducción/i })).toBeDisabled();
+        });
+
+        it("should not call onLoadPlaylist when load button is disabled", async () => {
+            const user = userEvent.setup();
+            render(
+                <PlaylistBanner
+                    currentPlaylistName={null}
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    disabled={true}
+                />
+            );
+            await user.click(screen.getByRole("button", { name: /cargar lista de reproducción/i }));
+            expect(mockOnLoadPlaylist).not.toHaveBeenCalled();
+        });
+
+        it("should not call onChangePlaylist when change button is disabled", async () => {
+            const user = userEvent.setup();
+            render(
+                <PlaylistBanner
+                    currentPlaylistName="Mi Playlist"
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    onChangePlaylist={mockOnChangePlaylist}
+                    disabled={true}
+                />
+            );
+            await user.click(screen.getByRole("button", { name: /cambiar lista de reproducción/i }));
+            expect(mockOnChangePlaylist).not.toHaveBeenCalled();
+        });
+
+        it("should show a tooltip on the load button when disabled", () => {
+            render(
+                <PlaylistBanner
+                    currentPlaylistName={null}
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    disabled={true}
+                />
+            );
+            expect(screen.getByRole("button", { name: /cargar lista de reproducción/i })).toHaveAttribute("title");
+        });
+
+        it("should not disable buttons when disabled is false", () => {
+            render(
+                <PlaylistBanner
+                    currentPlaylistName="Mi Playlist"
+                    onLoadPlaylist={mockOnLoadPlaylist}
+                    onChangePlaylist={mockOnChangePlaylist}
+                    disabled={false}
+                />
+            );
+            expect(screen.getByRole("button", { name: /cambiar lista de reproducción/i })).not.toBeDisabled();
+        });
+    });
 });

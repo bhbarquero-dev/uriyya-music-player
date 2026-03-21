@@ -83,7 +83,7 @@ describe("useMusicPlayer", () => {
         expect(result.current.playlist).toHaveLength(2);
         expect(result.current.playlist[0]).toBe(song1);
         expect(result.current.playlist[1]).toBe(song2);
-        expect(result.current.selectedSong).toBe(song1);
+        expect(result.current.selectedSong).toBeNull();
         expect(result.current.currentPlaylistName).toBe("my-playlist");
     });
 
@@ -102,8 +102,9 @@ describe("useMusicPlayer", () => {
             await result.current.loadPlaylist();
         });
 
-        // Current is s1.mp3
-        expect(result.current.selectedSong).toBe(s1);
+        act(() => {
+            result.current.setSelectedSong(s1);
+        });
 
         act(() => {
             result.current.selectNextInList();

@@ -64,14 +64,16 @@ function App() {
   showUnsavedChangesDialogRef.current = showUnsavedChangesDialog;
 
   const handleLoadPlaylist = useCallback(async () => {
+    if (playingSong !== null) return;
     try {
       await loadPlaylist();
     } catch (error) {
       console.error("Failed to load playlist:", error);
     }
-  }, [loadPlaylist]);
+  }, [playingSong, loadPlaylist]);
 
   const handleChangePlaylist = useCallback(async () => {
+    if (playingSong !== null) return;
     if (hasUnsavedChanges) {
       showUnsavedChangesDialog(async () => {
         try {
@@ -87,7 +89,7 @@ function App() {
         console.error("Failed to change playlist:", error);
       }
     }
-  }, [hasUnsavedChanges, loadPlaylist, showUnsavedChangesDialog]);
+  }, [playingSong, hasUnsavedChanges, loadPlaylist, showUnsavedChangesDialog]);
 
   const handleRevealInExplorer = useCallback(async (song: Song) => {
     try {

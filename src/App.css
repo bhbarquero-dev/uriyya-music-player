@@ -637,6 +637,17 @@ body {
   background: rgba(0, 0, 0, 0.08);
 }
 
+.btn-load:disabled,
+.btn-change-playlist:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-load:disabled:hover,
+.btn-change-playlist:disabled:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
 @media (prefers-color-scheme: dark) {
   .btn-change-playlist {
     background: rgba(255, 255, 255, 0.05);

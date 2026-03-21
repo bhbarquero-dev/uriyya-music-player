@@ -26,7 +26,7 @@ describe("usePlaylistState", () => {
             expect(result.current.playlist).toHaveLength(2);
         });
 
-        it("should auto-select first song when loading non-empty playlist", () => {
+        it("should clear selected song when loading a non-empty playlist", () => {
             const { result } = renderHook(() => usePlaylistState());
             const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
 
@@ -34,10 +34,10 @@ describe("usePlaylistState", () => {
                 result.current.setPlaylist(songs);
             });
 
-            expect(result.current.selectedSong).toBe(songs[0]);
+            expect(result.current.selectedSong).toBeNull();
         });
 
-        it("should not auto-select if a song is already selected", () => {
+        it("should clear selected song even if one was already selected", () => {
             const { result } = renderHook(() => usePlaylistState());
             const song1 = new Song("song1.mp3");
             const song2 = new Song("song2.mp3");
@@ -47,7 +47,7 @@ describe("usePlaylistState", () => {
                 result.current.setPlaylist([song1, song2]);
             });
 
-            expect(result.current.selectedSong).toBe(song1);
+            expect(result.current.selectedSong).toBeNull();
         });
 
         it("should handle empty playlist", () => {
@@ -109,9 +109,8 @@ describe("usePlaylistState", () => {
 
             act(() => {
                 result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
             });
-
-            expect(result.current.selectedSong).toBe(songs[0]);
 
             act(() => {
                 result.current.selectNext();
@@ -154,9 +153,8 @@ describe("usePlaylistState", () => {
 
             act(() => {
                 result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
             });
-
-            expect(result.current.selectedSong).toBe(songs[0]);
 
             act(() => {
                 result.current.selectPrevious();
@@ -334,6 +332,7 @@ describe("usePlaylistState", () => {
             const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
 
             act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.setSelectedSong(songs[0]); });
             act(() => { result.current.removeSong(songs[0]); });
             act(() => { result.current.markAsSaved(); });
 
@@ -500,8 +499,8 @@ describe("usePlaylistState", () => {
                 result.current.setPlaylist(newSongs);
             });
 
-            // Should keep old selection when loading new playlist
-            expect(result.current.selectedSong).toBe(oldSongs[1]);
+            // Should clear selection when loading new playlist
+            expect(result.current.selectedSong).toBeNull();
         });
 
         it("should handle loading playlist multiple times", () => {

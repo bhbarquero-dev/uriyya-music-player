@@ -2,11 +2,14 @@ interface PlaylistBannerProps {
     currentPlaylistName: string | null;
     songsCount?: number;
     hasUnsavedChanges?: boolean;
+    disabled?: boolean;
     onLoadPlaylist: () => void;
     onChangePlaylist?: () => void;
 }
 
-export function PlaylistBanner({ currentPlaylistName, songsCount = 0, hasUnsavedChanges, onLoadPlaylist, onChangePlaylist }: PlaylistBannerProps) {
+const DISABLED_TITLE = "No se puede cambiar la lista de reproducción mientras hay una canción en reproducción o en pausa.";
+
+export function PlaylistBanner({ currentPlaylistName, songsCount = 0, hasUnsavedChanges, disabled, onLoadPlaylist, onChangePlaylist }: PlaylistBannerProps) {
     const songsLabel = songsCount === 1 ? "1 canción" : `${songsCount} canciones`;
 
     return (
@@ -31,13 +34,23 @@ export function PlaylistBanner({ currentPlaylistName, songsCount = 0, hasUnsaved
                             </div>
                         </div>
                         {onChangePlaylist && (
-                            <button className="btn-change-playlist" onClick={onChangePlaylist}>
+                            <button
+                                className="btn-change-playlist"
+                                onClick={onChangePlaylist}
+                                disabled={disabled}
+                                title={disabled ? DISABLED_TITLE : undefined}
+                            >
                                 Cambiar lista de reproducción
                             </button>
                         )}
                     </div>
             ) : (
-                <button className="btn-load" onClick={onLoadPlaylist}>
+                <button
+                    className="btn-load"
+                    onClick={onLoadPlaylist}
+                    disabled={disabled}
+                    title={disabled ? DISABLED_TITLE : undefined}
+                >
                     Cargar lista de reproducción
                 </button>
             )}

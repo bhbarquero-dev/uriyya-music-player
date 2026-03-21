@@ -59,6 +59,7 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
                 onLoadPlaylist={onLoadPlaylist}
                 onChangePlaylist={onChangePlaylist}
                 hasUnsavedChanges={hasUnsavedChanges}
+                disabled={playingSong !== null}
             />
             {playlist.length === 0 ? (
                 <EmptyPlaylist />

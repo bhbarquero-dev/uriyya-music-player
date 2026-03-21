@@ -38,13 +38,7 @@ export function usePlaylistState() {
         playlistManagerRef.current.setSongs(songs);
         setPlaylistState(songs);
         setHasUnsavedChanges(false);
-
-        const prev = selectedSongRef.current;
-        if (songs.length > 0 && !prev) {
-            updateSelectedSong(songs[0]);
-        } else if (songs.length === 0) {
-            updateSelectedSong(null);
-        }
+        updateSelectedSong(null);
     }, [updateSelectedSong]);
 
     const moveSong = useCallback((fromIndex: number, toIndex: number) => {
