@@ -44,12 +44,17 @@ export function usePlaylistState() {
         }
     }, []);
 
+    const peekNextSong = useCallback((): Song | null => {
+        return playlistManagerRef.current.peekNext();
+    }, []);
+
     return {
         playlist,
         selectedSong,
         setPlaylist,
         setSelectedSong,
         selectNext,
-        selectPrevious
+        selectPrevious,
+        peekNextSong
     };
 }

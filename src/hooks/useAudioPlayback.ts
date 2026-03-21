@@ -11,12 +11,12 @@ const TIME_POLL_INTERVAL_MS = 250;
  */
 function createAudioEventHandlers(
     getAudioManager: () => AudioManager | null,
+    onNaturalEndRef: { current: (() => void) | undefined },
+    resetPlaybackStateRef: { current: () => void },
     setState: {
         setIsPlaying: (value: boolean) => void;
         setPlayingSong: (value: Song | null) => void;
         setIsStopping: (value: boolean) => void;
-        setCurrentTime: (value: number) => void;
-        setDuration: (value: number | null) => void;
     }
 ) {
     return {
@@ -24,11 +24,8 @@ function createAudioEventHandlers(
             // Only reset timing and clear playing state if the ended channel is the active one
             const audioManager = getAudioManager();
             if (id === audioManager?.getActiveChannelId()) {
-                setState.setIsPlaying(false);
-                setState.setPlayingSong(null);
-                setState.setIsStopping(false);
-                setState.setCurrentTime(0);
-                setState.setDuration(null);
+                resetPlaybackStateRef.current();
+                onNaturalEndRef.current?.();
             }
         },
         onError: (id: AudioChannel, err: any) => {
@@ -43,11 +40,7 @@ function createAudioEventHandlers(
         onFadeFinished: (id: AudioChannel) => {
             const audioManager = getAudioManager();
             if (id === audioManager?.getActiveChannelId()) {
-                setState.setIsPlaying(false);
-                setState.setPlayingSong(null);
-                setState.setIsStopping(false);
-                setState.setCurrentTime(0);
-                setState.setDuration(null);
+                resetPlaybackStateRef.current();
             }
         }
     };
@@ -56,6 +49,7 @@ function createAudioEventHandlers(
 /**
  * Polls the active audio element for timing updates.
  * Avoids overwriting reset state when playback has ended or been stopped.
+ * Also acts as a fallback detector for natural song end when the 'ended' event is unreliable.
  */
 function createTimingTick(
     audioManager: AudioManager,
@@ -64,7 +58,8 @@ function createTimingTick(
     setState: {
         setCurrentTime: (value: number) => void;
         setDuration: (value: number | null) => void;
-    }
+    },
+    onNaturalEnd: () => void
 ) {
     return (mounted: { current: boolean }) => {
         const audio = audioManager.getActiveAudio();
@@ -72,6 +67,13 @@ function createTimingTick(
 
         // If we've recently ended/stopped, don't overwrite the reset
         if (endedOrStoppedRef.current) return;
+
+        // Fallback: detect natural end when the 'ended' event didn't fire (e.g. some WebViews)
+        if (audio.ended && isPlaying) {
+            if (!mounted.current) return;
+            onNaturalEnd();
+            return;
+        }
 
         // If audio is paused and we are not in playing state, keep times reset
         if (audio.paused && !isPlaying) {
@@ -89,7 +91,7 @@ function createTimingTick(
     };
 }
 
-export function useAudioPlayback() {
+export function useAudioPlayback(onNaturalEnd?: () => void) {
     const [playingSong, setPlayingSong] = useState<Song | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isStopping, setIsStopping] = useState(false);
@@ -99,12 +101,30 @@ export function useAudioPlayback() {
     // Ref to indicate we've recently ended/stopped playback so polling shouldn't overwrite resets
     const endedOrStoppedRef = useRef(false);
 
+    // Keep the external callback in a ref so handlers created once can always see the latest version
+    const onNaturalEndRef = useRef(onNaturalEnd);
+    useEffect(() => { onNaturalEndRef.current = onNaturalEnd; }, [onNaturalEnd]);
+
+    // Stable ref for full playback reset — captured by handlers created in the useState lazy init
+    // and reused by the polling fallback. Safe because all closed-over values (React setters,
+    // endedOrStoppedRef) are stable references guaranteed by React.
+    const resetPlaybackStateRef = useRef(() => {
+        endedOrStoppedRef.current = true;
+        setIsPlaying(false);
+        setPlayingSong(null);
+        setIsStopping(false);
+        setCurrentTime(0);
+        setDuration(null);
+    });
+
     // Initialize AudioManager with lazy initializer (proper React pattern)
     const [audioManager] = useState(() => {
         const audioManagerRef = { current: null as AudioManager | null };
         const handlers = createAudioEventHandlers(
             () => audioManagerRef.current,
-            { setIsPlaying, setPlayingSong, setIsStopping, setCurrentTime, setDuration }
+            onNaturalEndRef,
+            resetPlaybackStateRef,
+            { setIsPlaying, setPlayingSong, setIsStopping }
         );
         const manager = new AudioManager(handlers);
         audioManagerRef.current = manager;
@@ -118,7 +138,11 @@ export function useAudioPlayback() {
             audioManager,
             endedOrStoppedRef,
             isPlaying,
-            { setCurrentTime, setDuration }
+            { setCurrentTime, setDuration },
+            () => {
+                resetPlaybackStateRef.current();
+                onNaturalEndRef.current?.();
+            }
         );
 
         const interval = window.setInterval(() => {
@@ -161,12 +185,8 @@ export function useAudioPlayback() {
 
     const stop = useCallback(() => {
         audioManager.stopWithFade();
-        setIsPlaying(false);
-        setPlayingSong(null);
-        setIsStopping(true);
-        setCurrentTime(0);
-        setDuration(null);
-        endedOrStoppedRef.current = true;
+        resetPlaybackStateRef.current();
+        setIsStopping(true); // override: track that a fade-stop is in progress
     }, [audioManager]);
 
     const getAudioElement = useCallback(() => {

@@ -57,6 +57,33 @@ describe("PlaylistManager", () => {
         expect(manager.getPrevious()).toBeNull();
     });
 
+    describe("peekNext", () => {
+        it("should return the next song without advancing the index", () => {
+            const s1 = new Song("s1.mp3");
+            const s2 = new Song("s2.mp3");
+            manager.setSongs([s1, s2]);
+
+            const peeked = manager.peekNext();
+
+            expect(peeked).toBe(s2);
+            // Index must NOT have advanced
+            expect(manager.getCurrentSong()).toBe(s1);
+        });
+
+        it("should return null when at the last song", () => {
+            const s1 = new Song("s1.mp3");
+            const s2 = new Song("s2.mp3");
+            manager.setSongs([s1, s2]);
+            manager.setCurrentSong(s2);
+
+            expect(manager.peekNext()).toBeNull();
+        });
+
+        it("should return null when the playlist is empty", () => {
+            expect(manager.peekNext()).toBeNull();
+        });
+    });
+
     it("should reset current song when setting empty songs array", () => {
         manager.setSongs([new Song("s1.mp3")]);
         expect(manager.getCurrentSong()).not.toBeNull();
