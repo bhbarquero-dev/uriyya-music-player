@@ -47,14 +47,15 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
                     <tbody>
                         {playlist.map((song) => {
                             const isSelected = song.equals(selectedSong);
-                            const isReallyPlaying = song.equals(playingSong) && isPlaying;
+                            const isLoadedSong = song.equals(playingSong);
+                            const isReallyPlaying = isLoadedSong && isPlaying;
                             return (
                                 <SongRow
                                     key={song.getPath()}
                                     song={song}
                                     isSelected={isSelected}
                                     isPlaying={isReallyPlaying}
-                                    isPlayingSong={isReallyPlaying}
+                                    isPlayingSong={isLoadedSong}
                                     onSelect={onSelectSong}
                                     onPlay={onPlaySong}
                                     onRevealInExplorer={onRevealInExplorer}
