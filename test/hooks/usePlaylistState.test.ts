@@ -452,6 +452,20 @@ describe("usePlaylistState", () => {
             expect(result.current.hasUnsavedChanges).toBe(false);
         });
 
+        it("should clear hasUnsavedChanges when moves result in the original order", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            act(() => { result.current.setPlaylist(songs); });
+
+            // [song1, song2, song3] → move song1 to end → [song2, song3, song1]
+            act(() => { result.current.moveSong(0, 2); });
+            expect(result.current.hasUnsavedChanges).toBe(true);
+
+            // [song2, song3, song1] → move song1 back to start → [song1, song2, song3]
+            act(() => { result.current.moveSong(2, 0); });
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
         it("should maintain correct navigation after moving a song", () => {
             const { result } = renderHook(() => usePlaylistState());
 
