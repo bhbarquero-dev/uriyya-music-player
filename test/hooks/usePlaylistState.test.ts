@@ -189,6 +189,132 @@ describe("usePlaylistState", () => {
         });
     });
 
+    describe("removing songs", () => {
+        it("should start with hasUnsavedChanges as false", () => {
+            const { result } = renderHook(() => usePlaylistState());
+
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
+        it("should remove a song from the playlist", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3"), new Song("song3.mp3")];
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.removeSong(songs[1]); });
+
+            expect(result.current.playlist).toHaveLength(2);
+            expect(result.current.playlist[0]).toBe(songs[0]);
+            expect(result.current.playlist[1]).toBe(songs[2]);
+        });
+
+        it("should set hasUnsavedChanges to true after removing a song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.removeSong(songs[0]); });
+
+            expect(result.current.hasUnsavedChanges).toBe(true);
+        });
+
+        it("should reset hasUnsavedChanges to false when loading a new playlist", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.removeSong(songs[0]); });
+            expect(result.current.hasUnsavedChanges).toBe(true);
+
+            act(() => { result.current.setPlaylist([new Song("new1.mp3")]); });
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
+        it("should keep the selected song when a different song is removed", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3"), new Song("song3.mp3")];
+
+            act(() => {
+                result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
+            });
+
+            act(() => { result.current.removeSong(songs[2]); });
+
+            expect(result.current.selectedSong).toBe(songs[0]);
+        });
+
+        it("should auto-select the next song when the selected song is removed and it is not the last", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3"), new Song("song3.mp3")];
+
+            act(() => {
+                result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
+            });
+
+            act(() => { result.current.removeSong(songs[0]); });
+
+            expect(result.current.selectedSong).toBe(songs[1]);
+        });
+
+        it("should auto-select the previous song when removing the last song in the list", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3"), new Song("song3.mp3")];
+
+            act(() => {
+                result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[2]);
+            });
+
+            act(() => { result.current.removeSong(songs[2]); });
+
+            expect(result.current.selectedSong).toBe(songs[1]);
+        });
+
+        it("should set selectedSong to null when removing the only song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const song = new Song("song1.mp3");
+
+            act(() => { result.current.setPlaylist([song]); });
+            act(() => { result.current.removeSong(song); });
+
+            expect(result.current.selectedSong).toBeNull();
+            expect(result.current.playlist).toHaveLength(0);
+        });
+
+        it("should keep correct navigation after removing a song", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3"), new Song("song3.mp3")];
+
+            act(() => {
+                result.current.setPlaylist(songs);
+                result.current.setSelectedSong(songs[0]);
+            });
+
+            act(() => { result.current.removeSong(songs[0]); });
+
+            // After removal: playlist = [song2, song3], selectedSong = song2 (new index 0)
+            expect(result.current.selectedSong).toBe(songs[1]);
+
+            act(() => { result.current.selectNext(); });
+
+            expect(result.current.selectedSong).toBe(songs[2]);
+        });
+
+        it("should do nothing when removing a song not in the playlist", () => {
+            const { result } = renderHook(() => usePlaylistState());
+            const songs = [new Song("song1.mp3"), new Song("song2.mp3")];
+            const notInList = new Song("other.mp3");
+
+            act(() => { result.current.setPlaylist(songs); });
+            act(() => { result.current.removeSong(notInList); });
+
+            expect(result.current.playlist).toHaveLength(2);
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+    });
+
     describe("edge cases", () => {
         it("should handle replacing playlist while song is selected", () => {
             const { result } = renderHook(() => usePlaylistState());

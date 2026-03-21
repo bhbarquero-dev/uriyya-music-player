@@ -610,6 +610,15 @@ body {
   text-overflow: ellipsis;
 }
 
+.unsaved-dot {
+  font-size: 10px;
+  color: var(--apple-text-secondary);
+  flex-shrink: 0;
+  margin-right: 4px;
+  line-height: 1;
+  align-self: center;
+}
+
 .btn-change-playlist {
   background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--apple-border);

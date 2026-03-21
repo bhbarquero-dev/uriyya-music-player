@@ -115,7 +115,7 @@ export function Sidebar({ isCompact = false, onCollapse }: SidebarProps = {}) {
                     </div>
                     <div className="sidebar-compact-bottom">
                         {onCollapse && (
-                            <button className="sidebar-collapse-btn sidebar-collapse-btn--compact" onClick={onCollapse} title="Expandir sidebar" aria-label="Expandir sidebar">
+                            <button className="sidebar-collapse-btn sidebar-collapse-btn--compact" onClick={onCollapse} title="Expandir Biblioteca" aria-label="Expandir Biblioteca">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                     <polyline points="13 17 18 12 13 7"></polyline>
                                     <polyline points="6 17 11 12 6 7"></polyline>
@@ -169,7 +169,7 @@ export function Sidebar({ isCompact = false, onCollapse }: SidebarProps = {}) {
                                 <polyline points="11 17 6 12 11 7"></polyline>
                                 <polyline points="18 17 13 12 18 7"></polyline>
                             </svg>
-                            Contraer
+                            Ocultar Biblioteca
                         </button>
                     )}
 

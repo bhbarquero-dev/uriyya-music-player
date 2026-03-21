@@ -16,8 +16,10 @@ export function useMusicPlayer(fileService?: FileService) {
     const {
         playlist,
         selectedSong,
+        hasUnsavedChanges,
         setPlaylist: setPlaylistState,
         setSelectedSong: setSelectedSongState,
+        removeSong,
         selectNext,
         selectPrevious,
         peekNextSong
@@ -84,6 +86,7 @@ export function useMusicPlayer(fileService?: FileService) {
         playlist,
         currentPlaylistName,
         selectedSong,
+        hasUnsavedChanges,
         playingSong,
         isPlaying,
         isStopping,
@@ -93,6 +96,7 @@ export function useMusicPlayer(fileService?: FileService) {
         playCurrentSelected,
         pause: pauseAudio,
         stop: stopAudio,
+        removeSong,
         selectNextInList: selectNext,
         selectPreviousInList: selectPrevious,
         getAudioElement,

@@ -10,14 +10,16 @@ interface SongListProps {
     playingSong: Song | null;
     isPlaying: boolean;
     currentPlaylistName: string | null;
+    hasUnsavedChanges?: boolean;
     onSelectSong: (song: Song) => void;
     onPlaySong: (song: Song) => void;
     onLoadPlaylist: () => void;
     onChangePlaylist?: () => void;
     onRevealInExplorer?: (song: Song) => void;
+    onRemoveSong?: (song: Song) => void;
 }
 
-export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist, onRevealInExplorer }: SongListProps) {
+export function SongList({ playlist, selectedSong, playingSong, isPlaying, currentPlaylistName, hasUnsavedChanges, onSelectSong, onPlaySong, onLoadPlaylist, onChangePlaylist, onRevealInExplorer, onRemoveSong }: SongListProps) {
     const selectedRowRef = useRef<HTMLTableRowElement | null>(null);
 
     useEffect(() => {
@@ -36,6 +38,7 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
                 songsCount={playlist.length}
                 onLoadPlaylist={onLoadPlaylist}
                 onChangePlaylist={onChangePlaylist}
+                hasUnsavedChanges={hasUnsavedChanges}
             />
             {playlist.length === 0 ? (
                 <EmptyPlaylist />
@@ -44,16 +47,19 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
                     <tbody>
                         {playlist.map((song) => {
                             const isSelected = song.equals(selectedSong);
-                            const isReallyPlaying = song.equals(playingSong) && isPlaying;
+                            const isLoadedSong = song.equals(playingSong);
+                            const isReallyPlaying = isLoadedSong && isPlaying;
                             return (
                                 <SongRow
                                     key={song.getPath()}
                                     song={song}
                                     isSelected={isSelected}
                                     isPlaying={isReallyPlaying}
+                                    isPlayingSong={isLoadedSong}
                                     onSelect={onSelectSong}
                                     onPlay={onPlaySong}
                                     onRevealInExplorer={onRevealInExplorer}
+                                    onRemoveSong={onRemoveSong}
                                     ref={isSelected ? selectedRowRef : null}
                                 />
                             );
