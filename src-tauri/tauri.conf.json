@@ -40,5 +40,13 @@
     "macOS": {
       "entitlements": "entitlements.plist"
     }
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/bhbarquero-dev/uriyya-music-player/releases/latest/download/latest.json"
+      ],
+      "pubkey": ""
+    }
   }
 }

@@ -5,6 +5,7 @@ import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
 import { ConfirmDialog } from "@components/common/ConfirmDialog";
+import { UpdateChecker } from "@components/updater/UpdateChecker";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import { Song } from "./logic/Song";
 import "./App.css";
@@ -233,6 +234,8 @@ function App() {
           onCancel={() => setDialogConfig(null)}
         />
       )}
+
+      <UpdateChecker />
 
     </div>
   );
