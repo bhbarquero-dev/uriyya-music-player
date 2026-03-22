@@ -3,6 +3,15 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '.github/**/*.md'
+      - '.github/dependabot.yml'
+      - '.github/workflows/cd.yml'
+      - '.github/workflows/release.yml'
+      - 'README.md'
+      - '.gitignore'
+      - '.vscode/**'
+      - 'docs/**'
   workflow_dispatch:
   workflow_call:
 

@@ -9,52 +9,47 @@ We follow TDD practices in this project:
 2. Write the minimum code to make the test pass
 3. Refactor while keeping tests green
 
-### Component Development Flow
+When working with existing tests, confirm before changing or removing them. Adding new tests for approved behavior changes is encouraged.
+
+### Project Structure
+
+- `src/components` contains UI components
+- `src/hooks` contains reusable stateful coordination for the React app
+- `src/logic` contains domain logic, services, and non-UI behavior
+- `src/utils` and `src/abstractions` contain shared helpers and environment boundaries
+- `src-tauri` contains native/Tauri code
+- `test` contains unit and component tests mirroring the source areas they cover
+- `e2e` contains Playwright end-to-end tests
+
+Keep code in the layer where it belongs. Do not move code between layers unless the current placement is causing duplication or mixing responsibilities.
+
+### Change Expectations
+
+- Prefer the smallest change that fully solves the problem
+- Keep components presentational when possible and move complex coordination to hooks or `src/logic`
+- Avoid adding dependencies unless existing platform APIs or repo utilities are insufficient
+- Update documentation only when behavior, commands, architecture, or workflow actually change
+- Refactor only the code touched by the task unless a nearby design problem blocks the change
+
+### Implementation Flow
 
 1. **Planning**
-   - Define component requirements
-   - Identify props and state needed
-   - Plan component structure
+   - Define the behavior to change
+   - Identify the layer where the change belongs
+   - Decide whether the change needs unit, integration, or e2e coverage
 
-2. **Type Definitions**
-```typescript
-// types/component.ts
-export interface ComponentProps {
-  value: string;
-  onChange: (value: string) => void;
-}
-```
+2. **Test Writing**
+   - Add a failing test first when behavior is changing
+   - Put unit and component tests under `test`, following the source area they cover
+   - Put end-to-end tests under `e2e`
 
-3. **Test Writing**
-```typescript
-// components/Component/Component.test.tsx
-describe('Component', () => {
-  it('should render with initial value', () => {
-    render(<Component value="test" onChange={jest.fn()} />);
-    expect(screen.getByDisplayValue('test')).toBeInTheDocument();
-  });
-});
-```
-
-4. **Implementation**
-```typescript
-// components/Component/index.tsx
-export const Component: FC<ComponentProps> = ({ value, onChange }) => {
-
-  return <input value={value} onChange={e => onChange(e.target.value)} />;
-};
-```
+3. **Implementation**
+   - Favor small, focused units with one clear reason to change
+   - Extract logic when a unit mixes UI rendering, state coordination, and IO
+   - Use descriptive names that reveal intent and domain meaning
+   - Handle errors explicitly at the right boundary
 
 ### Code Organization
-
-#### Component Structure
-```
-components/
-└── ComponentName/
-    ├── index.tsx           # Main component
-    ├── SubComponent.tsx    # Child components
-    └── ComponentName.test.tsx # Co-located unit test
-```
 
 #### Business Logic
 - Extract to custom hooks
@@ -62,8 +57,10 @@ components/
 - Test hooks independently
 
 #### Test Organization
-- Unit tests should be co-located with the component they test (e.g., `Component.test.tsx` next to `index.tsx`).
-- E2E tests and utilities are located in the `tests/` directory.
+- Unit and component tests live under `test/`
+- Hook tests live under `test/hooks/`
+- Logic and service tests live under `test/logic/`
+- End-to-end tests live under `e2e/`
 
 ### Testing Guidelines
 
@@ -81,8 +78,16 @@ components/
 
 3. **E2E Testing**
    - Test critical user paths
-   - Test cross-window interactions
-   - Test platform-specific features
+   - Test navigation, playback, file loading, and persistence flows when affected
+   - Keep e2e coverage focused on behavior that matters across boundaries
+
+### Validation
+
+- For TypeScript or React behavior changes, run `pnpm exec tsc --noEmit` and the relevant tests
+- Run `pnpm test` when the change affects shared behavior or multiple components/hooks
+- Run `pnpm test:e2e` when the change affects critical user flows such as navigation, playback, file loading, or persistence
+- For Tauri or Rust changes, validate the affected Tauri build or command path as appropriate
+- For documentation or GitHub configuration only changes, do not run the full suite unless commands or documented behavior changed
 
 ### Pull Request Process
 
@@ -91,6 +96,14 @@ components/
 3. Follow commit message conventions
 4. Request review from maintainers
 5. Address review feedback
+
+### Do Not
+
+- Do not rename public files, exported symbols, or user-visible behavior without approval
+- Do not reformat, reorder, or refactor unrelated code
+- Do not add comments that only restate obvious code
+- Do not silently ignore failures or replace them with vague TODOs
+- Do not change unrelated tests as part of an implementation task
 
 ### Commit Message Format
 ```
