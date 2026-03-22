@@ -3,6 +3,14 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '.github/**/*.md'
+      - '.github/dependabot.yml'
+      - '.github/workflows/release.yml'
+      - 'README.md'
+      - '.gitignore'
+      - '.vscode/**'
+      - 'docs/**'
   workflow_dispatch:
 
 permissions:
