@@ -27,6 +27,14 @@ describe("ParallelsPathResolver", () => {
         it("returns false for a Windows absolute path", () => {
             expect(isParallelsPath("C:\\Users\\user\\Music\\file.mp3")).toBe(false);
         });
+
+        it("returns false for a path starting with \\\\Mac\\Home2", () => {
+            expect(isParallelsPath("\\\\Mac\\Home2\\Music\\file.mp3")).toBe(false);
+        });
+
+        it("returns true for a path exactly equal to the prefix", () => {
+            expect(isParallelsPath("\\\\Mac\\Home")).toBe(true);
+        });
     });
 
     describe("resolveParallelsPath", () => {
@@ -50,6 +58,12 @@ describe("ParallelsPathResolver", () => {
                 resolveParallelsPath("\\\\Mac\\Home\\Music\\file.mp3", "/Users/uriyya/")
             ).toBe("/Users/uriyya/Music/file.mp3");
         });
+
+        it("returns the path unchanged when it is not a Parallels path", () => {
+            expect(
+                resolveParallelsPath("/Users/uriyya/Music/file.mp3", "/Users/uriyya")
+            ).toBe("/Users/uriyya/Music/file.mp3");
+        });
     });
 
     describe("unresolveParallelsPath", () => {
@@ -65,6 +79,18 @@ describe("ParallelsPathResolver", () => {
             expect(
                 unresolveParallelsPath(resolveParallelsPath(original, homeDir), homeDir)
             ).toBe(original);
+        });
+
+        it("returns the path unchanged when it does not start with homeDir", () => {
+            expect(
+                unresolveParallelsPath("/Other/path/file.mp3", "/Users/uriyya")
+            ).toBe("/Other/path/file.mp3");
+        });
+
+        it("returns PARALLELS_HOME_PREFIX when path equals homeDir exactly", () => {
+            expect(
+                unresolveParallelsPath("/Users/uriyya", "/Users/uriyya")
+            ).toBe("\\\\Mac\\Home");
         });
     });
 });

@@ -5,11 +5,14 @@ export class Song {
     private readonly id: string;
     private readonly path: string;
 
+    private readonly originalPath?: string;
+
     constructor(
         path: string,
         private readonly valid: boolean = true,
-        private readonly originalPath?: string
+        originalPath?: string
     ) {
+        this.originalPath = originalPath?.trim();
         const normalizedPath = path.trim();
 
         if (!normalizedPath) {
