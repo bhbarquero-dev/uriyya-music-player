@@ -457,4 +457,79 @@ describe("useAudioPlayback", () => {
             expect(result.current.currentTime).toBe(30);
         });
     });
+
+    describe("seek", () => {
+        it("should update currentTime immediately", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+            act(() => { result.current.seek(60); });
+
+            expect(result.current.currentTime).toBe(60);
+        });
+
+        it("should set currentTime on the audio element", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+
+            const audioElement = result.current.getAudioElement();
+            act(() => { result.current.seek(90); });
+
+            expect(audioElement.currentTime).toBe(90);
+        });
+
+        it("should allow polling to resume after seeking following a stop", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+            act(() => { result.current.stop(); });
+
+            // After stop, endedOrStoppedRef is true — polling is blocked
+            expect(result.current.currentTime).toBe(0);
+
+            // Seek should clear the flag
+            act(() => { result.current.seek(45); });
+
+            expect(result.current.currentTime).toBe(45);
+
+            // Polling should now update normally
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'currentTime', { value: 50, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 180, configurable: true });
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+
+            act(() => { vi.advanceTimersByTime(250); });
+
+            expect(result.current.currentTime).toBe(50);
+        });
+
+        it("should allow polling to resume after seeking following natural end", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+
+            const audioElement = result.current.getAudioElement();
+            act(() => { audioElement.dispatchEvent(new Event("ended")); });
+
+            expect(result.current.currentTime).toBe(0);
+
+            act(() => { result.current.seek(30); });
+
+            expect(result.current.currentTime).toBe(30);
+
+            Object.defineProperty(audioElement, 'currentTime', { value: 35, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 180, configurable: true });
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+            Object.defineProperty(audioElement, 'ended', { value: false, configurable: true });
+
+            act(() => { vi.advanceTimersByTime(250); });
+
+            expect(result.current.currentTime).toBe(35);
+        });
+    });
 });

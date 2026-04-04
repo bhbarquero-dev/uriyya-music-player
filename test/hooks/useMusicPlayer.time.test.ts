@@ -50,6 +50,10 @@ vi.mock('../../src/logic/AudioManager', () => {
       this.events.onFadeFinished(this.getActiveChannelId());
     }
 
+    seek(time: number) {
+      this.audio.currentTime = time;
+    }
+
     cleanup() {
       this.audio.paused = true;
       this.audio.currentTime = 0;
@@ -165,5 +169,71 @@ describe('useMusicPlayer timing', () => {
 
     expect(result.current.currentTime).toBe(0);
     expect(result.current.duration).toBeNull();
+  });
+
+  describe('seekToFraction', () => {
+    it('should seek to the correct time for a given fraction', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(200);
+      am.setCurrentTime(0);
+      am.audio.paused = false;
+
+      act(() => { vi.advanceTimersByTime(300); });
+
+      expect(result.current.duration).toBe(200);
+
+      act(() => { result.current.seekToFraction(0.5); });
+
+      expect(result.current.currentTime).toBe(100);
+    });
+
+    it('should seek to the start when fraction is 0', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(180);
+      am.setCurrentTime(90);
+      am.audio.paused = false;
+
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(0); });
+
+      expect(result.current.currentTime).toBe(0);
+    });
+
+    it('should seek to the end when fraction is 1', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(180);
+      am.audio.paused = false;
+
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(1); });
+
+      expect(result.current.currentTime).toBe(180);
+    });
+
+    it('should do nothing when duration is null', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      // No song playing — duration is null
+      expect(result.current.duration).toBeNull();
+      expect(result.current.currentTime).toBe(0);
+
+      act(() => { result.current.seekToFraction(0.5); });
+
+      expect(result.current.currentTime).toBe(0);
+    });
   });
 });
