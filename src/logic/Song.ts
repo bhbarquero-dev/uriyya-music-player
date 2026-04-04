@@ -21,7 +21,8 @@ export class Song {
         private readonly valid: boolean = true,
         originalPath?: string
     ) {
-        this.originalPath = originalPath?.trim();
+        const normalizedOriginalPath = originalPath?.trim();
+        this.originalPath = normalizedOriginalPath || undefined;
         const normalizedPath = path.trim();
 
         if (!normalizedPath) {
