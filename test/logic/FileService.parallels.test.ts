@@ -16,9 +16,7 @@ describe("FileService - Parallels path resolution", () => {
         };
         const mockFileSystem: FileSystem = {
             readTextFile: vi.fn().mockResolvedValue(`${VM_PATH}\n`),
-            exists: vi.fn()
-                .mockResolvedValueOnce(false)  // exact VM path does not exist
-                .mockResolvedValueOnce(true),  // resolved Mac path exists
+            exists: vi.fn().mockResolvedValue(true),  // resolved Mac path exists
             writeTextFile: vi.fn(),
         };
         const homeDirFn = vi.fn().mockResolvedValue(HOME_DIR);
@@ -31,6 +29,9 @@ describe("FileService - Parallels path resolution", () => {
         expect(song.isValid()).toBe(true);
         expect(song.getPath()).toBe(RESOLVED_PATH);
         expect(song.getOriginalPath()).toBe(VM_PATH);
+        // exists is called only once — with the resolved Mac path, never with the raw VM path
+        expect(mockFileSystem.exists).toHaveBeenCalledTimes(1);
+        expect(mockFileSystem.exists).toHaveBeenCalledWith(RESOLVED_PATH);
     });
 
     it("keeps song invalid when homeDir is null (graceful degradation)", async () => {

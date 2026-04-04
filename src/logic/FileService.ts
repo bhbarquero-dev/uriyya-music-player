@@ -58,11 +58,13 @@ export class FileService {
 
             const songs = await Promise.all(
                 songPaths.map(async (originalPath) => {
-                    if (await this.fileSystem.exists(originalPath)) {
+                    const isParallels = isParallelsPath(originalPath);
+
+                    if (!isParallels && await this.fileSystem.exists(originalPath)) {
                         return new Song(originalPath, true);
                     }
 
-                    if (homeDir && isParallelsPath(originalPath)) {
+                    if (isParallels && homeDir) {
                         const resolvedPath = resolveParallelsPath(originalPath, homeDir);
                         if (await this.fileSystem.exists(resolvedPath)) {
                             return new Song(resolvedPath, true, originalPath);
