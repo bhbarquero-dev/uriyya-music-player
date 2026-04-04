@@ -15,12 +15,11 @@
     "jsx": "react-jsx",
 
     /* Path aliases */
-    "baseUrl": ".",
     "paths": {
-      "@components/player": ["src/components/player"],
-      "@components/songList": ["src/components/songList"],
-      "@components/sidebar": ["src/components/sidebar"],
-      "@components/*": ["src/components/*"]
+      "@components/player": ["./src/components/player"],
+      "@components/songList": ["./src/components/songList"],
+      "@components/sidebar": ["./src/components/sidebar"],
+      "@components/*": ["./src/components/*"]
     },
 
     /* Linting */
