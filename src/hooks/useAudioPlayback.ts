@@ -75,14 +75,8 @@ function createTimingTick(
             return;
         }
 
-        // If audio is paused and we are not in playing state, keep times reset
-        if (audio.paused && !isPlaying) {
-            if (!mounted.current) return;
-            setState.setCurrentTime(0);
-            setState.setDuration(null);
-            return;
-        }
-
+        // If audio is paused and we are not in playing state, preserve current timing state
+        // (stop/ended resets are handled separately via endedOrStoppedRef above)
         const ct = audio.currentTime || 0;
         const d = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : null;
         if (!mounted.current) return;

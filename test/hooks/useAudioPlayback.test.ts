@@ -167,7 +167,7 @@ describe("useAudioPlayback", () => {
             expect(result.current.playedPercent).toBe(50);
         });
 
-        it("should reset times when audio is paused and not in playing state", () => {
+        it("should preserve currentTime and duration when audio is paused", () => {
             const { result } = renderHook(() => useAudioPlayback());
             const song = new Song("test.mp3");
 
@@ -196,6 +196,33 @@ describe("useAudioPlayback", () => {
                 vi.advanceTimersByTime(250);
             });
 
+            expect(result.current.currentTime).toBe(60);
+            expect(result.current.duration).toBe(180);
+        });
+
+        it("should reset times to 0/null after stop but not after pause", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'currentTime', { value: 45, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 120, configurable: true });
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+            act(() => { vi.advanceTimersByTime(250); });
+
+            // pause — timing preserved
+            act(() => { result.current.pause(); });
+            Object.defineProperty(audioElement, 'paused', { value: true, configurable: true });
+            act(() => { vi.advanceTimersByTime(250); });
+            expect(result.current.currentTime).toBe(45);
+            expect(result.current.duration).toBe(120);
+
+            // resume then stop — timing resets
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+            act(() => { result.current.play(song); });
+            act(() => { result.current.stop(); });
             expect(result.current.currentTime).toBe(0);
             expect(result.current.duration).toBeNull();
         });

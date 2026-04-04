@@ -281,5 +281,32 @@ describe('useMusicPlayer timing', () => {
 
       expect(result.current.currentTime).toBe(0);
     });
+
+    it('should seek to the correct time while paused', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(200);
+      am.setCurrentTime(50);
+      am.audio.paused = false;
+      act(() => { vi.advanceTimersByTime(300); });
+      expect(result.current.duration).toBe(200);
+      expect(result.current.currentTime).toBe(50);
+
+      // pause
+      act(() => { result.current.pause(); });
+      am.audio.paused = true;
+      act(() => { vi.advanceTimersByTime(300); });
+
+      // timing preserved after pause
+      expect(result.current.duration).toBe(200);
+
+      // seek while paused
+      act(() => { result.current.seekToFraction(0.75); });
+
+      expect(result.current.currentTime).toBe(150);
+    });
   });
 });
