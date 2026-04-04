@@ -7,7 +7,8 @@ export class Song {
 
     constructor(
         path: string,
-        private readonly valid: boolean = true
+        private readonly valid: boolean = true,
+        private readonly originalPath?: string
     ) {
         const normalizedPath = path.trim();
 
@@ -31,6 +32,10 @@ export class Song {
 
     public getPath(): string {
         return this.path;
+    }
+
+    public getOriginalPath(): string {
+        return this.originalPath ?? this.path;
     }
 
     public isValid(): boolean {

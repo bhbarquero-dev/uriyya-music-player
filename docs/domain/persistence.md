@@ -26,6 +26,19 @@ Persistence in the current app covers two separate concerns:
 - Saving is a no-op when there is no known playlist file path.
 - A successful save clears the unsaved-changes flag.
 
+## Parallels Path Resolution (Mac)
+
+- Playlist files may contain Parallels Desktop VM paths of the form `\\Mac\Home\...`.
+  These paths are relative to the user's Mac home directory as seen from a Windows VM running under Parallels.
+- When loading a playlist, if a path of this form does not exist on disk, the app attempts to resolve it
+  by replacing the `\\Mac\Home` prefix with the current user's home directory (via the OS path API).
+- If the resolved path exists, the song is marked valid and uses the resolved path for playback.
+  The original VM-style path is preserved internally for round-trip serialization.
+- When saving, the app writes back the original VM-style paths so the file remains compatible with the Parallels environment.
+- If the home directory is unavailable (e.g., the platform API fails), unresolved Parallels paths are
+  silently marked invalid — no error is surfaced to the user.
+- This behavior is Mac-only and applies only to the `\\Mac\Home` Parallels share.
+
 ## What Is Not Persisted Today
 
 - The currently selected song.
@@ -45,6 +58,9 @@ Persistence in the current app covers two separate concerns:
 - `src/logic/UserSettingsStore.ts`
 - `src/components/sidebar/Sidebar.tsx`
 - `src/logic/FileService.ts`
+- `src/logic/ParallelsPathResolver.ts`
 - `src/hooks/useMusicPlayer.ts`
 - `test/logic/UserSettingsStore.test.ts`
 - `test/hooks/useMusicPlayer.persistence.test.ts`
+- `test/logic/ParallelsPathResolver.test.ts`
+- `test/logic/FileService.parallels.test.ts`

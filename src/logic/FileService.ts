@@ -4,6 +4,7 @@ import { TauriFileDialog } from "./TauriFileDialog";
 import { TauriFileSystem } from "./TauriFileSystem";
 import { Song } from "./Song";
 import { isSupportedAudioPath } from "./audioFormats";
+import { isParallelsPath, resolveParallelsPath } from "./ParallelsPathResolver";
 
 export interface PlaylistData {
     songs: Song[];
@@ -14,10 +15,23 @@ export interface PlaylistData {
 export class FileService {
     private fileDialog: FileDialog;
     private fileSystem: FileSystem;
+    private homeDirFn: () => Promise<string | null>;
 
-    constructor(fileDialog?: FileDialog, fileSystem?: FileSystem) {
+    constructor(
+        fileDialog?: FileDialog,
+        fileSystem?: FileSystem,
+        homeDirFn?: () => Promise<string | null>
+    ) {
         this.fileDialog = fileDialog ?? new TauriFileDialog();
         this.fileSystem = fileSystem ?? new TauriFileSystem();
+        this.homeDirFn = homeDirFn ?? (async () => {
+            try {
+                const { homeDir } = await import("@tauri-apps/api/path");
+                return await homeDir();
+            } catch {
+                return null;
+            }
+        });
     }
 
     public async selectAndReadPlaylist(): Promise<PlaylistData | null> {
@@ -40,11 +54,22 @@ export class FileService {
                 .map((line) => line.trim())
                 .filter((line) => line.length > 0 && isSupportedAudioPath(line));
 
-            // Validate each song file exists
+            const homeDir = await this.homeDirFn();
+
             const songs = await Promise.all(
-                songPaths.map(async (path) => {
-                    const exists = await this.fileSystem.exists(path);
-                    return new Song(path, exists);
+                songPaths.map(async (originalPath) => {
+                    if (await this.fileSystem.exists(originalPath)) {
+                        return new Song(originalPath, true);
+                    }
+
+                    if (homeDir && isParallelsPath(originalPath)) {
+                        const resolvedPath = resolveParallelsPath(originalPath, homeDir);
+                        if (await this.fileSystem.exists(resolvedPath)) {
+                            return new Song(resolvedPath, true, originalPath);
+                        }
+                    }
+
+                    return new Song(originalPath, false);
                 })
             );
 
@@ -57,7 +82,7 @@ export class FileService {
 
     public async savePlaylist(path: string, songs: Song[]): Promise<void> {
         try {
-            const content = songs.map(s => s.getPath()).join('\n');
+            const content = songs.map(s => s.getOriginalPath()).join('\n');
             await this.fileSystem.writeTextFile(path, content);
         } catch (err) {
             console.error("FileService Error:", err);
