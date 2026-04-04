@@ -60,15 +60,15 @@ export class FileService {
                 songPaths.map(async (originalPath) => {
                     const isParallels = isParallelsPath(originalPath);
 
-                    if (!isParallels && await this.fileSystem.exists(originalPath)) {
-                        return new Song(originalPath, true);
+                    if (!isParallels) {
+                        const found = await this.fileSystem.exists(originalPath).catch(() => false);
+                        if (found) return new Song(originalPath, true);
                     }
 
                     if (isParallels && homeDir) {
                         const resolvedPath = resolveParallelsPath(originalPath, homeDir);
-                        if (await this.fileSystem.exists(resolvedPath)) {
-                            return new Song(resolvedPath, true, originalPath);
-                        }
+                        const found = await this.fileSystem.exists(resolvedPath).catch(() => false);
+                        if (found) return new Song(resolvedPath, true, originalPath);
                     }
 
                     return new Song(originalPath, false);

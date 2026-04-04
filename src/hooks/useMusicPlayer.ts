@@ -66,6 +66,7 @@ export function useMusicPlayer(fileService?: FileService) {
             }
         } catch (err) {
             console.error("Failed to load playlist:", err);
+            throw err;
         }
     }, [loadPlaylistFiles, setPlaylistState]);
 

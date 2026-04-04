@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useState, useRef } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
+import { message } from "@tauri-apps/plugin-dialog";
 import { Sidebar } from "@components/sidebar/Sidebar";
 import { Player } from "@components/player/Player";
 import { SongList } from "@components/songList/SongList";
@@ -70,6 +71,7 @@ function App() {
       await loadPlaylist();
     } catch (error) {
       console.error("Failed to load playlist:", error);
+      await message(String(error), { title: "Error al cargar la lista", kind: "error" });
     }
   }, [loadPlaylist]);
 
@@ -81,6 +83,7 @@ function App() {
           await loadPlaylist();
         } catch (error) {
           console.error("Failed to change playlist:", error);
+          await message(String(error), { title: "Error al cargar la lista", kind: "error" });
         }
       });
     } else {
@@ -88,6 +91,7 @@ function App() {
         await loadPlaylist();
       } catch (error) {
         console.error("Failed to change playlist:", error);
+        await message(String(error), { title: "Error al cargar la lista", kind: "error" });
       }
     }
   }, [playingSong, hasUnsavedChanges, loadPlaylist, showUnsavedChangesDialog]);
