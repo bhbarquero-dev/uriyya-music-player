@@ -51,6 +51,7 @@ export function useMusicPlayer(fileService?: FileService) {
         play: playAudio,
         pause: pauseAudio,
         stop: stopAudio,
+        seek: seekAudio,
         getAudioElement
     } = useAudioPlayback(selectNextSongOnEnd);
 
@@ -95,6 +96,11 @@ export function useMusicPlayer(fileService?: FileService) {
         }
     }, [selectedSong, isPlaying, playlist, playSong]);
 
+    const seekToFraction = useCallback((fraction: number) => {
+        if (!duration) return;
+        seekAudio(fraction * duration);
+    }, [duration, seekAudio]);
+
     return {
         playlist,
         currentPlaylistName,
@@ -123,6 +129,7 @@ export function useMusicPlayer(fileService?: FileService) {
         currentTime,
         duration,
         remaining,
-        playedPercent
+        playedPercent,
+        seekToFraction
     };
 }

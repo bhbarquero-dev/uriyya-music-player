@@ -64,6 +64,10 @@ export class AudioManager {
         }
     }
 
+    public seek(time: number) {
+        this.getActiveChannel().getAudioElement().currentTime = time;
+    }
+
     public cleanup() {
         this.channel1.cleanup();
         this.channel2.cleanup();

@@ -189,6 +189,12 @@ export function useAudioPlayback(onNaturalEnd?: () => void) {
         setIsStopping(true); // override: track that a fade-stop is in progress
     }, [audioManager]);
 
+    const seek = useCallback((time: number) => {
+        endedOrStoppedRef.current = false;
+        audioManager.seek(time);
+        setCurrentTime(time);
+    }, [audioManager]);
+
     const getAudioElement = useCallback(() => {
         return audioManager.getActiveAudio();
     }, [audioManager]);
@@ -219,6 +225,7 @@ export function useAudioPlayback(onNaturalEnd?: () => void) {
         play,
         pause,
         stop,
+        seek,
         getAudioElement
     };
 }
