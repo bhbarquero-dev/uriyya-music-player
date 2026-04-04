@@ -31,6 +31,7 @@ export function ProgressBar({ playedPercent, onSeek }: ProgressBarProps) {
         <div
             className="progress-container"
             role="slider"
+            aria-label="Posición de reproducción"
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(pct)}
