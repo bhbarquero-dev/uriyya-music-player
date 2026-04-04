@@ -31,7 +31,7 @@ export function SidebarFooter({ isCompact = false }: SidebarFooterProps = {}) {
 
     return (
         <div className="sidebar-footer">
-            <div>Uriyya Music Player v0.2.1</div>
+            <div>Uriyya Music Player v0.3.0</div>
             <div>Hecho con ❤️ por <a href="https://github.com/bhbarquero-dev">bhbarquero-dev</a></div>
         </div>
     );

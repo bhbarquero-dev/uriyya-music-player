@@ -65,7 +65,7 @@ export function useMusicPlayer(fileService?: FileService) {
                 setCurrentPlaylistPath(result.path);
             }
         } catch (err) {
-            console.error("Failed to load playlist:", err);
+            throw err;
         }
     }, [loadPlaylistFiles, setPlaylistState]);
 
