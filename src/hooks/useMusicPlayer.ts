@@ -97,8 +97,9 @@ export function useMusicPlayer(fileService?: FileService) {
     }, [selectedSong, isPlaying, playlist, playSong]);
 
     const seekToFraction = useCallback((fraction: number) => {
-        if (!duration) return;
-        seekAudio(fraction * duration);
+        if (!duration || !Number.isFinite(fraction)) return;
+        const clampedFraction = Math.min(1, Math.max(0, fraction));
+        seekAudio(clampedFraction * duration);
     }, [duration, seekAudio]);
 
     return {

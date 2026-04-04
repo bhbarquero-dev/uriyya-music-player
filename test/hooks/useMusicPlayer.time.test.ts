@@ -224,6 +224,52 @@ describe('useMusicPlayer timing', () => {
       expect(result.current.currentTime).toBe(180);
     });
 
+    it('should do nothing when fraction is NaN', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(200);
+      am.audio.paused = false;
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(NaN); });
+
+      expect(result.current.currentTime).toBe(0);
+    });
+
+    it('should clamp fraction above 1 to the end of the song', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(100);
+      am.audio.paused = false;
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(1.5); });
+
+      expect(result.current.currentTime).toBe(100);
+    });
+
+    it('should clamp fraction below 0 to the start of the song', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(100);
+      am.setCurrentTime(50);
+      am.audio.paused = false;
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(-0.5); });
+
+      expect(result.current.currentTime).toBe(0);
+    });
+
     it('should do nothing when duration is null', () => {
       const { result } = renderHook(() => useMusicPlayer());
 

@@ -89,5 +89,54 @@ describe("ProgressBar", () => {
             fireEvent.click(el, { clientX: 200 });
             expect(mockOnSeek).toHaveBeenCalledWith(0.5);
         });
+
+        it("should not call onSeek when rect.width is 0", () => {
+            const el = renderWithRect(0, 0);
+            fireEvent.click(el, { clientX: 50 });
+            expect(mockOnSeek).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("keyboard seeking", () => {
+        const mockOnSeek = vi.fn();
+
+        beforeEach(() => {
+            mockOnSeek.mockClear();
+        });
+
+        it("should seek forward 5% on ArrowRight", () => {
+            const { container } = render(<ProgressBar playedPercent={50} onSeek={mockOnSeek} />);
+            const el = container.querySelector(".progress-container") as HTMLElement;
+            fireEvent.keyDown(el, { key: 'ArrowRight' });
+            expect(mockOnSeek).toHaveBeenCalledWith(0.55);
+        });
+
+        it("should seek backward 5% on ArrowLeft", () => {
+            const { container } = render(<ProgressBar playedPercent={50} onSeek={mockOnSeek} />);
+            const el = container.querySelector(".progress-container") as HTMLElement;
+            fireEvent.keyDown(el, { key: 'ArrowLeft' });
+            expect(mockOnSeek).toHaveBeenCalledWith(0.45);
+        });
+
+        it("should clamp to 1 at the end on ArrowRight", () => {
+            const { container } = render(<ProgressBar playedPercent={98} onSeek={mockOnSeek} />);
+            const el = container.querySelector(".progress-container") as HTMLElement;
+            fireEvent.keyDown(el, { key: 'ArrowRight' });
+            expect(mockOnSeek).toHaveBeenCalledWith(1);
+        });
+
+        it("should clamp to 0 at the start on ArrowLeft", () => {
+            const { container } = render(<ProgressBar playedPercent={2} onSeek={mockOnSeek} />);
+            const el = container.querySelector(".progress-container") as HTMLElement;
+            fireEvent.keyDown(el, { key: 'ArrowLeft' });
+            expect(mockOnSeek).toHaveBeenCalledWith(0);
+        });
+
+        it("should not call onSeek for unrelated keys", () => {
+            const { container } = render(<ProgressBar playedPercent={50} onSeek={mockOnSeek} />);
+            const el = container.querySelector(".progress-container") as HTMLElement;
+            fireEvent.keyDown(el, { key: 'Enter' });
+            expect(mockOnSeek).not.toHaveBeenCalled();
+        });
     });
 });

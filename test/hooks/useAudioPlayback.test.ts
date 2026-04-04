@@ -507,6 +507,33 @@ describe("useAudioPlayback", () => {
             expect(result.current.currentTime).toBe(50);
         });
 
+        it("should ignore NaN time and not update state", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'currentTime', { value: 30, configurable: true });
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+            act(() => { vi.advanceTimersByTime(250); });
+            expect(result.current.currentTime).toBe(30);
+
+            act(() => { result.current.seek(NaN); });
+
+            expect(result.current.currentTime).toBe(30);
+        });
+
+        it("should clamp negative time to 0", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+            act(() => { result.current.seek(-10); });
+
+            expect(result.current.currentTime).toBe(0);
+        });
+
         it("should allow polling to resume after seeking following natural end", () => {
             const { result } = renderHook(() => useAudioPlayback());
             const song = new Song("test.mp3");

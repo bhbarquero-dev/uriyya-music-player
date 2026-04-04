@@ -190,9 +190,12 @@ export function useAudioPlayback(onNaturalEnd?: () => void) {
     }, [audioManager]);
 
     const seek = useCallback((time: number) => {
+        if (!Number.isFinite(time)) return;
         endedOrStoppedRef.current = false;
-        audioManager.seek(time);
-        setCurrentTime(time);
+        const safeTime = Math.max(0, time);
+        audioManager.seek(safeTime);
+        const actualTime = audioManager.getActiveAudio()?.currentTime;
+        setCurrentTime(Number.isFinite(actualTime) ? actualTime : safeTime);
     }, [audioManager]);
 
     const getAudioElement = useCallback(() => {
