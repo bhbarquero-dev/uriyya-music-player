@@ -1,4 +1,4 @@
-import { Library } from "./Library";
+import { Library } from "./library/Library";
 import { SidebarFooter } from "./SidebarFooter";
 
 interface SidebarProps {

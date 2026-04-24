@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { LibrarySongItem } from "./LibrarySongItem";
-import { TauriFileDialog } from "../../logic/TauriFileDialog";
-import { getLibraryPathFromSettings, saveLibraryPathToSettings } from "../../logic/UserSettingsStore";
-import { scanLibraryAudioFiles } from "../../logic/LibraryScanner";
-import { getFileName } from "../../utils/formatting";
+import { TauriFileDialog } from "../../../logic/TauriFileDialog";
+import { getLibraryPathFromSettings, saveLibraryPathToSettings } from "../../../logic/UserSettingsStore";
+import { scanLibraryAudioFiles } from "../../../logic/LibraryScanner";
+import { getFileName } from "../../../utils/formatting";
 
 interface LibraryProps {
     onAddToPlaylist?: (path: string) => void;

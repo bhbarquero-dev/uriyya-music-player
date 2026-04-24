@@ -1,26 +1,26 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Library } from "@components/sidebar/Library";
+import { Library } from "@components/sidebar/library/Library";
 
 const openDirectoryMock = vi.fn();
 const saveLibraryPathToSettingsMock = vi.fn();
 const getLibraryPathFromSettingsMock = vi.fn();
 const scanLibraryAudioFilesMock = vi.fn();
 
-vi.mock("../../../src/logic/TauriFileDialog", () => ({
+vi.mock("../../../../src/logic/TauriFileDialog", () => ({
     TauriFileDialog: class {
         openDirectory = (...args: unknown[]) => openDirectoryMock(...args);
         open = vi.fn().mockResolvedValue(null);
     }
 }));
 
-vi.mock("../../../src/logic/UserSettingsStore", () => ({
+vi.mock("../../../../src/logic/UserSettingsStore", () => ({
     getLibraryPathFromSettings: (...args: unknown[]) => getLibraryPathFromSettingsMock(...args),
     saveLibraryPathToSettings: (...args: unknown[]) => saveLibraryPathToSettingsMock(...args),
 }));
 
-vi.mock("../../../src/logic/LibraryScanner", () => ({
+vi.mock("../../../../src/logic/LibraryScanner", () => ({
     scanLibraryAudioFiles: (...args: unknown[]) => scanLibraryAudioFilesMock(...args),
 }));
 
