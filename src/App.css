@@ -79,10 +79,6 @@ body {
   height: 100vh;
 }
 
-.app-container.sidebar-compact-mode {
-  --sidebar-width: 56px;
-}
-
 /* Player Styles */
 .player-header {
   grid-area: player;
@@ -202,88 +198,12 @@ body {
   transition: all 0.3s ease;
 }
 
-.sidebar-compact {
-  padding: 16px 0;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 56px;
-}
-
-.sidebar-expand-btn {
-  background: none;
-  border: none;
-  color: var(--apple-text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  margin: 0 8px;
-}
-
-.sidebar-expand-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--apple-accent);
-}
-
-@media (prefers-color-scheme: dark) {
-  .sidebar-expand-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
-  }
-}
-
 .sidebar-content {
   flex: 1;
   overflow-y: hidden;
   display: flex;
   flex-direction: column;
   min-height: 0;
-}
-
-.sidebar-collapse-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 16px;
-  background: none;
-  border: none;
-  border-top: 1px solid var(--apple-border);
-  color: var(--apple-text-secondary);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s, color 0.15s;
-  flex-shrink: 0;
-}
-
-.sidebar-collapse-btn--compact {
-  justify-content: center;
-  padding: 10px 0;
-  border-top: none;
-}
-
-.sidebar-collapse-btn:hover {
-  background: rgba(0, 0, 0, 0.04);
-  color: var(--apple-text);
-}
-
-@media (prefers-color-scheme: dark) {
-  .sidebar-collapse-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-  }
-}
-
-.sidebar-compact-bottom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  border-top: 1px solid var(--apple-border);
 }
 
 .sidebar-footer {
@@ -294,17 +214,6 @@ body {
   color: var(--apple-text-secondary);
   text-align: center;
   line-height: 1.3;
-}
-
-.sidebar-footer--compact {
-  padding: 12px 0;
-  border-top: 1px solid var(--apple-border);
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
-  box-sizing: border-box;
 }
 
 .sidebar-footer a {
@@ -351,29 +260,6 @@ body {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-}
-
-.sidebar-compact-sections {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px 0;
-  width: 100%;
-}
-
-.sidebar-compact-section-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  color: var(--apple-text-secondary);
-  cursor: default;
-}
-
-.collapse-btn {
-  margin-left: auto;
 }
 
 /* Base styles for icon buttons */

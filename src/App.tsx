@@ -16,7 +16,6 @@ type DialogConfig = {
 };
 
 function App() {
-  const [isSidebarCompact, setIsSidebarCompact] = useState(false);
   const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
   const {
     playlist,
@@ -122,8 +121,6 @@ function App() {
     insertSongAfter(selectedSong, new Song(path));
   }, [insertSongAfter, selectedSong]);
 
-  const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
-
   useEffect(() => {
     let unlisten: (() => void) | null = null;
     let cancelled = false;
@@ -191,7 +188,7 @@ function App() {
   }, [playCurrentSelected, pause, stop, selectNextInList, selectPreviousInList]);
 
   return (
-    <div className={`app-container ${isSidebarCompact ? 'sidebar-compact-mode' : ''}`}>
+    <div className="app-container">
       <Player
         playingSong={playingSong}
         isPlaying={isPlaying}
@@ -206,8 +203,6 @@ function App() {
       />
 
       <Sidebar
-        isCompact={isSidebarCompact}
-        onCollapse={toggleSidebar}
         onAddToPlaylist={currentPlaylistPath ? handleAddLibrarySong : undefined}
         onAddToStart={currentPlaylistPath ? handleAddLibrarySongAtStart : undefined}
         onAddAfterSelected={selectedSong ? handleAddLibrarySongAfterSelected : undefined}

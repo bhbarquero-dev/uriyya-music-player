@@ -29,7 +29,7 @@ Uriyya Music Player is a desktop application for loading, browsing, and playing 
 - Shuffle, repeat, and queue management.
 - Metadata editing or tag management.
 - Restoring active playback, selected song, or playback position on app startup.
-- Persisting temporary UI state such as search text or sidebar compact mode.
+- Persisting temporary UI state such as search text.
 
 ## Related Code
 
