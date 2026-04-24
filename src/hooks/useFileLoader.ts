@@ -10,8 +10,12 @@ export function useFileLoader(fileService?: FileService) {
         return await fileServiceRef.current.selectAndReadPlaylist();
     }, []);
 
-    const savePlaylist = useCallback(async (path: string, songs: Song[]): Promise<void> => {
-        await fileServiceRef.current.savePlaylist(path, songs);
+    const savePlaylist = useCallback(async (path: string, songs: Song[], parallelsHomeDir?: string): Promise<void> => {
+        if (parallelsHomeDir) {
+            await fileServiceRef.current.savePlaylist(path, songs, parallelsHomeDir);
+        } else {
+            await fileServiceRef.current.savePlaylist(path, songs);
+        }
     }, []);
 
     return {

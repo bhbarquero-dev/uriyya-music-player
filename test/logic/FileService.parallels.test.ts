@@ -115,4 +115,85 @@ describe("FileService - Parallels path resolution", () => {
             VM_PATH
         );
     });
+
+    it("selectAndReadPlaylist returns parallelsHomeDir when the playlist contains Parallels paths", async () => {
+        const mockDialog: FileDialog = {
+            open: vi.fn().mockResolvedValue("C:\\playlist.alb"),
+            openDirectory: vi.fn(),
+        };
+        const mockFileSystem: FileSystem = {
+            readTextFile: vi.fn().mockResolvedValue(`${VM_PATH}\n`),
+            exists: vi.fn().mockResolvedValue(true),
+            writeTextFile: vi.fn(),
+        };
+        const homeDirFn = vi.fn().mockResolvedValue(HOME_DIR);
+
+        const service = new FileService(mockDialog, mockFileSystem, homeDirFn);
+        const result = await service.selectAndReadPlaylist();
+
+        expect(result?.parallelsHomeDir).toBe(HOME_DIR);
+    });
+
+    it("selectAndReadPlaylist does not set parallelsHomeDir for a non-Parallels playlist", async () => {
+        const nativePath = "/Users/uriyya/Music/native.mp3";
+        const mockDialog: FileDialog = {
+            open: vi.fn().mockResolvedValue("C:\\playlist.alb"),
+            openDirectory: vi.fn(),
+        };
+        const mockFileSystem: FileSystem = {
+            readTextFile: vi.fn().mockResolvedValue(`${nativePath}\n`),
+            exists: vi.fn().mockResolvedValue(true),
+            writeTextFile: vi.fn(),
+        };
+        const homeDirFn = vi.fn().mockResolvedValue(HOME_DIR);
+
+        const service = new FileService(mockDialog, mockFileSystem, homeDirFn);
+        const result = await service.selectAndReadPlaylist();
+
+        expect(result?.parallelsHomeDir).toBeUndefined();
+    });
+
+    it("savePlaylist converts macOS paths to VM paths when parallelsHomeDir is provided", async () => {
+        const mockDialog: FileDialog = {
+            open: vi.fn(),
+            openDirectory: vi.fn(),
+        };
+        const mockFileSystem: FileSystem = {
+            readTextFile: vi.fn(),
+            exists: vi.fn(),
+            writeTextFile: vi.fn().mockResolvedValue(undefined),
+        };
+        // A newly added song — macOS path only, no originalPath
+        const newSong = new Song(RESOLVED_PATH, true);
+        const service = new FileService(mockDialog, mockFileSystem);
+
+        await service.savePlaylist("C:\\playlist.alb", [newSong], HOME_DIR);
+
+        expect(mockFileSystem.writeTextFile).toHaveBeenCalledWith(
+            "C:\\playlist.alb",
+            VM_PATH
+        );
+    });
+
+    it("savePlaylist with parallelsHomeDir saves a mix of original and new songs as VM paths", async () => {
+        const mockDialog: FileDialog = {
+            open: vi.fn(),
+            openDirectory: vi.fn(),
+        };
+        const mockFileSystem: FileSystem = {
+            readTextFile: vi.fn(),
+            exists: vi.fn(),
+            writeTextFile: vi.fn().mockResolvedValue(undefined),
+        };
+        const existingSong = new Song(RESOLVED_PATH, true, VM_PATH);
+        const newSong = new Song(RESOLVED_PATH, true);
+        const service = new FileService(mockDialog, mockFileSystem);
+
+        await service.savePlaylist("C:\\playlist.alb", [existingSong, newSong], HOME_DIR);
+
+        expect(mockFileSystem.writeTextFile).toHaveBeenCalledWith(
+            "C:\\playlist.alb",
+            `${VM_PATH}\n${VM_PATH}`
+        );
+    });
 });

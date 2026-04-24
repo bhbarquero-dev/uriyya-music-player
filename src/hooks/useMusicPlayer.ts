@@ -12,6 +12,7 @@ import { useAudioPlayback } from "./useAudioPlayback";
 export function useMusicPlayer(fileService?: FileService) {
     const [currentPlaylistName, setCurrentPlaylistName] = useState<string | null>(null);
     const [currentPlaylistPath, setCurrentPlaylistPath] = useState<string | null>(null);
+    const [parallelsHomeDir, setParallelsHomeDir] = useState<string | null>(null);
 
     // Domain hooks
     const {
@@ -51,6 +52,7 @@ export function useMusicPlayer(fileService?: FileService) {
         play: playAudio,
         pause: pauseAudio,
         stop: stopAudio,
+        seek: seekAudio,
         getAudioElement
     } = useAudioPlayback(selectNextSongOnEnd);
 
@@ -63,6 +65,7 @@ export function useMusicPlayer(fileService?: FileService) {
                 setPlaylistState(result.songs);
                 setCurrentPlaylistName(result.name);
                 setCurrentPlaylistPath(result.path);
+                setParallelsHomeDir(result.parallelsHomeDir ?? null);
             }
         } catch (err) {
             throw err;
@@ -71,9 +74,13 @@ export function useMusicPlayer(fileService?: FileService) {
 
     const saveCurrentPlaylist = useCallback(async () => {
         if (!currentPlaylistPath) return;
-        await savePlaylistFiles(currentPlaylistPath, playlist);
+        if (parallelsHomeDir) {
+            await savePlaylistFiles(currentPlaylistPath, playlist, parallelsHomeDir);
+        } else {
+            await savePlaylistFiles(currentPlaylistPath, playlist);
+        }
         markAsSaved();
-    }, [currentPlaylistPath, playlist, savePlaylistFiles, markAsSaved]);
+    }, [currentPlaylistPath, parallelsHomeDir, playlist, savePlaylistFiles, markAsSaved]);
 
     const playSong = useCallback((song: Song) => {
         // Don't play invalid songs
@@ -94,6 +101,12 @@ export function useMusicPlayer(fileService?: FileService) {
             playSong(playlist[0]);
         }
     }, [selectedSong, isPlaying, playlist, playSong]);
+
+    const seekToFraction = useCallback((fraction: number) => {
+        if (!duration || !Number.isFinite(fraction)) return;
+        const clampedFraction = Math.min(1, Math.max(0, fraction));
+        seekAudio(clampedFraction * duration);
+    }, [duration, seekAudio]);
 
     return {
         playlist,
@@ -123,6 +136,7 @@ export function useMusicPlayer(fileService?: FileService) {
         currentTime,
         duration,
         remaining,
-        playedPercent
+        playedPercent,
+        seekToFraction
     };
 }

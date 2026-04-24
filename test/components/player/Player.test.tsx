@@ -8,6 +8,8 @@ describe("Player", () => {
     const mockOnPause = vi.fn();
     const mockOnStop = vi.fn();
 
+    const mockOnSeek = vi.fn();
+
     const defaultProps = {
         playingSong: null,
         isPlaying: false,
@@ -15,6 +17,7 @@ describe("Player", () => {
         onPlay: mockOnPlay,
         onPause: mockOnPause,
         onStop: mockOnStop,
+        onSeek: mockOnSeek,
         currentTime: 0,
         remaining: null,
         playedPercent: 0,

@@ -75,14 +75,8 @@ function createTimingTick(
             return;
         }
 
-        // If audio is paused and we are not in playing state, keep times reset
-        if (audio.paused && !isPlaying) {
-            if (!mounted.current) return;
-            setState.setCurrentTime(0);
-            setState.setDuration(null);
-            return;
-        }
-
+        // If audio is paused and we are not in playing state, preserve current timing state
+        // (stop/ended resets are handled separately via endedOrStoppedRef above)
         const ct = audio.currentTime || 0;
         const d = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : null;
         if (!mounted.current) return;
@@ -189,6 +183,15 @@ export function useAudioPlayback(onNaturalEnd?: () => void) {
         setIsStopping(true); // override: track that a fade-stop is in progress
     }, [audioManager]);
 
+    const seek = useCallback((time: number) => {
+        if (!Number.isFinite(time)) return;
+        endedOrStoppedRef.current = false;
+        const safeTime = Math.max(0, time);
+        audioManager.seek(safeTime);
+        const actualTime = audioManager.getActiveAudio()?.currentTime;
+        setCurrentTime(Number.isFinite(actualTime) ? actualTime : safeTime);
+    }, [audioManager]);
+
     const getAudioElement = useCallback(() => {
         return audioManager.getActiveAudio();
     }, [audioManager]);
@@ -219,6 +222,7 @@ export function useAudioPlayback(onNaturalEnd?: () => void) {
         play,
         pause,
         stop,
+        seek,
         getAudioElement
     };
 }

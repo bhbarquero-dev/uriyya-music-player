@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: 1. Continuous Integration
 on:
   pull_request:
     branches:
@@ -25,7 +25,8 @@ jobs:
   validate:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

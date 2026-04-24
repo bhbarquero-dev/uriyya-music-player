@@ -43,7 +43,8 @@ function App() {
     selectPreviousInList,
     currentTime,
     remaining,
-    playedPercent
+    playedPercent,
+    seekToFraction
   } = useMusicPlayer();
 
   const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
@@ -201,6 +202,7 @@ function App() {
         currentTime={currentTime}
         remaining={remaining}
         playedPercent={playedPercent}
+        onSeek={seekToFraction}
       />
 
       <Sidebar
