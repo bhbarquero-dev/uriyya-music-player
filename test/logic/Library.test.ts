@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { mock } from "vitest-mock-extended";
 import { Library, filterSongs } from "@logic/Library";
+import type { FileDialog } from "@abstractions/FileDialog";
 
 const getLibraryPathFromSettingsMock = vi.fn();
 const saveLibraryPathToSettingsMock = vi.fn();
 const scanLibraryAudioFilesMock = vi.fn();
-const openDirectoryMock = vi.fn();
 
 vi.mock("../../src/logic/UserSettingsStore", () => ({
     getLibraryPathFromSettings: (...args: unknown[]) => getLibraryPathFromSettingsMock(...args),
@@ -15,23 +16,17 @@ vi.mock("../../src/logic/LibraryScanner", () => ({
     scanLibraryAudioFiles: (...args: unknown[]) => scanLibraryAudioFilesMock(...args),
 }));
 
-vi.mock("../../src/logic/TauriFileDialog", () => ({
-    TauriFileDialog: class {
-        open = vi.fn();
-        openDirectory = (...args: unknown[]) => openDirectoryMock(...args);
-    }
-}));
-
 describe("Library", () => {
     let library: Library;
+    let fakeFileDialog: ReturnType<typeof mock<FileDialog>>;
 
     beforeEach(() => {
         vi.clearAllMocks();
         getLibraryPathFromSettingsMock.mockResolvedValue(null);
         saveLibraryPathToSettingsMock.mockResolvedValue(undefined);
         scanLibraryAudioFilesMock.mockResolvedValue([]);
-        openDirectoryMock.mockResolvedValue(null);
-        library = new Library();
+        fakeFileDialog = mock<FileDialog>();
+        library = new Library(fakeFileDialog);
     });
 
     describe("getPath", () => {
@@ -80,16 +75,16 @@ describe("Library", () => {
 
     describe("add", () => {
         it("should open a directory dialog and return the selected path", async () => {
-            openDirectoryMock.mockResolvedValue("C:/Music");
+            fakeFileDialog.openDirectory.mockResolvedValue("C:/Music");
 
             const result = await library.add();
 
             expect(result).toBe("C:/Music");
-            expect(openDirectoryMock).toHaveBeenCalledOnce();
+            expect(fakeFileDialog.openDirectory).toHaveBeenCalledOnce();
         });
 
         it("should save the selected path to settings", async () => {
-            openDirectoryMock.mockResolvedValue("C:/Music");
+            fakeFileDialog.openDirectory.mockResolvedValue("C:/Music");
 
             await library.add();
 
@@ -97,7 +92,7 @@ describe("Library", () => {
         });
 
         it("should return null and not save if dialog is cancelled", async () => {
-            openDirectoryMock.mockResolvedValue(null);
+            fakeFileDialog.openDirectory.mockResolvedValue(null);
 
             const result = await library.add();
 
@@ -106,7 +101,7 @@ describe("Library", () => {
         });
 
         it("should propagate errors from the file dialog", async () => {
-            openDirectoryMock.mockRejectedValue(new Error("Dialog error"));
+            fakeFileDialog.openDirectory.mockRejectedValue(new Error("Dialog error"));
 
             await expect(library.add()).rejects.toThrow("Dialog error");
         });

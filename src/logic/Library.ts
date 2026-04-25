@@ -1,10 +1,11 @@
 import { getLibraryPathFromSettings, saveLibraryPathToSettings } from "./UserSettingsStore";
 import { scanLibraryAudioFiles } from "./LibraryScanner";
-import { TauriFileDialog } from "./TauriFileDialog";
+import type { FileDialog } from "@abstractions/FileDialog";
 
 export class Library {
     private path: string | null = null;
-    private readonly fileDialog = new TauriFileDialog();
+
+    constructor(private readonly fileDialog: FileDialog) {}
 
     async getPath(): Promise<string | null> {
         const storePath = await getLibraryPathFromSettings();
