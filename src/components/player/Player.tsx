@@ -1,7 +1,7 @@
 import { PlayerControls } from "./PlayerControls";
 import { ProgressBar } from "./ProgressBar";
 import { TimeDisplay } from "./TimeDisplay";
-import { Song } from "../../logic/Song";
+import { Song } from "@logic/Song";
 
 interface PlayerProps {
     playingSong: Song | null;

@@ -6,6 +6,7 @@ export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
+            '@logic': path.resolve(__dirname, './src/logic'),
             '@components': path.resolve(__dirname, './src/components'),
         },
     },

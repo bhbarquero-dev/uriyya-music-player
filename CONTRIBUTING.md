@@ -64,8 +64,14 @@ Keep code in the layer where it belongs. Do not move code between layers unless 
 
 ### Testing Guidelines
 
+Behavior-first testing philosophy:
+
+- Prioritize tests that validate user-observable behavior and outcomes.
+- Prefer assertions on visible text, accessible roles/labels, and side effects (callbacks, persistence, state transitions).
+- Avoid tests coupled to implementation details such as internal wrapper sections, specific DOM hierarchy, or CSS class presence unless that structure is the behavior itself.
+
 1. **Component Testing**
-   - Test rendering
+   - Test rendering that users can observe
    - Test user interactions
    - Test prop changes
    - Test error states

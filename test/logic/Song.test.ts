@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Song } from "../../src/logic/Song";
+import { Song } from "@logic/Song";
 
 describe("Song", () => {
     beforeEach(() => {

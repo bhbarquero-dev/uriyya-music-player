@@ -4,7 +4,7 @@ import { RestrictToVerticalAxis } from "@dnd-kit/abstract/modifiers";
 import { SongRow } from "./SongRow";
 import { EmptyPlaylist } from "./EmptyPlaylist";
 import { PlaylistBanner } from "./PlaylistBanner";
-import { Song } from "../../logic/Song";
+import { Song } from "@logic/Song";
 
 type DragEntityWithId = {
     id: string | number;

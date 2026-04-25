@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { usePlaylistState } from "../../src/hooks/usePlaylistState";
-import { Song } from "../../src/logic/Song";
+import { Song } from "@logic/Song";
 
 describe("usePlaylistState", () => {
     describe("initialization", () => {

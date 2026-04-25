@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
-import { ContextMenu } from "../common/ContextMenu";
-import { getFileName } from "../../utils/formatting";
+import { ContextMenu } from "../../common/ContextMenu";
+import { getFileName } from "../../../utils/formatting";
 
 interface LibrarySongItemProps {
     path: string;

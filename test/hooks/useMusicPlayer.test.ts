@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useMusicPlayer } from "../../src/hooks/useMusicPlayer";
-import { FileService } from "../../src/logic/FileService";
-import { Song } from "../../src/logic/Song";
+import { FileService } from "@logic/FileService";
+import { Song } from "@logic/Song";
 
 // Helper to create a mock FileService
 const createMockFileService = (playlistData: { songs: Song[]; name: string; path?: string } | null = null) => {

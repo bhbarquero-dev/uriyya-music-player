@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { FileService } from "../logic/FileService";
-import { Song } from "../logic/Song";
+import { FileService } from "@logic/FileService";
+import { Song } from "@logic/Song";
 import { usePlaylistState } from "./usePlaylistState";
 import { useFileLoader } from "./useFileLoader";
 import { useAudioPlayback } from "./useAudioPlayback";

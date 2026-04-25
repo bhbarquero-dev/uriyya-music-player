@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { AudioManager } from "../logic/AudioManager";
-import { Song } from "../logic/Song";
-import type { AudioChannel } from "../logic/AudioManager";
+import { AudioManager } from "@logic/AudioManager";
+import { Song } from "@logic/Song";
+import type { AudioChannel } from "@logic/AudioManager";
 
 const TIME_POLL_INTERVAL_MS = 250;
 

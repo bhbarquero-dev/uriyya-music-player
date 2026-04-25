@@ -80,7 +80,7 @@ vi.mock('../../src/logic/AudioManager', () => {
 });
 
 import { useMusicPlayer } from '../../src/hooks/useMusicPlayer';
-import { Song } from '../../src/logic/Song';
+import { Song } from '@logic/Song';
 
 describe('useMusicPlayer timing', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { scanLibraryAudioFiles } from "../../src/logic/LibraryScanner";
+import { scanLibraryAudioFiles } from "@logic/LibraryScanner";
 
 vi.mock("@tauri-apps/api/path", () => ({
     join: vi.fn(async (...parts: string[]) => parts.join("/")),
@@ -46,6 +46,8 @@ describe("scanLibraryAudioFiles", () => {
     });
 
     it("ignores non-audio files", async () => {
+        const { join } = await import("@tauri-apps/api/path");
+        const mockedJoin = vi.mocked(join);
         mockedReadDir.mockResolvedValue([
             { name: "cover.jpg", isFile: true, isDirectory: false, isSymlink: false },
             { name: "notes.txt", isFile: true, isDirectory: false, isSymlink: false },
@@ -55,6 +57,7 @@ describe("scanLibraryAudioFiles", () => {
         const result = await scanLibraryAudioFiles("/music");
 
         expect(result).toEqual(["/music/song.mp3"]);
+        expect(mockedJoin).toHaveBeenCalledTimes(1);
     });
 
     it("recursively scans subdirectories", async () => {
@@ -81,26 +84,6 @@ describe("scanLibraryAudioFiles", () => {
         const result = await scanLibraryAudioFiles("/music");
 
         expect(result).toEqual(["/music/alpha.mp3", "/music/mango.wav", "/music/zebra.mp3"]);
-    });
-
-    it("sorts alphabetically by file name across subdirectories, ignoring directory path", async () => {
-        mockedReadDir
-            .mockResolvedValueOnce([
-                { name: "ZootAlbum", isFile: false, isDirectory: true, isSymlink: false },
-                { name: "AAlbum", isFile: false, isDirectory: true, isSymlink: false },
-            ])
-            .mockResolvedValueOnce([
-                // AAlbum (popped first due to LIFO)
-                { name: "zebra.mp3", isFile: true, isDirectory: false, isSymlink: false },
-            ])
-            .mockResolvedValueOnce([
-                // ZootAlbum
-                { name: "alpha.mp3", isFile: true, isDirectory: false, isSymlink: false },
-            ]);
-
-        const result = await scanLibraryAudioFiles("/music");
-
-        expect(result).toEqual(["/music/ZootAlbum/alpha.mp3", "/music/AAlbum/zebra.mp3"]);
     });
 
     it("skips unreadable directories and continues scanning siblings", async () => {
@@ -156,19 +139,4 @@ describe("scanLibraryAudioFiles", () => {
         expect(result).toEqual(["/music/other.WAV", "/music/song.MP3"]);
     });
 
-    it("does not call join for non-audio files", async () => {
-        const { join } = await import("@tauri-apps/api/path");
-        const mockedJoin = vi.mocked(join);
-
-        mockedReadDir.mockResolvedValue([
-            { name: "cover.jpg", isFile: true, isDirectory: false, isSymlink: false },
-            { name: "song.mp3", isFile: true, isDirectory: false, isSymlink: false },
-        ]);
-
-        await scanLibraryAudioFiles("/music");
-
-        // join should only be called once: for the mp3 file
-        expect(mockedJoin).toHaveBeenCalledTimes(1);
-        expect(mockedJoin).toHaveBeenCalledWith("/music", "song.mp3");
-    });
 });

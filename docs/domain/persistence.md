@@ -46,7 +46,6 @@ Persistence in the current app covers two separate concerns:
 - Playback position, duration, or active playback state.
 - The current playlist path across app restarts.
 - Library scan results and sidebar search query.
-- Temporary UI state such as compact sidebar mode.
 
 ## Failure Handling
 

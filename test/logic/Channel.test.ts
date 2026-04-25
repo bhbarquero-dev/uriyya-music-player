@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Channel } from "../../src/logic/Channel";
-import { Song } from "../../src/logic/Song";
-import type { AudioChannel } from "../../src/logic/AudioManager";
+import { Channel } from "@logic/Channel";
+import { Song } from "@logic/Song";
+import type { AudioChannel } from "@logic/AudioManager";
 
 describe("Channel", () => {
     let channel: Channel;

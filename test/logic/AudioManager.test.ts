@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { AudioManager } from "../../src/logic/AudioManager";
-import { Song } from "../../src/logic/Song";
+import { AudioManager } from "@logic/AudioManager";
+import { Song } from "@logic/Song";
 
 describe("AudioManager", () => {
     let audioManager: AudioManager;
