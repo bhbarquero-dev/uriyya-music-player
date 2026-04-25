@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { scanLibraryAudioFiles } from "../../src/logic/LibraryScanner";
+import { scanLibraryAudioFiles } from "@logic/LibraryScanner";
 
 vi.mock("@tauri-apps/api/path", () => ({
     join: vi.fn(async (...parts: string[]) => parts.join("/")),

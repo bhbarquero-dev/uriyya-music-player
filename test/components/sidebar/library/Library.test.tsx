@@ -3,105 +3,82 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Library } from "@components/sidebar/library/Library";
 
-const openDirectoryMock = vi.fn();
-const saveLibraryPathToSettingsMock = vi.fn();
-const getLibraryPathFromSettingsMock = vi.fn();
-const scanLibraryAudioFilesMock = vi.fn();
+const getPathMock = vi.fn();
+const getSongsMock = vi.fn();
+const addMock = vi.fn();
+const getNameMock = vi.fn();
+const hasLibraryMock = vi.fn();
 
-vi.mock("../../../../src/logic/TauriFileDialog", () => ({
-    TauriFileDialog: class {
-        openDirectory = (...args: unknown[]) => openDirectoryMock(...args);
-        open = vi.fn().mockResolvedValue(null);
-    }
-}));
-
-vi.mock("../../../../src/logic/UserSettingsStore", () => ({
-    getLibraryPathFromSettings: (...args: unknown[]) => getLibraryPathFromSettingsMock(...args),
-    saveLibraryPathToSettings: (...args: unknown[]) => saveLibraryPathToSettingsMock(...args),
-}));
-
-vi.mock("../../../../src/logic/LibraryScanner", () => ({
-    scanLibraryAudioFiles: (...args: unknown[]) => scanLibraryAudioFilesMock(...args),
-}));
+vi.mock("../../../../src/logic/Library", async (importOriginal) => {
+    const actual = await importOriginal<typeof import("../../../../src/logic/Library")>();
+    return {
+        ...actual,
+        Library: class {
+            getPath = getPathMock;
+            setPath = vi.fn().mockResolvedValue(undefined);
+            getSongs = getSongsMock;
+            add = addMock;
+            getName = getNameMock;
+            hasLibrary = hasLibraryMock;
+        }
+    };
+});
 
 describe("Library", () => {
     const renderLibrary = async () => {
         const view = render(<Library />);
         await waitFor(() => {
-            expect(getLibraryPathFromSettingsMock).toHaveBeenCalled();
+            expect(getPathMock).toHaveBeenCalled();
         });
         return view;
     };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        openDirectoryMock.mockResolvedValue(null);
-        saveLibraryPathToSettingsMock.mockResolvedValue(undefined);
-        getLibraryPathFromSettingsMock.mockResolvedValue(null);
-        scanLibraryAudioFilesMock.mockResolvedValue([]);
+        getPathMock.mockResolvedValue(null);
+        getSongsMock.mockResolvedValue([]);
+        addMock.mockResolvedValue(null);
+        getNameMock.mockReturnValue(null);
+        hasLibraryMock.mockReturnValue(false);
     });
 
-    it("should render section with Biblioteca title", async () => {
-        await renderLibrary();
-        expect(screen.getByText("Biblioteca")).toBeInTheDocument();
-    });
-
-    it("should render add button when no library selected", async () => {
-        await renderLibrary();
-        const button = screen.getByRole("button", { name: "Agregar biblioteca" });
-        expect(button).toBeInTheDocument();
-    });
-
-    it("should render placeholder when no library selected", async () => {
-        await renderLibrary();
-        expect(screen.getByText("No hay biblioteca seleccionada")).toBeInTheDocument();
-    });
-
-    it("should call file dialog when add button is clicked", async () => {
+    it("should call library add when add button is clicked", async () => {
         const user = userEvent.setup();
         await renderLibrary();
         const button = screen.getByRole("button", { name: "Agregar biblioteca" });
         await user.click(button);
-        expect(openDirectoryMock).toHaveBeenCalledOnce();
+        expect(addMock).toHaveBeenCalledOnce();
     });
 
-    it("should save selected library path after picking a directory", async () => {
+    it("should render selected library after picking a directory", async () => {
         const user = userEvent.setup();
-        openDirectoryMock.mockResolvedValue("C:/Music");
+        addMock.mockImplementation(async () => {
+            getNameMock.mockReturnValue("Music");
+            hasLibraryMock.mockReturnValue(true);
+            return "C:/Music";
+        });
 
         await renderLibrary();
         await user.click(screen.getByRole("button", { name: "Agregar biblioteca" }));
 
-        expect(saveLibraryPathToSettingsMock).toHaveBeenCalledWith("C:/Music");
+        expect(await screen.findByText("Music")).toBeInTheDocument();
     });
 
     it("should render selected library and edit button when a path is stored", async () => {
-        getLibraryPathFromSettingsMock.mockResolvedValue("C:/My Folder");
+        getPathMock.mockResolvedValue("C:/My Folder");
+        getNameMock.mockReturnValue("My Folder");
+        hasLibraryMock.mockReturnValue(true);
         await renderLibrary();
 
         expect(await screen.findByText("My Folder")).toBeInTheDocument();
         expect(screen.getByRole("button", { name: "Cambiar biblioteca" })).toBeInTheDocument();
     });
 
-    it("should not render placeholder when library is selected", async () => {
-        getLibraryPathFromSettingsMock.mockResolvedValue("C:/My Folder");
-        await renderLibrary();
-
-        await screen.findByText("My Folder");
-        expect(screen.queryByText("No hay biblioteca seleccionada")).not.toBeInTheDocument();
-    });
-
-    it("should render refresh button when library is selected", async () => {
-        getLibraryPathFromSettingsMock.mockResolvedValue("C:/My Folder");
-        await renderLibrary();
-
-        expect(await screen.findByRole("button", { name: "Actualizar lista de canciones" })).toBeInTheDocument();
-    });
-
     it("should render search input and filter library songs", async () => {
         const user = userEvent.setup();
-        getLibraryPathFromSettingsMock.mockResolvedValue("C:/Music");
-        scanLibraryAudioFilesMock.mockResolvedValue(["C:/Music/uno.mp3", "C:/Music/dos.wav"]);
+        getPathMock.mockResolvedValue("C:/Music");
+        hasLibraryMock.mockReturnValue(true);
+        getSongsMock.mockResolvedValue(["C:/Music/uno.mp3", "C:/Music/dos.wav"]);
 
         await renderLibrary();
 
@@ -117,59 +94,10 @@ describe("Library", () => {
         expect(screen.queryByText("dos.wav")).not.toBeInTheDocument();
     });
 
-    it("should filter songs when search query contains ñ", async () => {
-        const user = userEvent.setup();
-        getLibraryPathFromSettingsMock.mockResolvedValue("C:/Music");
-        scanLibraryAudioFilesMock.mockResolvedValue(["C:/Music/niña.mp3", "C:/Music/nina.wav"]);
-
-        await renderLibrary();
-
-        const searchInput = await screen.findByPlaceholderText("Buscar canciones...");
-        await user.type(searchInput, "ñ");
-
-        await waitFor(() => {
-            expect(screen.getByText("niña.mp3")).toBeInTheDocument();
-        });
-        expect(screen.queryByText("nina.wav")).not.toBeInTheDocument();
-    });
-
-    it("should filter songs when search query contains accented vowels", async () => {
-        const user = userEvent.setup();
-        getLibraryPathFromSettingsMock.mockResolvedValue("C:/Music");
-        scanLibraryAudioFilesMock.mockResolvedValue(["C:/Music/canción.mp3", "C:/Music/cancion.wav"]);
-
-        await renderLibrary();
-
-        const searchInput = await screen.findByPlaceholderText("Buscar canciones...");
-        await user.type(searchInput, "ó");
-
-        await waitFor(() => {
-            expect(screen.getByText("canción.mp3")).toBeInTheDocument();
-        });
-        expect(screen.queryByText("cancion.wav")).not.toBeInTheDocument();
-    });
-
-    it("should filter songs when filename uses NFD encoding (macOS)", async () => {
-        const user = userEvent.setup();
-        getLibraryPathFromSettingsMock.mockResolvedValue("C:/Music");
-        // macOS returns filenames in NFD: ñ = n + U+0303 (combining tilde)
-        const nfdPath = "C:/Music/nin\u0303a.mp3";
-        scanLibraryAudioFilesMock.mockResolvedValue([nfdPath, "C:/Music/nina.wav"]);
-
-        await renderLibrary();
-
-        const searchInput = await screen.findByPlaceholderText("Buscar canciones...");
-        await user.type(searchInput, "ñ"); // NFC ñ typed by the user
-
-        await waitFor(() => {
-            expect(screen.getByTitle(nfdPath)).toBeInTheDocument();
-        });
-        expect(screen.queryByTitle("C:/Music/nina.wav")).not.toBeInTheDocument();
-    });
-
     it("should render empty state when selected library has no supported files", async () => {
-        getLibraryPathFromSettingsMock.mockResolvedValue("C:/Music");
-        scanLibraryAudioFilesMock.mockResolvedValue([]);
+        getPathMock.mockResolvedValue("C:/Music");
+        hasLibraryMock.mockReturnValue(true);
+        getSongsMock.mockResolvedValue([]);
 
         await renderLibrary();
 

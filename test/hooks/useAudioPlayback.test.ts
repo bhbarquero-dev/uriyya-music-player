@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useAudioPlayback } from "../../src/hooks/useAudioPlayback";
-import { Song } from "../../src/logic/Song";
+import { Song } from "@logic/Song";
 
 describe("useAudioPlayback", () => {
     beforeEach(() => {

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { FileService } from "../../src/logic/FileService";
+import { FileService } from "@logic/FileService";
 import { FileDialog } from "../../src/abstractions/FileDialog";
 import { FileSystem } from "../../src/abstractions/FileSystem";
-import { Song } from "../../src/logic/Song";
+import { Song } from "@logic/Song";
 
 const HOME_DIR = "/Users/uriyya";
 const VM_PATH = "\\\\Mac\\Home\\Music\\file.mp3";

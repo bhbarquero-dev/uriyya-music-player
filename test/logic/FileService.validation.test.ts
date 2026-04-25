@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { FileService } from "../../src/logic/FileService";
+import { FileService } from "@logic/FileService";
 import { FileDialog } from "../../src/abstractions/FileDialog";
 import { FileSystem } from "../../src/abstractions/FileSystem";
 

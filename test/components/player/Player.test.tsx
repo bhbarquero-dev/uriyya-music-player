@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Player } from "@components/player/Player";
-import { Song } from "../../../src/logic/Song";
+import { Song } from "@logic/Song";
 
 describe("Player", () => {
     const mockOnPlay = vi.fn();

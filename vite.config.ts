@@ -9,6 +9,7 @@ export default defineConfig(async () => ({
   plugins: [react()],
   resolve: {
     alias: {
+      "@logic": path.resolve(__dirname, "./src/logic"),
       "@components": path.resolve(__dirname, "./src/components"),
     },
   },
