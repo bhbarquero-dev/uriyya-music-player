@@ -89,10 +89,10 @@ export function Library({ onAddToPlaylist, onAddToStart, onAddAfterSelected }: L
         if (!searchQuery.trim()) {
             return librarySongs;
         }
-        const lowerQuery = searchQuery.toLowerCase();
+        const normalizedQuery = searchQuery.normalize('NFC').toLowerCase();
         return librarySongs.filter((songPath) => {
-            const fileName = getFileName(songPath).toLowerCase();
-            return fileName.includes(lowerQuery);
+            const fileName = getFileName(songPath).normalize('NFC').toLowerCase();
+            return fileName.includes(normalizedQuery);
         });
     }, [librarySongs, searchQuery]);
 

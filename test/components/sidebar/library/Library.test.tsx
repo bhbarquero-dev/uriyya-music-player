@@ -149,6 +149,24 @@ describe("Library", () => {
         expect(screen.queryByText("cancion.wav")).not.toBeInTheDocument();
     });
 
+    it("should filter songs when filename uses NFD encoding (macOS)", async () => {
+        const user = userEvent.setup();
+        getLibraryPathFromSettingsMock.mockResolvedValue("C:/Music");
+        // macOS returns filenames in NFD: ñ = n + U+0303 (combining tilde)
+        const nfdPath = "C:/Music/nin\u0303a.mp3";
+        scanLibraryAudioFilesMock.mockResolvedValue([nfdPath, "C:/Music/nina.wav"]);
+
+        await renderLibrary();
+
+        const searchInput = await screen.findByPlaceholderText("Buscar canciones...");
+        await user.type(searchInput, "ñ"); // NFC ñ typed by the user
+
+        await waitFor(() => {
+            expect(screen.getByTitle(nfdPath)).toBeInTheDocument();
+        });
+        expect(screen.queryByTitle("C:/Music/nina.wav")).not.toBeInTheDocument();
+    });
+
     it("should render empty state when selected library has no supported files", async () => {
         getLibraryPathFromSettingsMock.mockResolvedValue("C:/Music");
         scanLibraryAudioFilesMock.mockResolvedValue([]);
