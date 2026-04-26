@@ -2,15 +2,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mock } from "vitest-mock-extended";
 import { Library, filterSongs } from "@logic/Library";
 import type { FileDialog } from "@abstractions/FileDialog";
+import type { SettingsStore } from "@abstractions/SettingsStore";
 
-const getLibraryPathFromSettingsMock = vi.fn();
-const saveLibraryPathToSettingsMock = vi.fn();
 const scanLibraryAudioFilesMock = vi.fn();
-
-vi.mock("../../src/logic/UserSettingsStore", () => ({
-    getLibraryPathFromSettings: (...args: unknown[]) => getLibraryPathFromSettingsMock(...args),
-    saveLibraryPathToSettings: (...args: unknown[]) => saveLibraryPathToSettingsMock(...args),
-}));
 
 vi.mock("../../src/logic/LibraryScanner", () => ({
     scanLibraryAudioFiles: (...args: unknown[]) => scanLibraryAudioFilesMock(...args),
@@ -19,28 +13,28 @@ vi.mock("../../src/logic/LibraryScanner", () => ({
 describe("Library", () => {
     let library: Library;
     let fakeFileDialog: ReturnType<typeof mock<FileDialog>>;
+    let fakeSettings: ReturnType<typeof mock<SettingsStore>>;
 
     beforeEach(() => {
         vi.clearAllMocks();
-        getLibraryPathFromSettingsMock.mockResolvedValue(null);
-        saveLibraryPathToSettingsMock.mockResolvedValue(undefined);
         scanLibraryAudioFilesMock.mockResolvedValue([]);
         fakeFileDialog = mock<FileDialog>();
-        library = new Library(fakeFileDialog);
+        fakeSettings = mock<SettingsStore>();
+        library = new Library(fakeFileDialog, fakeSettings);
     });
 
     describe("getPath", () => {
         it("should return the library path from settings", async () => {
-            getLibraryPathFromSettingsMock.mockResolvedValue("C:/Music");
+            fakeSettings.getLibraryPath.mockResolvedValue("C:/Music");
 
             const path = await library.getPath();
 
             expect(path).toBe("C:/Music");
-            expect(getLibraryPathFromSettingsMock).toHaveBeenCalledOnce();
+            expect(fakeSettings.getLibraryPath).toHaveBeenCalledOnce();
         });
 
         it("should return null if no path is stored", async () => {
-            getLibraryPathFromSettingsMock.mockResolvedValue(null);
+            fakeSettings.getLibraryPath.mockResolvedValue(null);
 
             const path = await library.getPath();
 
@@ -49,7 +43,7 @@ describe("Library", () => {
 
         it("should propagate errors from settings store", async () => {
             const error = new Error("Settings store error");
-            getLibraryPathFromSettingsMock.mockRejectedValue(error);
+            fakeSettings.getLibraryPath.mockRejectedValue(error);
 
             await expect(library.getPath()).rejects.toThrow("Settings store error");
         });
@@ -57,17 +51,15 @@ describe("Library", () => {
 
     describe("setPath", () => {
         it("should save the library path to settings", async () => {
-            saveLibraryPathToSettingsMock.mockResolvedValue(undefined);
-
             await library.setPath("C:/Music");
 
-            expect(saveLibraryPathToSettingsMock).toHaveBeenCalledWith("C:/Music");
-            expect(saveLibraryPathToSettingsMock).toHaveBeenCalledOnce();
+            expect(fakeSettings.saveLibraryPath).toHaveBeenCalledWith("C:/Music");
+            expect(fakeSettings.saveLibraryPath).toHaveBeenCalledOnce();
         });
 
         it("should propagate errors from settings store", async () => {
             const error = new Error("Settings store error");
-            saveLibraryPathToSettingsMock.mockRejectedValue(error);
+            fakeSettings.saveLibraryPath.mockRejectedValue(error);
 
             await expect(library.setPath("C:/Music")).rejects.toThrow("Settings store error");
         });
@@ -88,7 +80,7 @@ describe("Library", () => {
 
             await library.add();
 
-            expect(saveLibraryPathToSettingsMock).toHaveBeenCalledWith("C:/Music");
+            expect(fakeSettings.saveLibraryPath).toHaveBeenCalledWith("C:/Music");
         });
 
         it("should return null and not save if dialog is cancelled", async () => {
@@ -97,7 +89,7 @@ describe("Library", () => {
             const result = await library.add();
 
             expect(result).toBeNull();
-            expect(saveLibraryPathToSettingsMock).not.toHaveBeenCalled();
+            expect(fakeSettings.saveLibraryPath).not.toHaveBeenCalled();
         });
 
         it("should propagate errors from the file dialog", async () => {

@@ -10,6 +10,7 @@ import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import { Song } from "./logic/Song";
 import { Library } from "./logic/Library";
 import { TauriFileDialog } from "./logic/TauriFileDialog";
+import { TauriSettingsStore } from "./logic/TauriSettingsStore";
 import "./App.css";
 
 type DialogConfig = {
@@ -19,7 +20,7 @@ type DialogConfig = {
 
 function App() {
   const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
-  const libraryStore = useMemo(() => new Library(new TauriFileDialog()), []);
+  const libraryStore = useMemo(() => new Library(new TauriFileDialog(), new TauriSettingsStore()), []);
   const {
     playlist,
     currentPlaylistName,
