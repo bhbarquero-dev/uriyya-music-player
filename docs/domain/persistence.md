@@ -59,12 +59,12 @@ Persistence in the current app covers two separate concerns:
 
 ## Related Code
 
-- `src/logic/UserSettingsStore.ts`
+- `src/logic/TauriSettingsStore.ts`
 - `src/components/sidebar/Sidebar.tsx`
 - `src/logic/FileService.ts`
 - `src/logic/ParallelsPathResolver.ts`
 - `src/hooks/useMusicPlayer.ts`
-- `test/logic/UserSettingsStore.test.ts`
+- `test/logic/TauriSettingsStore.test.ts`
 - `test/hooks/useMusicPlayer.persistence.test.ts`
 - `test/logic/ParallelsPathResolver.test.ts`
-- `test/logic/FileService.parallels.test.ts`
+- `test/logic/FileService.test.ts`

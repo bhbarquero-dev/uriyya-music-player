@@ -33,7 +33,7 @@ function decodeText(bytes: Uint8Array): { text: string; state: FileEncodingState
             state: { encoding: "utf-8", hasUtf8Bom: withBom },
         };
     } catch {
-        const text = decodeWindows1252(bytes);
+        const text = decodeWindows1252(payload);
         return {
             text,
             state: { encoding: "windows-1252", hasUtf8Bom: false },

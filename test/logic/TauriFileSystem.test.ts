@@ -46,6 +46,34 @@ describe("TauriFileSystem", () => {
         expect(payload).toEqual(new TextEncoder().encode("ni\u00f1o.mp3"));
     });
 
+    it("migrates a windows-1252 playlist to UTF-8 so later saves can include emoji", async () => {
+        mockReadFile.mockResolvedValue(toBytes([0x53, 0x45, 0xd1, 0x4f, 0x52, 0x2e, 0x6d, 0x70, 0x33]));
+
+        await fileSystem.readTextFile("C:/playlist.alb");
+
+        await fileSystem.writeTextFile("C:/playlist.alb", "SEÑOR 🎄.mp3");
+
+        expect(mockWriteFile).toHaveBeenCalledTimes(1);
+        const [, payload] = mockWriteFile.mock.calls[0] as [string, Uint8Array];
+        expect(payload).toEqual(new TextEncoder().encode("SEÑOR 🎄.mp3"));
+    });
+
+    it("does not leak a UTF-8 BOM into text when falling back to Windows-1252", async () => {
+        mockReadFile.mockResolvedValue(
+            new Uint8Array([0xef, 0xbb, 0xbf, 0x53, 0x45, 0xd1, 0x4f, 0x52, 0x2e, 0x6d, 0x70, 0x33])
+        );
+
+        const content = await fileSystem.readTextFile("C:/playlist.alb");
+
+        expect(content).toBe("SEÑOR.mp3");
+
+        await fileSystem.writeTextFile("C:/playlist.alb", content);
+
+        expect(mockWriteFile).toHaveBeenCalledTimes(1);
+        const [, payload] = mockWriteFile.mock.calls[0] as [string, Uint8Array];
+        expect(payload).toEqual(new TextEncoder().encode("SEÑOR.mp3"));
+    });
+
     it("preserves UTF-8 BOM when rewriting UTF-8 files", async () => {
         const utf8WithBom = new Uint8Array([
             0xef, 0xbb, 0xbf,
@@ -77,3 +105,4 @@ describe("TauriFileSystem", () => {
         expect(mockExists).toHaveBeenCalledWith("C:/file.mp3");
     });
 });
+
