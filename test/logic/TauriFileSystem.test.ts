@@ -32,7 +32,7 @@ describe("TauriFileSystem", () => {
         expect(payload).toEqual(new TextEncoder().encode("cancion.mp3"));
     });
 
-    it("reads Windows-1252 playlists and writes back in Windows-1252", async () => {
+    it("reads Windows-1252 playlists and rewrites them as UTF-8", async () => {
         // canci\u00f3n.mp3 in Windows-1252 bytes
         mockReadFile.mockResolvedValue(toBytes([0x63, 0x61, 0x6e, 0x63, 0x69, 0xf3, 0x6e, 0x2e, 0x6d, 0x70, 0x33]));
 
@@ -43,7 +43,7 @@ describe("TauriFileSystem", () => {
 
         expect(mockWriteFile).toHaveBeenCalledTimes(1);
         const [, payload] = mockWriteFile.mock.calls[0] as [string, Uint8Array];
-        expect(Array.from(payload)).toEqual([0x6e, 0x69, 0xf1, 0x6f, 0x2e, 0x6d, 0x70, 0x33]);
+        expect(payload).toEqual(new TextEncoder().encode("ni\u00f1o.mp3"));
     });
 
     it("preserves UTF-8 BOM when rewriting UTF-8 files", async () => {

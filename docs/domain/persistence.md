@@ -25,10 +25,11 @@ Persistence in the current app covers two separate concerns:
 - Saving the current playlist writes the current ordered song paths to the loaded playlist file path, one path per line.
 - Saving is a no-op when there is no known playlist file path.
 - A successful save clears the unsaved-changes flag.
-- Playlist text encoding is preserved on round-trip when possible:
-  - UTF-8 playlists (with or without BOM) are saved as UTF-8.
-  - Legacy Windows-1252 playlists are detected on load and saved back as Windows-1252.
-  - This avoids corrupting accented characters (for example `\u00f1`, `\u00e1`, `\u00e9`) when editing existing playlists.
+- Playlist text encoding behaves as follows:
+  - UTF-8 playlists are saved as UTF-8.
+  - UTF-8 playlists with BOM are saved as UTF-8 with BOM.
+  - Legacy Windows-1252 playlists are detected on load and migrated to UTF-8 on the next save.
+  - This avoids corrupting accented characters (for example `\u00f1`, `\u00e1`, `\u00e9`) and also allows later saves to preserve characters outside Windows-1252, such as emoji.
 
 ## Parallels Path Resolution (Mac)
 
