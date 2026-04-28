@@ -37,4 +37,4 @@ Uriyya Music Player is a desktop application for loading, browsing, and playing 
 - `src/hooks/useAudioPlayback.ts`
 - `src/hooks/usePlaylistState.ts`
 - `src/logic/FileService.ts`
-- `src/logic/UserSettingsStore.ts`
+- `src/logic/TauriSettingsStore.ts`

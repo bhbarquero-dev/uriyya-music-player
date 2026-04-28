@@ -8,6 +8,7 @@ export default defineConfig({
         alias: {
             '@logic': path.resolve(__dirname, './src/logic'),
             '@components': path.resolve(__dirname, './src/components'),
+            '@abstractions': path.resolve(__dirname, './src/abstractions'),
         },
     },
     test: {

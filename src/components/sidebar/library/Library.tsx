@@ -2,20 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import { LibrarySongItem } from "./LibrarySongItem";
 import { LibraryHeader } from "./LibraryHeader";
 import { LibrarySearch } from "./LibrarySearch";
-import { Library as LibraryStore, filterSongs } from "@logic/Library";
+import { type Library as LibraryStore, filterSongs } from "@logic/Library";
 
 interface LibraryProps {
+    store: LibraryStore;
     onAddToPlaylist?: (path: string) => void;
     onAddToStart?: (path: string) => void;
     onAddAfterSelected?: (path: string) => void;
 }
 
-export function Library({ onAddToPlaylist, onAddToStart, onAddAfterSelected }: LibraryProps = {}) {
+export function Library({ store: libraryStore, onAddToPlaylist, onAddToStart, onAddAfterSelected }: LibraryProps) {
     const [libraryPath, setLibraryPath] = useState<string | null>(null);
     const [librarySongs, setLibrarySongs] = useState<string[]>([]);
     const [isScanningLibrary, setIsScanningLibrary] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const libraryStore = useMemo(() => new LibraryStore(), []);
 
     useEffect(() => {
         let isMounted = true;

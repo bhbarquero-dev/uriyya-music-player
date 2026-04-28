@@ -1,45 +1,23 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { mock } from "vitest-mock-extended";
 import { Library } from "@components/sidebar/library/Library";
-
-const getPathMock = vi.fn();
-const getSongsMock = vi.fn();
-const addMock = vi.fn();
-const getNameMock = vi.fn();
-const hasLibraryMock = vi.fn();
-
-vi.mock("../../../../src/logic/Library", async (importOriginal) => {
-    const actual = await importOriginal<typeof import("../../../../src/logic/Library")>();
-    return {
-        ...actual,
-        Library: class {
-            getPath = getPathMock;
-            setPath = vi.fn().mockResolvedValue(undefined);
-            getSongs = getSongsMock;
-            add = addMock;
-            getName = getNameMock;
-            hasLibrary = hasLibraryMock;
-        }
-    };
-});
+import type { Library as LibraryStore } from "@logic/Library";
 
 describe("Library", () => {
+    let fakeStore: ReturnType<typeof mock<LibraryStore>>;
+
     const renderLibrary = async () => {
-        const view = render(<Library />);
+        const view = render(<Library store={fakeStore} />);
         await waitFor(() => {
-            expect(getPathMock).toHaveBeenCalled();
+            expect(fakeStore.getPath).toHaveBeenCalled();
         });
         return view;
     };
 
     beforeEach(() => {
-        vi.clearAllMocks();
-        getPathMock.mockResolvedValue(null);
-        getSongsMock.mockResolvedValue([]);
-        addMock.mockResolvedValue(null);
-        getNameMock.mockReturnValue(null);
-        hasLibraryMock.mockReturnValue(false);
+        fakeStore = mock<LibraryStore>();
     });
 
     it("should call library add when add button is clicked", async () => {
@@ -47,14 +25,15 @@ describe("Library", () => {
         await renderLibrary();
         const button = screen.getByRole("button", { name: "Agregar biblioteca" });
         await user.click(button);
-        expect(addMock).toHaveBeenCalledOnce();
+        expect(fakeStore.add).toHaveBeenCalledOnce();
     });
 
     it("should render selected library after picking a directory", async () => {
         const user = userEvent.setup();
-        addMock.mockImplementation(async () => {
-            getNameMock.mockReturnValue("Music");
-            hasLibraryMock.mockReturnValue(true);
+        fakeStore.getSongs.mockResolvedValue([]);
+        fakeStore.add.mockImplementation(async () => {
+            fakeStore.getName.mockReturnValue("Music");
+            fakeStore.hasLibrary.mockReturnValue(true);
             return "C:/Music";
         });
 
@@ -65,9 +44,10 @@ describe("Library", () => {
     });
 
     it("should render selected library and edit button when a path is stored", async () => {
-        getPathMock.mockResolvedValue("C:/My Folder");
-        getNameMock.mockReturnValue("My Folder");
-        hasLibraryMock.mockReturnValue(true);
+        fakeStore.getPath.mockResolvedValue("C:/My Folder");
+        fakeStore.getName.mockReturnValue("My Folder");
+        fakeStore.hasLibrary.mockReturnValue(true);
+        fakeStore.getSongs.mockResolvedValue([]);
         await renderLibrary();
 
         expect(await screen.findByText("My Folder")).toBeInTheDocument();
@@ -76,9 +56,9 @@ describe("Library", () => {
 
     it("should render search input and filter library songs", async () => {
         const user = userEvent.setup();
-        getPathMock.mockResolvedValue("C:/Music");
-        hasLibraryMock.mockReturnValue(true);
-        getSongsMock.mockResolvedValue(["C:/Music/uno.mp3", "C:/Music/dos.wav"]);
+        fakeStore.getPath.mockResolvedValue("C:/Music");
+        fakeStore.hasLibrary.mockReturnValue(true);
+        fakeStore.getSongs.mockResolvedValue(["C:/Music/uno.mp3", "C:/Music/dos.wav"]);
 
         await renderLibrary();
 
@@ -95,9 +75,9 @@ describe("Library", () => {
     });
 
     it("should render empty state when selected library has no supported files", async () => {
-        getPathMock.mockResolvedValue("C:/Music");
-        hasLibraryMock.mockReturnValue(true);
-        getSongsMock.mockResolvedValue([]);
+        fakeStore.getPath.mockResolvedValue("C:/Music");
+        fakeStore.hasLibrary.mockReturnValue(true);
+        fakeStore.getSongs.mockResolvedValue([]);
 
         await renderLibrary();
 
