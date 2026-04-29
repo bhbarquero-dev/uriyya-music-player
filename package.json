@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@dnd-kit/abstract": "^0.3.2",
-    "@dnd-kit/react": "^0.3.2",
+    "@dnd-kit/react": "^0.4.0",
     "@tauri-apps/api": "^2.10.1",
     "@tauri-apps/plugin-dialog": "^2.7.0",
     "@tauri-apps/plugin-fs": "^2.5.0",
