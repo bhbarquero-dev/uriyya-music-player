@@ -13,7 +13,7 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@dnd-kit/abstract": "^0.3.2",
+    "@dnd-kit/abstract": "^0.4.0",
     "@dnd-kit/react": "^0.4.0",
     "@tauri-apps/api": "^2.10.1",
     "@tauri-apps/plugin-dialog": "^2.7.0",
