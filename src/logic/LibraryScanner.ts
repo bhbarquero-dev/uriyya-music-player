@@ -1,6 +1,13 @@
 import { join } from "@tauri-apps/api/path";
 import { readDir } from "@tauri-apps/plugin-fs";
 import { isSupportedAudioPath } from "./audioFormats";
+import { getFileName } from "../utils/formatting";
+
+const fileNameCollator = new Intl.Collator("es", {
+    sensitivity: "base",
+    numeric: true,
+    ignorePunctuation: true,
+});
 
 function isSupportedAudioFile(fileName: string): boolean {
     return isSupportedAudioPath(fileName);
@@ -39,8 +46,11 @@ export async function scanLibraryAudioFiles(libraryRootPath: string): Promise<st
     }
 
     return files.sort((a, b) => {
-        const nameA = a.split(/[\\/]/).pop() ?? a;
-        const nameB = b.split(/[\\/]/).pop() ?? b;
-        return nameA.localeCompare(nameB);
+        const byName = fileNameCollator.compare(getFileName(a), getFileName(b));
+        if (byName !== 0) {
+            return byName;
+        }
+
+        return fileNameCollator.compare(a, b);
     });
 }

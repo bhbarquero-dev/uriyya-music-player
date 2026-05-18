@@ -13,21 +13,22 @@ vi.mock("@tauri-apps/plugin-store", () => ({
     load: mockLoad,
 }));
 
-const { getLibraryPathFromSettings, saveLibraryPathToSettings } = await import(
-    "../../src/logic/UserSettingsStore"
-);
+const { TauriSettingsStore } = await import("../../src/logic/TauriSettingsStore");
 
-describe("UserSettingsStore", () => {
+describe("TauriSettingsStore", () => {
+    let store: InstanceType<typeof TauriSettingsStore>;
+
     beforeEach(() => {
         vi.clearAllMocks();
         mockLoad.mockResolvedValue({ get: mockGet, set: mockSet, save: mockSave });
+        store = new TauriSettingsStore();
     });
 
-    describe("getLibraryPathFromSettings", () => {
+    describe("getLibraryPath", () => {
         it("returns the stored string when the key exists", async () => {
             mockGet.mockResolvedValue("/home/music");
 
-            const result = await getLibraryPathFromSettings();
+            const result = await store.getLibraryPath();
 
             expect(result).toBe("/home/music");
         });
@@ -35,7 +36,7 @@ describe("UserSettingsStore", () => {
         it("returns null when the key is missing (undefined)", async () => {
             mockGet.mockResolvedValue(undefined);
 
-            const result = await getLibraryPathFromSettings();
+            const result = await store.getLibraryPath();
 
             expect(result).toBeNull();
         });
@@ -43,7 +44,7 @@ describe("UserSettingsStore", () => {
         it("returns null when the stored value is not a string", async () => {
             mockGet.mockResolvedValue(42);
 
-            const result = await getLibraryPathFromSettings();
+            const result = await store.getLibraryPath();
 
             expect(result).toBeNull();
         });
@@ -51,18 +52,18 @@ describe("UserSettingsStore", () => {
         it("returns null when the plugin throws", async () => {
             mockLoad.mockRejectedValue(new Error("plugin error"));
 
-            const result = await getLibraryPathFromSettings();
+            const result = await store.getLibraryPath();
 
             expect(result).toBeNull();
         });
     });
 
-    describe("saveLibraryPathToSettings", () => {
+    describe("saveLibraryPath", () => {
         it("saves the path using set and save", async () => {
             mockSet.mockResolvedValue(undefined);
             mockSave.mockResolvedValue(undefined);
 
-            await saveLibraryPathToSettings("/home/music");
+            await store.saveLibraryPath("/home/music");
 
             expect(mockSet).toHaveBeenCalledWith("library.path", "/home/music");
             expect(mockSave).toHaveBeenCalledOnce();
@@ -71,7 +72,7 @@ describe("UserSettingsStore", () => {
         it("does not throw when the plugin throws", async () => {
             mockLoad.mockRejectedValue(new Error("plugin error"));
 
-            await expect(saveLibraryPathToSettings("/home/music")).resolves.toBeUndefined();
+            await expect(store.saveLibraryPath("/home/music")).resolves.toBeUndefined();
         });
     });
 });

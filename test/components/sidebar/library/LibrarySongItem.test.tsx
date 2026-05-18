@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { LibrarySongItem } from "@components/sidebar/LibrarySongItem";
+import { LibrarySongItem } from "@components/sidebar/library/LibrarySongItem";
 
 const mockRevealItemInDir = vi.fn();
 

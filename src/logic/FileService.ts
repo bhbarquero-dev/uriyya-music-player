@@ -4,12 +4,13 @@ import { TauriFileDialog } from "./TauriFileDialog";
 import { TauriFileSystem } from "./TauriFileSystem";
 import { Song } from "./Song";
 import { isSupportedAudioPath } from "./audioFormats";
-import { isParallelsPath, resolveParallelsPath } from "./ParallelsPathResolver";
+import { isParallelsPath, resolveParallelsPath, unresolveParallelsPath } from "./ParallelsPathResolver";
 
 export interface PlaylistData {
     songs: Song[];
     name: string;
     path: string;
+    parallelsHomeDir?: string;
 }
 
 export class FileService {
@@ -75,16 +76,23 @@ export class FileService {
                 })
             );
 
-            return { songs, name, path: selected };
+            const hasParallelsPath = songs.some(s => isParallelsPath(s.getOriginalPath()));
+            const parallelsHomeDir = (homeDir && hasParallelsPath) ? homeDir : undefined;
+
+            return { songs, name, path: selected, parallelsHomeDir };
         } catch (err) {
             console.error("FileService Error:", err);
             throw err;
         }
     }
 
-    public async savePlaylist(path: string, songs: Song[]): Promise<void> {
+    public async savePlaylist(path: string, songs: Song[], parallelsHomeDir?: string): Promise<void> {
         try {
-            const content = songs.map(s => s.getOriginalPath()).join('\n');
+            const content = songs.map(s =>
+                parallelsHomeDir
+                    ? unresolveParallelsPath(s.getOriginalPath(), parallelsHomeDir)
+                    : s.getOriginalPath()
+            ).join('\n');
             await this.fileSystem.writeTextFile(path, content);
         } catch (err) {
             console.error("FileService Error:", err);

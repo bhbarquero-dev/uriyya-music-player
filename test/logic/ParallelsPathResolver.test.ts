@@ -3,7 +3,7 @@ import {
     isParallelsPath,
     resolveParallelsPath,
     unresolveParallelsPath,
-} from "../../src/logic/ParallelsPathResolver";
+} from "@logic/ParallelsPathResolver";
 
 describe("ParallelsPathResolver", () => {
     describe("isParallelsPath", () => {

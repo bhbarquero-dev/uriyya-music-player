@@ -17,7 +17,7 @@ Playback manages which song is actively sounding, which song is selected in the 
 
 - The player must not start playback for a song marked as invalid.
 - Calling play on the same song while it is already playing is a no-op.
-- Pausing stops active playback but keeps `playingSong` assigned.
+- Pausing stops active playback but keeps `playingSong` assigned and preserves `currentTime` and `duration`.
 - Stopping clears `playingSong`, clears timing state, and sets `isStopping` while the fade-out completes.
 - When playback ends naturally, `playingSong` becomes `null`, `isPlaying` becomes `false`, and timing resets.
 - Timing state resets to `currentTime = 0` and `duration = null` after stop or natural end.

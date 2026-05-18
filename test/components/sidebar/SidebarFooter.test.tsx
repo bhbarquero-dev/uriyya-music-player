@@ -5,7 +5,7 @@ import { SidebarFooter } from "@components/sidebar/SidebarFooter";
 describe("SidebarFooter", () => {
     it("should display version", () => {
         render(<SidebarFooter />);
-        expect(screen.getByText(/Uriyya Music Player v\d+\.\d+\.\d+/)).toBeInTheDocument();
+        expect(screen.getByText(/Uriyyá Music Player v\d+\.\d+\.\d+/)).toBeInTheDocument();
     });
 
     it("should display credits with heart", () => {

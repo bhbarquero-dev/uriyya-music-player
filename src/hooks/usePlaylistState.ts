@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
-import { PlaylistManager } from "../logic/PlaylistManager";
-import { Song } from "../logic/Song";
+import { PlaylistManager } from "@logic/PlaylistManager";
+import { Song } from "@logic/Song";
 
 function resolveSelectionAfterRemoval(
     updated: Song[],

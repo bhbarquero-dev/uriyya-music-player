@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { PlaylistManager } from "../../src/logic/PlaylistManager";
-import { Song } from "../../src/logic/Song";
+import { PlaylistManager } from "@logic/PlaylistManager";
+import { Song } from "@logic/Song";
 
 describe("PlaylistManager", () => {
     let manager: PlaylistManager;

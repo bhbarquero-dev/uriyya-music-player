@@ -16,10 +16,13 @@
 
     /* Path aliases */
     "paths": {
+      "@logic": ["./src/logic"],
+      "@logic/*": ["./src/logic/*"],
       "@components/player": ["./src/components/player"],
       "@components/songList": ["./src/components/songList"],
       "@components/sidebar": ["./src/components/sidebar"],
-      "@components/*": ["./src/components/*"]
+      "@components/*": ["./src/components/*"],
+      "@abstractions/*": ["./src/abstractions/*"]
     },
 
     /* Linting */

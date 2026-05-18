@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState, useRef } from "react";
+import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { message } from "@tauri-apps/plugin-dialog";
@@ -8,6 +8,9 @@ import { SongList } from "@components/songList/SongList";
 import { ConfirmDialog } from "@components/common/ConfirmDialog";
 import { useMusicPlayer } from "./hooks/useMusicPlayer";
 import { Song } from "./logic/Song";
+import { Library } from "./logic/Library";
+import { TauriFileDialog } from "./logic/TauriFileDialog";
+import { TauriSettingsStore } from "./logic/TauriSettingsStore";
 import "./App.css";
 
 type DialogConfig = {
@@ -16,8 +19,8 @@ type DialogConfig = {
 };
 
 function App() {
-  const [isSidebarCompact, setIsSidebarCompact] = useState(false);
   const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
+  const libraryStore = useMemo(() => new Library(new TauriFileDialog(), new TauriSettingsStore()), []);
   const {
     playlist,
     currentPlaylistName,
@@ -43,7 +46,8 @@ function App() {
     selectPreviousInList,
     currentTime,
     remaining,
-    playedPercent
+    playedPercent,
+    seekToFraction
   } = useMusicPlayer();
 
   const hasUnsavedChangesRef = useRef(hasUnsavedChanges);
@@ -121,8 +125,6 @@ function App() {
     insertSongAfter(selectedSong, new Song(path));
   }, [insertSongAfter, selectedSong]);
 
-  const toggleSidebar = useCallback(() => setIsSidebarCompact(prev => !prev), []);
-
   useEffect(() => {
     let unlisten: (() => void) | null = null;
     let cancelled = false;
@@ -190,7 +192,7 @@ function App() {
   }, [playCurrentSelected, pause, stop, selectNextInList, selectPreviousInList]);
 
   return (
-    <div className={`app-container ${isSidebarCompact ? 'sidebar-compact-mode' : ''}`}>
+    <div className="app-container">
       <Player
         playingSong={playingSong}
         isPlaying={isPlaying}
@@ -201,11 +203,11 @@ function App() {
         currentTime={currentTime}
         remaining={remaining}
         playedPercent={playedPercent}
+        onSeek={seekToFraction}
       />
 
       <Sidebar
-        isCompact={isSidebarCompact}
-        onCollapse={toggleSidebar}
+        store={libraryStore}
         onAddToPlaylist={currentPlaylistPath ? handleAddLibrarySong : undefined}
         onAddToStart={currentPlaylistPath ? handleAddLibrarySongAtStart : undefined}
         onAddAfterSelected={selectedSong ? handleAddLibrarySongAfterSelected : undefined}

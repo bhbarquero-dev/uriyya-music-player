@@ -64,6 +64,11 @@ export class AudioManager {
         }
     }
 
+    public seek(time: number) {
+        if (!Number.isFinite(time)) return;
+        this.getActiveChannel().getAudioElement().currentTime = Math.max(0, time);
+    }
+
     public cleanup() {
         this.channel1.cleanup();
         this.channel2.cleanup();

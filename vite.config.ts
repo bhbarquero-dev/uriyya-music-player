@@ -9,8 +9,14 @@ export default defineConfig(async () => ({
   plugins: [react()],
   resolve: {
     alias: {
+      "@logic": path.resolve(__dirname, "./src/logic"),
       "@components": path.resolve(__dirname, "./src/components"),
+      "@abstractions": path.resolve(__dirname, "./src/abstractions"),
     },
+  },
+
+  optimizeDeps: {
+    include: ["@tauri-apps/plugin-store"],
   },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

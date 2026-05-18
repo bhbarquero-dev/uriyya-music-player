@@ -1,7 +1,7 @@
 import { PlayerControls } from "./PlayerControls";
 import { ProgressBar } from "./ProgressBar";
 import { TimeDisplay } from "./TimeDisplay";
-import { Song } from "../../logic/Song";
+import { Song } from "@logic/Song";
 
 interface PlayerProps {
     playingSong: Song | null;
@@ -13,9 +13,10 @@ interface PlayerProps {
     currentTime: number;
     remaining: number | null;
     playedPercent: number;
+    onSeek: (fraction: number) => void;
 }
 
-export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, onStop, currentTime, remaining, playedPercent }: PlayerProps) {
+export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, onStop, currentTime, remaining, playedPercent, onSeek }: PlayerProps) {
     return (
         <header className="player-header">
             <PlayerControls isPlaying={isPlaying} onPlay={onPlay} onPause={onPause} onStop={onStop} />
@@ -27,7 +28,7 @@ export function Player({ playingSong, isPlaying, isStopping, onPlay, onPause, on
                         : (isStopping ? "Deteniendo..." : "Sin reproducción")}
                 </div>
 
-                <ProgressBar playedPercent={playedPercent} />
+                <ProgressBar playedPercent={playedPercent} onSeek={onSeek} />
 
                 <TimeDisplay currentTime={currentTime} remaining={remaining} />
             </div>

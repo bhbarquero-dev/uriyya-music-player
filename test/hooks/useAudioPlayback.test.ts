@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useAudioPlayback } from "../../src/hooks/useAudioPlayback";
-import { Song } from "../../src/logic/Song";
+import { Song } from "@logic/Song";
 
 describe("useAudioPlayback", () => {
     beforeEach(() => {
@@ -167,7 +167,7 @@ describe("useAudioPlayback", () => {
             expect(result.current.playedPercent).toBe(50);
         });
 
-        it("should reset times when audio is paused and not in playing state", () => {
+        it("should preserve currentTime and duration when audio is paused", () => {
             const { result } = renderHook(() => useAudioPlayback());
             const song = new Song("test.mp3");
 
@@ -196,6 +196,33 @@ describe("useAudioPlayback", () => {
                 vi.advanceTimersByTime(250);
             });
 
+            expect(result.current.currentTime).toBe(60);
+            expect(result.current.duration).toBe(180);
+        });
+
+        it("should reset times to 0/null after stop but not after pause", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'currentTime', { value: 45, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 120, configurable: true });
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+            act(() => { vi.advanceTimersByTime(250); });
+
+            // pause — timing preserved
+            act(() => { result.current.pause(); });
+            Object.defineProperty(audioElement, 'paused', { value: true, configurable: true });
+            act(() => { vi.advanceTimersByTime(250); });
+            expect(result.current.currentTime).toBe(45);
+            expect(result.current.duration).toBe(120);
+
+            // resume then stop — timing resets
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+            act(() => { result.current.play(song); });
+            act(() => { result.current.stop(); });
             expect(result.current.currentTime).toBe(0);
             expect(result.current.duration).toBeNull();
         });
@@ -455,6 +482,108 @@ describe("useAudioPlayback", () => {
 
             // Now polling should work again
             expect(result.current.currentTime).toBe(30);
+        });
+    });
+
+    describe("seek", () => {
+        it("should update currentTime immediately", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+            act(() => { result.current.seek(60); });
+
+            expect(result.current.currentTime).toBe(60);
+        });
+
+        it("should set currentTime on the audio element", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+
+            const audioElement = result.current.getAudioElement();
+            act(() => { result.current.seek(90); });
+
+            expect(audioElement.currentTime).toBe(90);
+        });
+
+        it("should allow polling to resume after seeking following a stop", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+            act(() => { result.current.stop(); });
+
+            // After stop, endedOrStoppedRef is true — polling is blocked
+            expect(result.current.currentTime).toBe(0);
+
+            // Seek should clear the flag
+            act(() => { result.current.seek(45); });
+
+            expect(result.current.currentTime).toBe(45);
+
+            // Polling should now update normally
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'currentTime', { value: 50, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 180, configurable: true });
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+
+            act(() => { vi.advanceTimersByTime(250); });
+
+            expect(result.current.currentTime).toBe(50);
+        });
+
+        it("should ignore NaN time and not update state", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+
+            const audioElement = result.current.getAudioElement();
+            Object.defineProperty(audioElement, 'currentTime', { value: 30, configurable: true });
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+            act(() => { vi.advanceTimersByTime(250); });
+            expect(result.current.currentTime).toBe(30);
+
+            act(() => { result.current.seek(NaN); });
+
+            expect(result.current.currentTime).toBe(30);
+        });
+
+        it("should clamp negative time to 0", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+            act(() => { result.current.seek(-10); });
+
+            expect(result.current.currentTime).toBe(0);
+        });
+
+        it("should allow polling to resume after seeking following natural end", () => {
+            const { result } = renderHook(() => useAudioPlayback());
+            const song = new Song("test.mp3");
+
+            act(() => { result.current.play(song); });
+
+            const audioElement = result.current.getAudioElement();
+            act(() => { audioElement.dispatchEvent(new Event("ended")); });
+
+            expect(result.current.currentTime).toBe(0);
+
+            act(() => { result.current.seek(30); });
+
+            expect(result.current.currentTime).toBe(30);
+
+            Object.defineProperty(audioElement, 'currentTime', { value: 35, configurable: true });
+            Object.defineProperty(audioElement, 'duration', { value: 180, configurable: true });
+            Object.defineProperty(audioElement, 'paused', { value: false, configurable: true });
+            Object.defineProperty(audioElement, 'ended', { value: false, configurable: true });
+
+            act(() => { vi.advanceTimersByTime(250); });
+
+            expect(result.current.currentTime).toBe(35);
         });
     });
 });

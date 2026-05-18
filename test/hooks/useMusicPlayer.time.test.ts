@@ -50,6 +50,10 @@ vi.mock('../../src/logic/AudioManager', () => {
       this.events.onFadeFinished(this.getActiveChannelId());
     }
 
+    seek(time: number) {
+      this.audio.currentTime = time;
+    }
+
     cleanup() {
       this.audio.paused = true;
       this.audio.currentTime = 0;
@@ -76,7 +80,7 @@ vi.mock('../../src/logic/AudioManager', () => {
 });
 
 import { useMusicPlayer } from '../../src/hooks/useMusicPlayer';
-import { Song } from '../../src/logic/Song';
+import { Song } from '@logic/Song';
 
 describe('useMusicPlayer timing', () => {
   beforeEach(() => {
@@ -165,5 +169,144 @@ describe('useMusicPlayer timing', () => {
 
     expect(result.current.currentTime).toBe(0);
     expect(result.current.duration).toBeNull();
+  });
+
+  describe('seekToFraction', () => {
+    it('should seek to the correct time for a given fraction', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(200);
+      am.setCurrentTime(0);
+      am.audio.paused = false;
+
+      act(() => { vi.advanceTimersByTime(300); });
+
+      expect(result.current.duration).toBe(200);
+
+      act(() => { result.current.seekToFraction(0.5); });
+
+      expect(result.current.currentTime).toBe(100);
+    });
+
+    it('should seek to the start when fraction is 0', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(180);
+      am.setCurrentTime(90);
+      am.audio.paused = false;
+
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(0); });
+
+      expect(result.current.currentTime).toBe(0);
+    });
+
+    it('should seek to the end when fraction is 1', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(180);
+      am.audio.paused = false;
+
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(1); });
+
+      expect(result.current.currentTime).toBe(180);
+    });
+
+    it('should do nothing when fraction is NaN', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(200);
+      am.audio.paused = false;
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(NaN); });
+
+      expect(result.current.currentTime).toBe(0);
+    });
+
+    it('should clamp fraction above 1 to the end of the song', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(100);
+      am.audio.paused = false;
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(1.5); });
+
+      expect(result.current.currentTime).toBe(100);
+    });
+
+    it('should clamp fraction below 0 to the start of the song', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(100);
+      am.setCurrentTime(50);
+      am.audio.paused = false;
+      act(() => { vi.advanceTimersByTime(300); });
+
+      act(() => { result.current.seekToFraction(-0.5); });
+
+      expect(result.current.currentTime).toBe(0);
+    });
+
+    it('should do nothing when duration is null', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      // No song playing — duration is null
+      expect(result.current.duration).toBeNull();
+      expect(result.current.currentTime).toBe(0);
+
+      act(() => { result.current.seekToFraction(0.5); });
+
+      expect(result.current.currentTime).toBe(0);
+    });
+
+    it('should seek to the correct time while paused', () => {
+      const { result } = renderHook(() => useMusicPlayer());
+
+      act(() => { result.current.playSong(new Song('a.mp3')); });
+
+      const am = lastAM;
+      am.setDuration(200);
+      am.setCurrentTime(50);
+      am.audio.paused = false;
+      act(() => { vi.advanceTimersByTime(300); });
+      expect(result.current.duration).toBe(200);
+      expect(result.current.currentTime).toBe(50);
+
+      // pause
+      act(() => { result.current.pause(); });
+      am.audio.paused = true;
+      act(() => { vi.advanceTimersByTime(300); });
+
+      // timing preserved after pause
+      expect(result.current.duration).toBe(200);
+
+      // seek while paused
+      act(() => { result.current.seekToFraction(0.75); });
+
+      expect(result.current.currentTime).toBe(150);
+    });
   });
 });

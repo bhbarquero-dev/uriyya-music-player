@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Player } from "@components/player/Player";
-import { Song } from "../../../src/logic/Song";
+import { Song } from "@logic/Song";
 
 describe("Player", () => {
     const mockOnPlay = vi.fn();
     const mockOnPause = vi.fn();
     const mockOnStop = vi.fn();
+
+    const mockOnSeek = vi.fn();
 
     const defaultProps = {
         playingSong: null,
@@ -15,6 +17,7 @@ describe("Player", () => {
         onPlay: mockOnPlay,
         onPause: mockOnPause,
         onStop: mockOnStop,
+        onSeek: mockOnSeek,
         currentTime: 0,
         remaining: null,
         playedPercent: 0,
