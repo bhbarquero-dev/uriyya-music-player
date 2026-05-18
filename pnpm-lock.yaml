@@ -12,11 +12,11 @@ importers:
   .:
     dependencies:
       '@dnd-kit/abstract':
-        specifier: ^0.3.2
-        version: 0.3.2
+        specifier: ^0.4.0
+        version: 0.4.0
       '@dnd-kit/react':
-        specifier: ^0.3.2
-        version: 0.3.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        specifier: ^0.4.0
+        version: 0.4.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@tauri-apps/api':
         specifier: ^2.10.1
         version: 2.10.1
@@ -71,7 +71,7 @@ importers:
         version: 5.2.0(vite@8.0.13(@types/node@25.6.0))
       jsdom:
         specifier: ^29.1.0
-        version: 29.1.0
+        version: 29.1.1
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
@@ -80,10 +80,10 @@ importers:
         version: 8.0.13(@types/node@25.6.0)
       vitest:
         specifier: ^4.1.5
-        version: 4.1.5(@types/node@25.6.0)(jsdom@29.1.0)(vite@8.0.13(@types/node@25.6.0))
+        version: 4.1.5(@types/node@25.6.0)(jsdom@29.1.1)(vite@8.0.13(@types/node@25.6.0))
       vitest-mock-extended:
         specifier: ^4.0.0
-        version: 4.0.0(typescript@6.0.3)(vitest@4.1.5(@types/node@25.6.0)(jsdom@29.1.0)(vite@8.0.13(@types/node@25.6.0)))
+        version: 4.0.0(typescript@6.0.3)(vitest@4.1.5(@types/node@25.6.0)(jsdom@29.1.1)(vite@8.0.13(@types/node@25.6.0)))
 
 packages:
 
@@ -232,26 +232,26 @@ packages:
     resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
     engines: {node: '>=20.19.0'}
 
-  '@dnd-kit/abstract@0.3.2':
-    resolution: {integrity: sha512-uvPVK+SZYD6Viddn9M0K0JQdXknuVSxA/EbMlFRanve3P/XTc18oLa5zGftKSGjfQGmuzkZ34E26DSbly1zi3Q==}
+  '@dnd-kit/abstract@0.4.0':
+    resolution: {integrity: sha512-loEEJxKT5oLOLeRBJVTO9qpgvvW/Qq902xO20v1JMbpANuN/NLurUdpxIwNpVz+RtOSyzznnbc7lO7psmOhc9A==}
 
-  '@dnd-kit/collision@0.3.2':
-    resolution: {integrity: sha512-pNmNSLCI8S9fNQ7QJ3fBCDjiT0sqBhUFcKgmyYaGvGCAU+kq0AP8OWlh0JSisc9k5mFyxmRpmFQcnJpILz/RPA==}
+  '@dnd-kit/collision@0.4.0':
+    resolution: {integrity: sha512-oOHHUkH1h9Vl2m8TwLw/mPHA7Blf+s0PYcRoLNWNBVxDzugJKZo8WdpU58EMu9qkqyQGrR/YTOozGiMPhlqZ5Q==}
 
-  '@dnd-kit/dom@0.3.2':
-    resolution: {integrity: sha512-cIUAVgt2szQyz6JRy7I+0r+xeyOAGH21Y15hb5bIyHoDEaZBvIDH+OOlD9eoLjCbsxDLN9WloU2CBi3OE6LYDg==}
+  '@dnd-kit/dom@0.4.0':
+    resolution: {integrity: sha512-mJDKt0BtlHXetZyrvZXh6++aycleIbYWH/OVC4nlszDh8NvW7q8dfsxFllR5RtLKLcykLaI4o545Figfks/HZQ==}
 
-  '@dnd-kit/geometry@0.3.2':
-    resolution: {integrity: sha512-3UBPuIS7E3oGiHxOE8h810QA+0pnrnCtGxl4Os1z3yy5YkC/BEYGY+TxWPTQaY1/OMV7GCX7ZNMlama2QN3n3w==}
+  '@dnd-kit/geometry@0.4.0':
+    resolution: {integrity: sha512-d1n+CU54V/qF/g792bmJK2oR4f5jOL7Pls2IfC+j9f5UBECpjsYbcPZ/krom/z8LgieqvMh1qrUkdcBjJJ7vpg==}
 
-  '@dnd-kit/react@0.3.2':
-    resolution: {integrity: sha512-1Opg1xw6I75Z95c+rF2NJa0pdGb8rLAENtuopKtJ1J0PudWlz+P6yL137xy/6DV43uaRmNGtsdbMbR0yRYJ72g==}
+  '@dnd-kit/react@0.4.0':
+    resolution: {integrity: sha512-J2/N4CpQf98zJBZhMljDNsc+QR4VtUKU9BRO1+Di4OGaB1qafMC4qZ11xKXOkjw+d7h82FRSXmXCo0c8+VWaWg==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
 
-  '@dnd-kit/state@0.3.2':
-    resolution: {integrity: sha512-dLUIkoYrIJhGXfF2wGLTfb46vUokEsO/OoE21TSfmahYrx7ysTmnwbePsznFaHlwgZhQEh6AlLvthLCeY21b1A==}
+  '@dnd-kit/state@0.4.0':
+    resolution: {integrity: sha512-vVdwOY9VsYdMNa7Z0xQhTXlzHqCcCugGuoM1kzvZhnZ0tYVPRdmIhWfeO6Y2ZoN92JwYAyJRRNl4ICkEe2mneg==}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -741,8 +741,8 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  jsdom@29.1.0:
-    resolution: {integrity: sha512-YNUc7fB9QuvSSQWfrH0xF+TyABkxUwx8sswgIDaCrw4Hol8BghdZDkITtZheRJeMtzWlnTfsM3bBBusRvpO1wg==}
+  jsdom@29.1.1:
+    resolution: {integrity: sha512-ECi4Fi2f7BdJtUKTflYRTiaMxIB0O6zfR1fX0GXpUrf6flp8QIYn1UT20YQqdSOfk2dfkCwS8LAFoJDEppNK5Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24.0.0}
     peerDependencies:
       canvas: ^3.0.0
@@ -858,8 +858,8 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  nanoid@3.3.12:
-    resolution: {integrity: sha512-ZB9RH/39qpq5Vu6Y+NmUaFhQR6pp+M2Xt76XBnEwDaGcVAqhlvxrl3B2bKS5D3NH3QR76v3aSrKaF/Kiy7lEtQ==}
+  nanoid@3.3.11:
+    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -979,11 +979,11 @@ packages:
     resolution: {integrity: sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==}
     engines: {node: '>=14.0.0'}
 
-  tldts-core@7.0.29:
-    resolution: {integrity: sha512-W99NuU7b1DcG3uJ3v9k9VztCH3WialNbBkBft5wCs8V8mexu0XQqaZEYb9l9RNNzK8+3EJ9PKWB0/RUtTQ/o+Q==}
+  tldts-core@7.0.28:
+    resolution: {integrity: sha512-7W5Efjhsc3chVdFhqtaU0KtK32J37Zcr9RKtID54nG+tIpcY79CQK/veYPODxtD/LJ4Lue66jvrQzIX2Z2/pUQ==}
 
-  tldts@7.0.29:
-    resolution: {integrity: sha512-JIXCerhudr/N6OWLwLF1HVsTTUo7ry6qHa5eWZEkiMuxsIiAACL55tGLfqfHfoH7QaMQUW8fngD7u7TxWexYQg==}
+  tldts@7.0.28:
+    resolution: {integrity: sha512-+Zg3vWhRUv8B1maGSTFdev9mjoo8Etn2Ayfs4cnjlD3CsGkxXX4QyW3j2WJ0wdjYcYmy7Lx2RDsZMhgCWafKIw==}
     hasBin: true
 
   tough-cookie@6.0.1:
@@ -1310,41 +1310,41 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.0': {}
 
-  '@dnd-kit/abstract@0.3.2':
+  '@dnd-kit/abstract@0.4.0':
     dependencies:
-      '@dnd-kit/geometry': 0.3.2
-      '@dnd-kit/state': 0.3.2
+      '@dnd-kit/geometry': 0.4.0
+      '@dnd-kit/state': 0.4.0
       tslib: 2.8.1
 
-  '@dnd-kit/collision@0.3.2':
+  '@dnd-kit/collision@0.4.0':
     dependencies:
-      '@dnd-kit/abstract': 0.3.2
-      '@dnd-kit/geometry': 0.3.2
+      '@dnd-kit/abstract': 0.4.0
+      '@dnd-kit/geometry': 0.4.0
       tslib: 2.8.1
 
-  '@dnd-kit/dom@0.3.2':
+  '@dnd-kit/dom@0.4.0':
     dependencies:
-      '@dnd-kit/abstract': 0.3.2
-      '@dnd-kit/collision': 0.3.2
-      '@dnd-kit/geometry': 0.3.2
-      '@dnd-kit/state': 0.3.2
+      '@dnd-kit/abstract': 0.4.0
+      '@dnd-kit/collision': 0.4.0
+      '@dnd-kit/geometry': 0.4.0
+      '@dnd-kit/state': 0.4.0
       tslib: 2.8.1
 
-  '@dnd-kit/geometry@0.3.2':
+  '@dnd-kit/geometry@0.4.0':
     dependencies:
-      '@dnd-kit/state': 0.3.2
+      '@dnd-kit/state': 0.4.0
       tslib: 2.8.1
 
-  '@dnd-kit/react@0.3.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@dnd-kit/react@0.4.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@dnd-kit/abstract': 0.3.2
-      '@dnd-kit/dom': 0.3.2
-      '@dnd-kit/state': 0.3.2
+      '@dnd-kit/abstract': 0.4.0
+      '@dnd-kit/dom': 0.4.0
+      '@dnd-kit/state': 0.4.0
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
       tslib: 2.8.1
 
-  '@dnd-kit/state@0.3.2':
+  '@dnd-kit/state@0.4.0':
     dependencies:
       '@preact/signals-core': 1.14.1
       tslib: 2.8.1
@@ -1757,7 +1757,7 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  jsdom@29.1.0:
+  jsdom@29.1.1:
     dependencies:
       '@asamuzakjp/css-color': 5.1.11
       '@asamuzakjp/dom-selector': 7.1.1
@@ -1854,7 +1854,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  nanoid@3.3.12: {}
+  nanoid@3.3.11: {}
 
   node-releases@2.0.38: {}
 
@@ -1880,7 +1880,7 @@ snapshots:
 
   postcss@8.5.14:
     dependencies:
-      nanoid: 3.3.12
+      nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -1964,15 +1964,15 @@ snapshots:
 
   tinyrainbow@3.1.0: {}
 
-  tldts-core@7.0.29: {}
+  tldts-core@7.0.28: {}
 
-  tldts@7.0.29:
+  tldts@7.0.28:
     dependencies:
-      tldts-core: 7.0.29
+      tldts-core: 7.0.28
 
   tough-cookie@6.0.1:
     dependencies:
-      tldts: 7.0.29
+      tldts: 7.0.28
 
   tr46@6.0.0:
     dependencies:
@@ -2007,13 +2007,13 @@ snapshots:
       '@types/node': 25.6.0
       fsevents: 2.3.3
 
-  vitest-mock-extended@4.0.0(typescript@6.0.3)(vitest@4.1.5(@types/node@25.6.0)(jsdom@29.1.0)(vite@8.0.13(@types/node@25.6.0))):
+  vitest-mock-extended@4.0.0(typescript@6.0.3)(vitest@4.1.5(@types/node@25.6.0)(jsdom@29.1.1)(vite@8.0.13(@types/node@25.6.0))):
     dependencies:
       ts-essentials: 10.1.1(typescript@6.0.3)
       typescript: 6.0.3
-      vitest: 4.1.5(@types/node@25.6.0)(jsdom@29.1.0)(vite@8.0.13(@types/node@25.6.0))
+      vitest: 4.1.5(@types/node@25.6.0)(jsdom@29.1.1)(vite@8.0.13(@types/node@25.6.0))
 
-  vitest@4.1.5(@types/node@25.6.0)(jsdom@29.1.0)(vite@8.0.13(@types/node@25.6.0)):
+  vitest@4.1.5(@types/node@25.6.0)(jsdom@29.1.1)(vite@8.0.13(@types/node@25.6.0)):
     dependencies:
       '@vitest/expect': 4.1.5
       '@vitest/mocker': 4.1.5(vite@8.0.13(@types/node@25.6.0))
@@ -2037,7 +2037,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 25.6.0
-      jsdom: 29.1.0
+      jsdom: 29.1.1
     transitivePeerDependencies:
       - msw
 
