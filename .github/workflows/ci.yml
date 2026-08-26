@@ -61,8 +61,8 @@ jobs:
       - name: Install system dependencies
         uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
         with:
-          packages: libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-          version: 1.0
+          packages: libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf webkit2gtk-driver xvfb
+          version: 1.1
 
       - name: Install frontend dependencies
         run: pnpm install
@@ -107,3 +107,25 @@ jobs:
 
       - name: Verify Tauri build (debug mode)
         run: pnpm tauri build --debug --no-bundle
+
+      # A partir de acá corre la suite de WebDriver contra el binario real que
+      # produjo el paso anterior. La versión de tauri-driver es independiente de
+      # la versión de Tauri del proyecto, así que no se pinea.
+      - name: Install tauri-driver
+        run: cargo install tauri-driver --locked
+
+      # xvfb da un servidor gráfico virtual para que la app corra headless sin
+      # cambios en el código. -a elige un display libre y evita colisiones.
+      # Marcado como no bloqueante hasta confirmar que es estable en CI.
+      - name: Run Tauri WebDriver E2E tests
+        run: xvfb-run -a pnpm test:e2e:tauri
+        continue-on-error: true
+
+      - name: Upload Tauri WebDriver logs
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: tauri-webdriver-logs
+          path: e2e-tauri/logs/
+          retention-days: 30
+          if-no-files-found: ignore

@@ -1,5 +1,10 @@
 allowBuilds:
+  # Dependencias transitivas de @wdio/cli. Sus scripts de instalación descargan
+  # drivers de navegador que esta suite no usa: tauri-driver lanza el driver
+  # nativo y msedgedriver lo resuelve e2e-tauri/support/edgeDriver.js.
+  edgedriver: false
   esbuild: true
+  geckodriver: false
 
 onlyBuiltDependencies:
   - esbuild

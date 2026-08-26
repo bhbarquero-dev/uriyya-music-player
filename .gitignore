@@ -28,3 +28,8 @@ playwright/.cache
 *.njsproj
 *.sln
 *.sw?
+
+# Tauri WebDriver e2e
+e2e-tauri/fixtures
+e2e-tauri/.drivers
+e2e-tauri/logs
