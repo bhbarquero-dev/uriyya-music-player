@@ -50,7 +50,7 @@ jobs:
           workspaces: src-tauri -> target
 
       - name: Install cargo-audit
-        uses: taiki-e/install-action@b6b84cf49ebfe0176417bdce007c624f0db37f20 # v2
+        uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2
         with:
           tool: cargo-audit
 
