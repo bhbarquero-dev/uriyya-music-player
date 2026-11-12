@@ -31,6 +31,15 @@ Uriyya Music Player is a desktop application for loading, browsing, and playing 
 - Restoring active playback, selected song, or playback position on app startup.
 - Persisting temporary UI state such as search text.
 
+## Domain Documents
+
+- [Playback](domain/playback.md)
+- [Playlist](domain/playlist.md)
+- [Library](domain/library.md)
+- [Persistence](domain/persistence.md)
+
+See [architecture.md](architecture.md) for how the code is organized.
+
 ## Related Code
 
 - `src/hooks/useMusicPlayer.ts`

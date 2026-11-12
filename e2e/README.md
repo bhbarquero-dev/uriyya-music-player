@@ -1,90 +1,86 @@
 # E2E Testing with Playwright
 
-Este directorio contiene las pruebas end-to-end (e2e) del Uriyya Music Player utilizando Playwright.
+This directory contains the end-to-end (e2e) tests for Uriyya Music Player, written with Playwright.
 
-## Descripción
+## What Is Covered
 
-Las pruebas e2e validan el comportamiento de la aplicación en un navegador real, incluyendo:
+The e2e tests validate the app's behavior in a real browser:
 
-- **Navegación con teclas de flecha**: Valida que al navegar entre canciones con ArrowUp/ArrowDown, el elemento seleccionado permanece visible en el viewport del contenedor con scroll.
-- **Scroll automático**: Verifica que el scroll se ajusta automáticamente cuando el usuario navega más allá del área visible.
-- **Límites de la lista**: Verifica que la navegación se comporta correctamente al llegar a la primera y a la última canción.
+- **Arrow key navigation**: when moving between songs with ArrowUp/ArrowDown, the selected row stays visible inside the scrollable container.
+- **Automatic scrolling**: the scroll position adjusts when the user navigates beyond the visible area.
+- **List boundaries**: navigation behaves correctly when reaching the first and the last song.
 
-## Requisitos
+## Requirements
 
 - Node.js LTS
-- pnpm (habilitado con `corepack enable`)
-- Navegadores Playwright instalados
+- pnpm (enabled with `corepack enable`)
+- Playwright browsers installed
 
-## Instalación
+## Installation
 
 ```bash
-# Instalar dependencias
+# Install dependencies
 pnpm install
 
-# Instalar navegadores de Playwright
+# Install Playwright browsers
 pnpm exec playwright install chromium
 ```
 
-## Ejecutar las pruebas
+## Running the Tests
 
-### Modo headless (por defecto)
+### Headless mode (default)
 
 ```bash
 pnpm run test:e2e
 ```
 
-### Modo UI (interactivo)
+### UI mode (interactive)
 
 ```bash
 pnpm run test:e2e:ui
 ```
 
-### Ver el reporte HTML
+### HTML report
 
-Después de ejecutar las pruebas, se genera un reporte HTML:
+After a run, an HTML report is generated:
 
 ```bash
 pnpm exec playwright show-report
 ```
 
-## Estructura de pruebas
+## Test Files
 
-- `arrow-navigation.spec.ts`: Pruebas de navegación con teclas de flecha y validación de scroll
+- `arrow-navigation.spec.ts`: arrow key navigation and scroll validation
 
-## Notas importantes
+## Important Notes
 
-1. **Datos simulados**: Las pruebas no usan archivos de música reales. Inyectan en la página una lista de canciones simulada y validan el comportamiento de navegación y scroll sobre ella.
+1. **Mock data**: the tests do not use real music files. They inject a mock song list into the page and validate navigation and scrolling against it.
 
-2. **Frontend en navegador**: Las pruebas corren contra el servidor de desarrollo de Vite en `http://localhost:1420` (Playwright lo levanta automáticamente) usando Chromium, no contra la ventana de Tauri, por lo que las APIs nativas no están disponibles.
+2. **Frontend in a browser**: the tests run against the Vite dev server at `http://localhost:1420` (Playwright starts it automatically) using Chromium, not against the Tauri window, so native APIs are not available.
 
-3. **CI/CD**: Las pruebas se ejecutan automáticamente en el pipeline de CI de GitHub Actions.
+3. **CI/CD**: the tests run automatically in the GitHub Actions CI pipeline.
 
 ## Debugging
 
-Para debugging de pruebas:
-
 ```bash
-# Ejecutar en modo debug
+# Run in debug mode
 pnpm exec playwright test --debug
 
-# Ejecutar una prueba específica
+# Run a specific test file
 pnpm exec playwright test arrow-navigation
 
-# Ver el trace de una prueba fallida
+# Open the trace of a failed test
 pnpm exec playwright show-trace trace.zip
 ```
 
-## Agregar nuevas pruebas
+## Adding New Tests
 
-Para agregar nuevas pruebas e2e:
+1. Create a new `.spec.ts` file in this directory
+2. Import `test` and `expect` from `@playwright/test`
+3. Write the test cases
+4. Make sure the tests do not depend on real music files or Tauri APIs
 
-1. Crear un nuevo archivo `.spec.ts` en este directorio
-2. Importar `test` y `expect` de `@playwright/test`
-3. Escribir los test cases
-4. Asegurarse de que las pruebas no dependan de archivos de música reales ni de APIs de Tauri
+## References
 
-## Referencias
-
-- [Documentación de Playwright](https://playwright.dev)
-- [Best Practices de Playwright](https://playwright.dev/docs/best-practices)
+- [Playwright documentation](https://playwright.dev)
+- [Playwright best practices](https://playwright.dev/docs/best-practices)
