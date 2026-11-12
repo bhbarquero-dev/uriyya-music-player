@@ -473,50 +473,16 @@ Keep these when changing the workflows:
 
 ### 10.2 CI does not block merging
 
-**Problem.** The ruleset on `main` requires pull requests, squash merges and one status check: `CodeQL`. The `validate` job of `ci.yml` is not a required check, so a pull request with failing tests, lint or build can be merged.
+**Status.** The workflow side is done on branch `ci/required-gate-job`; the repository setting is not.
 
-**Proposal.**
+- `ci.yml` no longer uses `paths-ignore` on the pull request trigger. A `changes` job decides whether the pull request touches anything outside the documentation paths, `validate` runs only when it does, and a final `ci-ok` job always reports the outcome.
+- The path list lives in a shell `case` in the `changes` job, with no extra action.
 
-1. Add the CI result to the required status checks of the ruleset.
-2. That creates a new problem: `ci.yml` has `paths-ignore` for documentation, and a required check that never runs leaves the pull request blocked forever. Replace the trigger-level `paths-ignore` with a job-level filter and a gate job that always reports:
+**Still open.**
 
-   ```yaml
-   jobs:
-     changes:
-       runs-on: ubuntu-22.04
-       outputs:
-         code: ${{ steps.filter.outputs.code }}
-       steps:
-         - uses: actions/checkout@<sha>
-         - uses: dorny/paths-filter@<sha>
-           id: filter
-           with:
-             predicate-quantifier: every
-             filters: |
-               code:
-                 - '!**/*.md'
-                 - '!docs/**'
-                 - '!LICENSE'
-                 - '!.gitignore'
-                 - '!.vscode/**'
-
-     validate:
-       needs: changes
-       if: needs.changes.outputs.code == 'true'
-       # existing steps
-
-     ci-ok:
-       needs: [changes, validate]
-       if: always()
-       runs-on: ubuntu-22.04
-       steps:
-         - env:
-             RESULT: ${{ needs.validate.result }}
-           run: test "$RESULT" = "success" -o "$RESULT" = "skipped"
-   ```
-
-   Require `ci-ok`. `dorny/paths-filter` is one option; a short `git diff --name-only` step does the same without a new action. Check the filter syntax against the action's documentation before relying on this sketch.
-3. Update the CI section of `CONTRIBUTING.md`.
+1. After this is merged, add `ci-ok` to the required status checks of the `main` ruleset. Until then a pull request with failing tests, lint or build can still be merged: the ruleset only requires `CodeQL`.
+2. Pull requests opened before the merge do not have a `ci-ok` check. Update them with `main` before making the check required, or they will be blocked.
+3. The documentation-only path (where `validate` is skipped) can only be exercised by a real documentation-only pull request.
 
 ### 10.3 Manual releases: reduce the room for mistakes
 

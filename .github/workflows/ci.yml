@@ -3,15 +3,6 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - '**/*.md'
-      - '.github/dependabot.yml'
-      - '.github/workflows/cd.yml'
-      - '.github/workflows/release.yml'
-      - '.gitignore'
-      - 'LICENSE'
-      - '.vscode/**'
-      - 'docs/**'
   workflow_dispatch:
   workflow_call:
 
@@ -26,7 +17,45 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
+  # Decides whether the pull request touches anything that needs validation.
+  # A trigger-level `paths-ignore` would leave the required `ci-ok` check
+  # unreported on documentation-only pull requests and block them forever.
+  changes:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.detect.outputs.code }}
+    steps:
+      - name: Checkout
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Detect changes that need validation
+        id: detect
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          code=true
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            code=false
+            # HEAD is the merge commit of the pull request; its first parent is the base branch.
+            # Assigned on its own line so a failing diff fails the job instead of skipping validation.
+            changed_files="$(git diff --name-only HEAD^1 HEAD)"
+            while IFS= read -r file; do
+              case "$file" in
+                ''|*.md|docs/*|LICENSE|.gitignore|.vscode/*|.github/dependabot.yml|.github/workflows/cd.yml|.github/workflows/release.yml) ;;
+                *) code=true; break ;;
+              esac
+            done <<< "$changed_files"
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
   validate:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:
@@ -125,3 +154,19 @@ jobs:
 
       - name: Verify Tauri build (debug mode)
         run: pnpm tauri build --debug --no-bundle
+
+  # The only check that should be marked as required: it always reports a result.
+  ci-ok:
+    needs: [changes, validate]
+    if: always()
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - name: Check results
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+        run: |
+          echo "changes: $CHANGES_RESULT, validate: $VALIDATE_RESULT"
+          [ "$CHANGES_RESULT" = "success" ] || exit 1
+          [ "$VALIDATE_RESULT" = "success" ] || [ "$VALIDATE_RESULT" = "skipped" ] || exit 1

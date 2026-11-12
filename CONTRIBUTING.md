@@ -153,7 +153,9 @@ Three GitHub Actions workflows cover the pipeline:
 | `cd.yml` | Pushes to `main` | Runs CI, then builds installers for macOS (Intel), Linux, and Windows and uploads them as workflow artifacts |
 | `release.yml` | A GitHub Release is published | Runs CI, then builds all bundles for the three platforms, attaches them to the release, and attests build provenance |
 
-CI and CD are skipped when a change only touches documentation (any `*.md` file, `docs/**`, `LICENSE`) or the other paths listed under `paths-ignore` in `ci.yml` and `cd.yml`.
+A pull request that only touches documentation (any `*.md` file, `docs/**`, `LICENSE`) or the other paths listed in the `changes` job of `ci.yml` skips the `validate` job. CD is skipped for the same kind of change through `paths-ignore` in `cd.yml`.
+
+`ci.yml` ends with a `ci-ok` job that always reports: it passes when `validate` passed or was skipped, and fails otherwise. `ci-ok` is the check to mark as required in the `main` ruleset. Do not require `validate` directly, and do not add `paths-ignore` to the pull request trigger: a required check that never runs leaves the pull request blocked.
 
 `package.json` is the source of truth for the app version: change it there and nowhere else. `src-tauri/tauri.conf.json` and the sidebar footer read it directly. `scripts/sync-version.mjs` copies it into `src-tauri/Cargo.toml` and `src-tauri/Cargo.lock`; it runs at the start of `pnpm dev` and `pnpm build` (and therefore of every Tauri build, including CD and releases), or on demand with `pnpm sync:version`. Commit the Cargo files it updates. The release tag (`vX.Y.Z`) is created by hand and is not checked against the version.
 
