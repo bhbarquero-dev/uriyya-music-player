@@ -6,9 +6,9 @@ export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            '@logic': path.resolve(__dirname, './src/logic'),
-            '@components': path.resolve(__dirname, './src/components'),
-            '@abstractions': path.resolve(__dirname, './src/abstractions'),
+            '@logic': path.resolve(import.meta.dirname, './src/logic'),
+            '@components': path.resolve(import.meta.dirname, './src/components'),
+            '@abstractions': path.resolve(import.meta.dirname, './src/abstractions'),
         },
     },
     test: {
