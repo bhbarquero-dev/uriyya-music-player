@@ -35,6 +35,8 @@ export function usePlaylistState() {
     const setPlaylist = useCallback((songs: Song[]) => {
         playlistRef.current = songs;
         originalPlaylistRef.current = songs;
+        // A loaded playlist must not inherit the navigation position of the previous one
+        playlistManagerRef.current = new PlaylistManager();
         playlistManagerRef.current.setSongs(songs);
         setPlaylistState(songs);
         setHasUnsavedChanges(false);
