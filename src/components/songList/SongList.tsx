@@ -4,7 +4,7 @@ import { RestrictToVerticalAxis } from "@dnd-kit/abstract/modifiers";
 import { SongRow } from "./SongRow";
 import { EmptyPlaylist } from "./EmptyPlaylist";
 import { PlaylistBanner } from "./PlaylistBanner";
-import { Song } from "@logic/Song";
+import type { Song } from "@logic/Song";
 
 type DragEntityWithId = {
     id: string | number;
@@ -49,6 +49,7 @@ export function SongList({ playlist, selectedSong, playingSong, isPlaying, curre
 
     const containerRef = useRef<HTMLElement | null>(null);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: selectedSong is the trigger; the effect reads the row through a ref
     useEffect(() => {
         const row = selectedRowRef.current;
         const container = containerRef.current;

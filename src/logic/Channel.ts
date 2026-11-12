@@ -1,4 +1,4 @@
-import { Song } from "./Song";
+import type { Song } from "./Song";
 import type { AudioChannel, AudioManagerEvents } from "./AudioManager";
 
 export const FADE_DURATION_MS = 6000;

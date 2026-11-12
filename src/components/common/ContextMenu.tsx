@@ -37,6 +37,7 @@ export function ContextMenu({ x, y, items, onClose }: ContextMenuProps) {
         <div ref={menuRef} className="context-menu" style={{ top: y, left: x }}>
             <ul className="context-menu-list">
                 {items.map((item) => (
+                    // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard navigation for the context menu is not implemented yet
                     <li
                         key={item.label}
                         className={`context-menu-item${item.disabled ? " disabled" : ""}`}

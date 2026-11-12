@@ -185,6 +185,44 @@ describe("usePlaylistState", () => {
 
             expect(result.current.selectedSong).toBe(songs[0]);
         });
+
+        describe("after loading another playlist", () => {
+            const createSongs = (count: number) =>
+                Array.from({ length: count }, (_, i) => new Song(`reloaded${i + 1}.mp3`));
+
+            const navigateOnFreshLoad = (playlist: Song[], direction: "next" | "previous") => {
+                const { result } = renderHook(() => usePlaylistState());
+                act(() => { result.current.setPlaylist(playlist); });
+                act(() => {
+                    if (direction === "next") result.current.selectNext();
+                    else result.current.selectPrevious();
+                });
+                return result.current.selectedSong;
+            };
+
+            it.each([
+                { direction: "next" as const, newLength: 3 },
+                { direction: "previous" as const, newLength: 3 },
+                { direction: "next" as const, newLength: 12 },
+                { direction: "previous" as const, newLength: 12 },
+            ])("should navigate $direction as on a fresh load when the new playlist has $newLength songs", ({ direction, newLength }) => {
+                const previousPlaylist = createSongs(8);
+                const newPlaylist = createSongs(newLength);
+                const { result } = renderHook(() => usePlaylistState());
+
+                act(() => { result.current.setPlaylist(previousPlaylist); });
+                act(() => { result.current.setSelectedSong(previousPlaylist[6]); });
+                act(() => { result.current.setPlaylist(newPlaylist); });
+                act(() => {
+                    if (direction === "next") result.current.selectNext();
+                    else result.current.selectPrevious();
+                });
+
+                const expected = navigateOnFreshLoad(newPlaylist, direction);
+                expect(expected).not.toBeNull();
+                expect(result.current.selectedSong).toBe(expected);
+            });
+        });
     });
 
     describe("removing songs", () => {

@@ -1,0 +1,39 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": ["**", "!!**/dist", "!!src-tauri"]
+	},
+	"formatter": {
+		"enabled": false
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"correctness": {
+				"useExhaustiveDependencies": "error",
+				"useHookAtTopLevel": "error"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["test/**", "e2e/**"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"useButtonType": "off"
+					}
+				}
+			}
+		}
+	],
+	"assist": {
+		"enabled": false
+	}
+}

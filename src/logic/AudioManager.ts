@@ -1,4 +1,4 @@
-import { Song } from "./Song";
+import type { Song } from "./Song";
 import { Channel, FADE_DURATION_MS } from "./Channel";
 
 export type AudioChannel = 1 | 2;

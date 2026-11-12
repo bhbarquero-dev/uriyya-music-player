@@ -1,5 +1,5 @@
 import { open } from "@tauri-apps/plugin-dialog";
-import { FileDialog, FileDialogOptions } from "../abstractions/FileDialog";
+import type { FileDialog, FileDialogOptions } from "../abstractions/FileDialog";
 
 /**
  * Tauri implementation of FileDialog abstraction.

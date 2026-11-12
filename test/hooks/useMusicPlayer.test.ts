@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useMusicPlayer } from "../../src/hooks/useMusicPlayer";
-import { FileService } from "@logic/FileService";
+import type { FileService } from "@logic/FileService";
 import { Song } from "@logic/Song";
 
 // Helper to create a mock FileService

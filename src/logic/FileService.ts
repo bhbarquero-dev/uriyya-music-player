@@ -1,5 +1,5 @@
-import { FileDialog } from "../abstractions/FileDialog";
-import { FileSystem } from "../abstractions/FileSystem";
+import type { FileDialog } from "../abstractions/FileDialog";
+import type { FileSystem } from "../abstractions/FileSystem";
 import { TauriFileDialog } from "./TauriFileDialog";
 import { TauriFileSystem } from "./TauriFileSystem";
 import { Song } from "./Song";

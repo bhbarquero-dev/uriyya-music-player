@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { PlaylistManager } from "@logic/PlaylistManager";
-import { Song } from "@logic/Song";
+import type { Song } from "@logic/Song";
 
 function resolveSelectionAfterRemoval(
     updated: Song[],
@@ -35,6 +35,8 @@ export function usePlaylistState() {
     const setPlaylist = useCallback((songs: Song[]) => {
         playlistRef.current = songs;
         originalPlaylistRef.current = songs;
+        // A loaded playlist must not inherit the navigation position of the previous one
+        playlistManagerRef.current = new PlaylistManager();
         playlistManagerRef.current.setSongs(songs);
         setPlaylistState(songs);
         setHasUnsavedChanges(false);

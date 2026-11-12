@@ -1,5 +1,5 @@
 import { join } from "@tauri-apps/api/path";
-import { readDir } from "@tauri-apps/plugin-fs";
+import { readDir, type DirEntry } from "@tauri-apps/plugin-fs";
 import { isSupportedAudioPath } from "./audioFormats";
 import { getFileName } from "../utils/formatting";
 
@@ -23,7 +23,7 @@ export async function scanLibraryAudioFiles(libraryRootPath: string): Promise<st
             continue;
         }
 
-        let entries;
+        let entries: DirEntry[];
         try {
             entries = await readDir(currentDirectory);
         } catch {
