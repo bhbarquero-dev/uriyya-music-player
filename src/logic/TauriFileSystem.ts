@@ -1,5 +1,5 @@
 import { readFile, exists, writeFile } from "@tauri-apps/plugin-fs";
-import { FileSystem } from "../abstractions/FileSystem";
+import type { FileSystem } from "../abstractions/FileSystem";
 
 type FileTextEncoding = "utf-8" | "windows-1252";
 

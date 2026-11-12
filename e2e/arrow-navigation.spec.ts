@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 // Helper function to inject mock playlist data into the page
 async function injectMockPlaylist(page: Page, songCount: number = 30) {

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useSortable } from "@dnd-kit/react/sortable";
-import { Song } from "@logic/Song";
+import type { Song } from "@logic/Song";
 import { ContextMenu } from "../common/ContextMenu";
 
 interface SongRowProps {

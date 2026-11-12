@@ -38,7 +38,7 @@ export class Library {
 
     getName(): string | null {
         if (!this.path) return null;
-        return this.path.split(/[\/\\]/).pop() ?? null;
+        return this.path.split(/[/\\]/).pop() ?? null;
     }
 
     hasLibrary(): boolean {
@@ -52,7 +52,7 @@ export function filterSongs(songs: string[], query: string): string[] {
     }
     const normalizedQuery = query.normalize('NFC').toLowerCase();
     return songs.filter((songPath) => {
-        const fileName = songPath.split(/[\/\\]/).pop() ?? songPath;
+        const fileName = songPath.split(/[/\\]/).pop() ?? songPath;
         return fileName.normalize('NFC').toLowerCase().includes(normalizedQuery);
     });
 }

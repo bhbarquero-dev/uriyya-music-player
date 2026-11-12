@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { FileService } from "@logic/FileService";
-import { FileDialog } from "../../src/abstractions/FileDialog";
-import { FileSystem } from "../../src/abstractions/FileSystem";
+import type { FileDialog } from "../../src/abstractions/FileDialog";
+import type { FileSystem } from "../../src/abstractions/FileSystem";
 import { Song } from "@logic/Song";
 
 const HOME_DIR = "/Users/uriyya";

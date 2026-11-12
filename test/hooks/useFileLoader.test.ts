@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useFileLoader } from "../../src/hooks/useFileLoader";
 import type { PlaylistData } from "@logic/FileService";
-import { FileDialog } from "../../src/abstractions/FileDialog";
-import { FileSystem } from "../../src/abstractions/FileSystem";
+import type { FileDialog } from "../../src/abstractions/FileDialog";
+import type { FileSystem } from "../../src/abstractions/FileSystem";
 import { FileService } from "@logic/FileService";
 import { Song } from "@logic/Song";
 

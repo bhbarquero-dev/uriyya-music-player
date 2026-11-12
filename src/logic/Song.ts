@@ -60,7 +60,7 @@ export class Song {
     }
 
     public getDisplayName(): string {
-        return this.path.split(/[\\\/]/).pop() || this.path;
+        return this.path.split(/[\\/]/).pop() || this.path;
     }
 
     public equals(other: Song | null | undefined): boolean {
