@@ -153,9 +153,9 @@ Three GitHub Actions workflows cover the pipeline:
 | `cd.yml` | Pushes to `main` | Runs CI, then builds installers for macOS (Intel), Linux, and Windows and uploads them as workflow artifacts |
 | `release.yml` | A GitHub Release is published | Runs CI, then builds all bundles for the three platforms, attaches them to the release, and attests build provenance |
 
-CI is skipped for pull requests that only touch `README.md`, `docs/**`, or the other paths listed under `paths-ignore` in `ci.yml`.
+CI and CD are skipped when a change only touches documentation (any `*.md` file, `docs/**`, `LICENSE`) or the other paths listed under `paths-ignore` in `ci.yml` and `cd.yml`.
 
-The app version is declared in `package.json`, `src-tauri/tauri.conf.json`, and the sidebar footer (`src/components/sidebar/SidebarFooter.tsx`). Keep the three in sync with the release tag.
+The app version is declared in `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` (mirrored in `src-tauri/Cargo.lock`), and the sidebar footer (`src/components/sidebar/SidebarFooter.tsx`). Keep them in sync with the release tag.
 
 ## Dependency Updates
 
