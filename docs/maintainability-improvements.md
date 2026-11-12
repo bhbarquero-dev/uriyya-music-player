@@ -349,7 +349,6 @@ Small, independent cleanups. Each can be its own commit.
 | Where | What happens |
 | --- | --- |
 | `FileService.selectAndReadPlaylist`, `savePlaylist` | `console.error` then rethrow. `App.tsx` logs the same error again and shows a dialog, so it is logged twice |
-| `App.tsx` unsaved-changes dialog, `onSave` | `saveCurrentPlaylist()` is not wrapped. If the write fails, the dialog stays open, nothing is shown, and the promise rejection is unhandled. The user can lose edits by choosing Discard afterwards without knowing the save failed |
 | `useAudioPlayback` polling | `try { tick() } catch (e) { // ignore }` hides any bug in the tick function |
 | `AudioManagerEvents.onError` | The error is typed `any` and only logged. The user gets no feedback when a song fails to play; playback state just resets |
 | `TauriSettingsStore` | Both methods catch everything. A failed save means the library silently is not remembered on next launch |
@@ -362,7 +361,7 @@ Small, independent cleanups. Each can be its own commit.
 Adopt one rule and write it in `CONTRIBUTING.md`: logic throws, hooks pass errors through, and the UI boundary decides what the user sees. Logging happens once, at that boundary.
 
 1. Remove the log-and-rethrow blocks from `FileService`.
-2. Wrap `saveCurrentPlaylist()` in the dialog's `onSave`: on failure, keep the dialog open and show the error through the notifier. Add this to `docs/domain/playlist.md` under "Unsaved Changes" and cover it with a test.
+2. Done: a failed save from the unsaved-changes dialog is now reported, the dialog stays open and the pending action does not continue (`test/App.test.tsx`).
 3. Delete the `try/catch` around `tick` in `useAudioPlayback`. If it was added for a specific WebView failure, catch that specific case inside `createTimingTick` with a comment.
 4. Type `onError` as `(channelId: AudioChannel, error: unknown) => void` and surface playback failures: expose a `playbackError` from `useAudioPlayback` and show it, or mark the song as invalid. This is a behavior change that belongs in `docs/domain/playback.md` first.
 5. `TauriSettingsStore.saveLibraryPath` should let the error propagate, and `useLibrary` (item 4) should report it. `getLibraryPath` returning `null` on failure is reasonable, but log it once.
