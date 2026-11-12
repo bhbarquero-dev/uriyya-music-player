@@ -74,6 +74,9 @@ jobs:
       - name: Audit frontend dependencies
         run: pnpm audit --audit-level=high
 
+      - name: Lint
+        run: pnpm lint
+
       - name: Type check
         run: pnpm exec tsc --noEmit
 

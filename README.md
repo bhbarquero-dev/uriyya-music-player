@@ -70,6 +70,7 @@ pnpm test
 Run the same local validation sequence used by CI:
 
 ```bash
+pnpm lint
 pnpm exec tsc --noEmit
 pnpm test
 pnpm exec playwright install chromium

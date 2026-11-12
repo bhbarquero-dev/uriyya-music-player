@@ -24,13 +24,13 @@ export function ConfirmDialog({ title, message, canSave = true, onSave, onDiscar
                     {message}
                 </p>
                 <div className="confirm-dialog-actions">
-                    <button onClick={onCancel} className="confirm-dialog-btn confirm-dialog-btn--cancel">
+                    <button type="button" onClick={onCancel} className="confirm-dialog-btn confirm-dialog-btn--cancel">
                         Cancelar
                     </button>
-                    <button onClick={onDiscard} className="confirm-dialog-btn confirm-dialog-btn--discard">
+                    <button type="button" onClick={onDiscard} className="confirm-dialog-btn confirm-dialog-btn--discard">
                         Descartar
                     </button>
-                    <button onClick={onSave} disabled={!canSave} className="confirm-dialog-btn confirm-dialog-btn--save">
+                    <button type="button" onClick={onSave} disabled={!canSave} className="confirm-dialog-btn confirm-dialog-btn--save">
                         Guardar
                     </button>
                 </div>

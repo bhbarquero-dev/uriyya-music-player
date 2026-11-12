@@ -90,7 +90,7 @@ Behavior-first testing philosophy:
 
 ### Validation
 
-- For TypeScript or React behavior changes, run `pnpm exec tsc --noEmit` and the relevant tests
+- For TypeScript or React behavior changes, run `pnpm lint`, `pnpm exec tsc --noEmit` and the relevant tests
 - Run `pnpm test` when the change affects shared behavior or multiple components/hooks
 - Run `pnpm test:e2e` when the change affects critical user flows such as navigation, playback, file loading, or persistence
 - For Tauri or Rust changes, validate the affected Tauri build or command path as appropriate

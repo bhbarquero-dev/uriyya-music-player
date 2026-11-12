@@ -35,6 +35,7 @@ export function PlaylistBanner({ currentPlaylistName, songsCount = 0, hasUnsaved
                         </div>
                         {onChangePlaylist && (
                             <button
+                                type="button"
                                 className="btn-change-playlist"
                                 onClick={onChangePlaylist}
                                 disabled={disabled}
@@ -46,6 +47,7 @@ export function PlaylistBanner({ currentPlaylistName, songsCount = 0, hasUnsaved
                     </div>
             ) : (
                 <button
+                    type="button"
                     className="btn-load"
                     onClick={onLoadPlaylist}
                     disabled={disabled}

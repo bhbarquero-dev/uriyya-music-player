@@ -32,7 +32,7 @@ export function Library({ store: libraryStore, onAddToPlaylist, onAddToStart, on
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [libraryStore]);
 
     useEffect(() => {
         let isMounted = true;
@@ -62,7 +62,7 @@ export function Library({ store: libraryStore, onAddToPlaylist, onAddToStart, on
         return () => {
             isMounted = false;
         };
-    }, [libraryPath]);
+    }, [libraryPath, libraryStore]);
 
     const handleLibraryAddClick = async () => {
         const selectedPath = await libraryStore.add();
