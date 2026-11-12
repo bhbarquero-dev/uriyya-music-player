@@ -49,6 +49,7 @@ A playlist is an ordered list of songs loaded from a text file. The user can nav
   - **Save**: save the playlist, then continue.
   - **Discard**: continue without saving.
   - **Cancel**: stay in the current playlist.
+- If saving fails after choosing **Save**, the error is shown in a native error dialog, the unsaved-changes dialog stays open, and the pending action (changing the playlist or closing the window) does not continue. The user can retry, discard, or cancel.
 - That dialog is currently the only way to save a playlist; there is no standalone save action.
 
 ## Related Code
@@ -62,6 +63,7 @@ A playlist is an ordered list of songs loaded from a text file. The user can nav
 - `src/components/songList/`
 - `src/components/common/ConfirmDialog.tsx`
 - `src/App.tsx`
+- `test/App.test.tsx`
 - `test/hooks/usePlaylistState.test.ts`
 - `test/logic/FileService.test.ts`
 - `test/logic/PlaylistManager.test.ts`

@@ -55,7 +55,8 @@ Persistence in the current app covers two separate concerns:
 ## Failure Handling
 
 - Library-path persistence failures are intentionally non-blocking.
-- Playlist load and save failures are surfaced to callers, which log and handle them at the UI boundary.
+- Playlist load and save failures are surfaced to callers, which log and handle them at the UI boundary: both are shown to the user in a native error dialog.
+- A failed save leaves the unsaved-changes flag set.
 
 ## Related Code
 

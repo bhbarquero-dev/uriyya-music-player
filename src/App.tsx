@@ -58,7 +58,13 @@ function App() {
   const showUnsavedChangesDialog = useCallback((onProceed: () => Promise<void> | void) => {
     setDialogConfig({
       onSave: async () => {
-        await saveCurrentPlaylist();
+        try {
+          await saveCurrentPlaylist();
+        } catch (error) {
+          console.error("Failed to save playlist:", error);
+          await message(String(error), { title: "Error al guardar la lista", kind: "error" });
+          return;
+        }
         setDialogConfig(null);
         await onProceed();
       },
