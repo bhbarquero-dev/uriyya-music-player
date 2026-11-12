@@ -8,7 +8,7 @@ Las pruebas e2e validan el comportamiento de la aplicación en un navegador real
 
 - **Navegación con teclas de flecha**: Valida que al navegar entre canciones con ArrowUp/ArrowDown, el elemento seleccionado permanece visible en el viewport del contenedor con scroll.
 - **Scroll automático**: Verifica que el scroll se ajusta automáticamente cuando el usuario navega más allá del área visible.
-- **Manejo de casos sin datos**: Asegura que la aplicación no falla cuando no hay canciones cargadas.
+- **Límites de la lista**: Verifica que la navegación se comporta correctamente al llegar a la primera y a la última canción.
 
 ## Requisitos
 
@@ -54,9 +54,9 @@ pnpm exec playwright show-report
 
 ## Notas importantes
 
-1. **Sin archivos de prueba**: Las pruebas están diseñadas para funcionar sin archivos de música reales. Se enfocan en validar la estructura de la UI y el comportamiento de navegación.
+1. **Datos simulados**: Las pruebas no usan archivos de música reales. Inyectan en la página una lista de canciones simulada y validan el comportamiento de navegación y scroll sobre ella.
 
-2. **Tauri app**: Esta es una aplicación Tauri que corre en `http://localhost:1420` durante el desarrollo.
+2. **Frontend en navegador**: Las pruebas corren contra el servidor de desarrollo de Vite en `http://localhost:1420` (Playwright lo levanta automáticamente) usando Chromium, no contra la ventana de Tauri, por lo que las APIs nativas no están disponibles.
 
 3. **CI/CD**: Las pruebas se ejecutan automáticamente en el pipeline de CI de GitHub Actions.
 
@@ -82,7 +82,7 @@ Para agregar nuevas pruebas e2e:
 1. Crear un nuevo archivo `.spec.ts` en este directorio
 2. Importar `test` y `expect` de `@playwright/test`
 3. Escribir los test cases
-4. Asegurarse de que las pruebas funcionen tanto con como sin datos de prueba
+4. Asegurarse de que las pruebas no dependan de archivos de música reales ni de APIs de Tauri
 
 ## Referencias
 

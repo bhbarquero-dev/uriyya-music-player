@@ -16,7 +16,7 @@ Uriyya Music Player is a desktop music player built with React + TypeScript and 
 	pnpm install
 	```
 
-2. In a separate terminal, run the Tauri dev environment (this will open the desktop window and load the frontend):
+2. Run the Tauri dev environment (this starts the frontend dev server and opens the desktop window):
 
 	```bash
 	pnpm tauri dev
@@ -68,7 +68,6 @@ See the [e2e/README.md](e2e/README.md) for more details about e2e testing.
 
 ## Project Structure (high level)
 - `src/` — React app source (components, hooks, logic)
-- `public/` — static assets
 - `src-tauri/` — Tauri/Rust configuration and native code
 - `test/` — unit tests
 - `e2e/` — end-to-end tests with Playwright

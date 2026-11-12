@@ -41,7 +41,9 @@ Playback manages which song is actively sounding, which song is selected in the 
 - If no song is selected, pressing `P` must attempt to play the first song in the playlist.
 - If playback is already active, pressing `P` must do nothing and must not restart or switch the current song.
 - Pressing `S` must stop playback using fade-out rather than an abrupt cut.
-- Playback shortcuts must be ignored while focus is inside a text input or textarea.
+- Pressing `Space` must pause playback.
+- Pressing `ArrowDown` or `ArrowUp` must move the selection to the next or previous song in the playlist.
+- Playback and navigation shortcuts must be ignored while focus is inside a text input or textarea.
 
 ## Edge Cases
 

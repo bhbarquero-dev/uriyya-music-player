@@ -52,9 +52,10 @@ Keep code in the layer where it belongs. Do not move code between layers unless 
 ### Code Organization
 
 #### Business Logic
-- Extract to custom hooks
-- Keep components purely presentational
-- Test hooks independently
+- Put domain logic and services in `src/logic`
+- Put stateful React coordination in custom hooks under `src/hooks`
+- Keep components presentational when possible
+- Test hooks and logic independently
 
 #### Test Organization
 - Unit and component tests live under `test/`
@@ -128,6 +129,8 @@ Types:
 - refactor: Code restructuring
 - test: Adding tests
 - chore: Maintenance
+- ci: CI/CD workflows
+- build: Build system or dependencies
 
 Example:
 ```
