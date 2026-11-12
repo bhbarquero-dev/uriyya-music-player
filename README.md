@@ -5,9 +5,36 @@
 
 Uriyya Music Player is a desktop music player built with React + TypeScript and packaged with Tauri. It provides a lightweight UI for playing local audio files and demonstrates integration between a modern web frontend and native desktop capabilities.
 
+## Features
+- Plays local `.mp3` and `.wav` files.
+- Loads playlists from `.txt` and `.alb` files (one absolute file path per line).
+- Edits the loaded playlist: reorder by drag and drop, add songs from the library, remove songs, and save back to the same file.
+- Flags playlist entries whose file is missing on disk.
+- Browses and searches a library directory, remembered across launches.
+- Fades out on stop and when switching songs.
+- Click-to-seek progress bar with elapsed and remaining time.
+
+The user interface is in Spanish.
+
+## Keyboard Shortcuts
+
+| Key | Action |
+| --- | --- |
+| `P` | Play the selected song, or the first song if none is selected |
+| `Space` | Pause |
+| `S` | Stop with fade-out |
+| `↑` / `↓` | Select the previous / next song |
+| `←` / `→` | Seek backward / forward 5% (with the progress bar focused) |
+
+Shortcuts are ignored while typing in a text field.
+
+## Download
+Installers for Windows, macOS (Intel build), and Linux are published on the [Releases](https://github.com/bhbarquero-dev/uriyya-music-player/releases) page.
+
 ## Prerequisites
-- [Tauri](https://v2.tauri.app/start/prerequisites/) 
-- pnpm
+- [Node.js](https://nodejs.org/) LTS
+- pnpm, enabled through Corepack (`corepack enable`); the version is pinned in `package.json`
+- Rust and the platform dependencies listed in the [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/)
 
 ## Quick Start (Development)
 1. Install dependencies:
@@ -16,7 +43,7 @@ Uriyya Music Player is a desktop music player built with React + TypeScript and 
 	pnpm install
 	```
 
-2. In a separate terminal, run the Tauri dev environment (this will open the desktop window and load the frontend):
+2. Run the Tauri dev environment (this starts the frontend dev server and opens the desktop window):
 
 	```bash
 	pnpm tauri dev
@@ -68,10 +95,15 @@ See the [e2e/README.md](e2e/README.md) for more details about e2e testing.
 
 ## Project Structure (high level)
 - `src/` — React app source (components, hooks, logic)
-- `public/` — static assets
 - `src-tauri/` — Tauri/Rust configuration and native code
-- `test/` — unit tests
+- `test/` — unit and component tests
 - `e2e/` — end-to-end tests with Playwright
+- `docs/` — product rules and architecture
+
+## Documentation
+- [Product constitution](docs/constitution.md) — scope and global rules
+- Domain rules: [playback](docs/domain/playback.md), [playlist](docs/domain/playlist.md), [library](docs/domain/library.md), [persistence](docs/domain/persistence.md)
+- [Architecture](docs/architecture.md) — layers, boundaries, and native permissions
 
 ## Notes & Troubleshooting
 - If Tauri commands fail, ensure the Rust toolchain is installed and up to date.

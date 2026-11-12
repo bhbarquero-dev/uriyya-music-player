@@ -35,13 +35,30 @@ Playback manages which song is actively sounding, which song is selected in the 
 - When the current song ends naturally and there is a next song, the next song becomes selected but does not auto-play.
 - When the current song is the last song, natural end stops playback with no wraparound.
 
+## Transitions Between Songs
+
+- The player uses two audio channels so one song can fade out while another starts.
+- Starting a song while another is playing starts the new song immediately at full volume and fades the previous one out.
+- Fade-outs, including the one used by `stop()`, last 6 seconds.
+- While a stop fade-out is in progress the player shows a "stopping" state instead of a song name.
+- If the audio element reports an error on the active channel, playback state is cleared and the error is logged.
+
+## Seeking
+
+- Clicking the progress bar seeks to the clicked position, as a fraction of the song duration.
+- With the progress bar focused, `ArrowRight` and `ArrowLeft` seek forward and backward by 5% of the duration.
+- Seeking is a no-op while the duration is unknown, which includes when no song is loaded.
+- The player shows elapsed time and remaining time; remaining time is blank while the duration is unknown.
+
 ## Required Keyboard Shortcuts
 
 - Pressing `P` must attempt to play the currently selected song.
 - If no song is selected, pressing `P` must attempt to play the first song in the playlist.
 - If playback is already active, pressing `P` must do nothing and must not restart or switch the current song.
 - Pressing `S` must stop playback using fade-out rather than an abrupt cut.
-- Playback shortcuts must be ignored while focus is inside a text input or textarea.
+- Pressing `Space` must pause playback.
+- Pressing `ArrowDown` or `ArrowUp` must move the selection to the next or previous song in the playlist.
+- Playback and navigation shortcuts must be ignored while focus is inside a text input or textarea.
 
 ## Edge Cases
 
@@ -56,5 +73,8 @@ Playback manages which song is actively sounding, which song is selected in the 
 - `src/hooks/useAudioPlayback.ts`
 - `src/hooks/usePlaylistState.ts`
 - `src/logic/AudioManager.ts`
+- `src/logic/Channel.ts`
+- `src/components/player/ProgressBar.tsx`
+- `src/App.tsx`
 - `test/hooks/useMusicPlayer.test.ts`
 - `test/hooks/useMusicPlayer.time.test.ts`

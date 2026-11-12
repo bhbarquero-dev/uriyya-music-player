@@ -52,9 +52,10 @@ Keep code in the layer where it belongs. Do not move code between layers unless 
 ### Code Organization
 
 #### Business Logic
-- Extract to custom hooks
-- Keep components purely presentational
-- Test hooks independently
+- Put domain logic and services in `src/logic`
+- Put stateful React coordination in custom hooks under `src/hooks`
+- Keep components presentational when possible
+- Test hooks and logic independently
 
 #### Test Organization
 - Unit and component tests live under `test/`
@@ -128,6 +129,8 @@ Types:
 - refactor: Code restructuring
 - test: Adding tests
 - chore: Maintenance
+- ci: CI/CD workflows
+- build: Build system or dependencies
 
 Example:
 ```
@@ -139,3 +142,26 @@ feat(player): add volume control
 
 Closes #123
 ```
+
+## Continuous Integration and Releases
+
+Three GitHub Actions workflows cover the pipeline:
+
+| Workflow | Trigger | What it does |
+| --- | --- | --- |
+| `ci.yml` | Pull requests to `main` | `cargo audit`, `pnpm audit --audit-level=high`, type check, unit tests, e2e tests, frontend build, and a debug Tauri build |
+| `cd.yml` | Pushes to `main` | Runs CI, then builds installers for macOS (Intel), Linux, and Windows and uploads them as workflow artifacts |
+| `release.yml` | A GitHub Release is published | Runs CI, then builds all bundles for the three platforms, attaches them to the release, and attests build provenance |
+
+CI and CD are skipped when a change only touches documentation (any `*.md` file, `docs/**`, `LICENSE`) or the other paths listed under `paths-ignore` in `ci.yml` and `cd.yml`.
+
+The app version is declared in `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` (mirrored in `src-tauri/Cargo.lock`), and the sidebar footer (`src/components/sidebar/SidebarFooter.tsx`). Keep them in sync with the release tag.
+
+## Dependency Updates
+
+- Group Dependabot PRs into one branch/PR; keep major bumps in their own PR
+- `@tauri-apps/*` (api, cli, plugins) and their Rust crates (`tauri`, `tauri-plugin-*`) must match on major.minor, or `pnpm tauri build` fails. After `cargo update`, bump the npm side with `pnpm update --latest` and confirm `pnpm tauri info` shows no mismatch
+- Prefer `cargo update -p <crate>`, then raise the minimum versions in `src-tauri/Cargo.toml` to match the lockfile
+- A high vulnerability in a transitive dependency (e.g. `vite`, `undici`) fails every PR. Fix it with `pnpm update <pkg> -r`
+- GitHub Actions are pinned by SHA with a version comment. Take the new SHA from the Dependabot PR and update every workflow that uses the action (`ci.yml`, `cd.yml`, `release.yml`)
+- Rust may not compile locally on Windows without the MSVC linker (`link.exe`); rely on CI for the Rust check

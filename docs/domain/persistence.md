@@ -12,7 +12,7 @@ Persistence in the current app covers two separate concerns:
 ## Persisted Settings
 
 - The app stores the selected library directory under the key `library.path` in `settings.json`.
-- On sidebar mount, the app reads `library.path` and restores it into UI state if the stored value is a string.
+- When the library panel mounts, the app reads `library.path` through the library store and restores it into UI state if the stored value is a string.
 - If reading settings fails or the stored value is missing or not a string, the app behaves as if no library path was saved.
 - If saving the library path fails, the error is swallowed so the UI flow is not blocked.
 
@@ -60,7 +60,8 @@ Persistence in the current app covers two separate concerns:
 ## Related Code
 
 - `src/logic/TauriSettingsStore.ts`
-- `src/components/sidebar/Sidebar.tsx`
+- `src/logic/Library.ts`
+- `src/components/sidebar/library/Library.tsx`
 - `src/logic/FileService.ts`
 - `src/logic/ParallelsPathResolver.ts`
 - `src/hooks/useMusicPlayer.ts`

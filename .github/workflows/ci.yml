@@ -4,12 +4,12 @@ on:
     branches:
       - main
     paths-ignore:
-      - '.github/**/*.md'
+      - '**/*.md'
       - '.github/dependabot.yml'
       - '.github/workflows/cd.yml'
       - '.github/workflows/release.yml'
-      - 'README.md'
       - '.gitignore'
+      - 'LICENSE'
       - '.vscode/**'
       - 'docs/**'
   workflow_dispatch:
