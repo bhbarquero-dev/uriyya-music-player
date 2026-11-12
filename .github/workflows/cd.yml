@@ -35,16 +35,18 @@ jobs:
       matrix:
         include:
           - platform: "macos-15" # for Intel based macs.
-            args: "--target x86_64-apple-darwin"
+            args: "--target x86_64-apple-darwin --bundles dmg"
           - platform: "ubuntu-22.04"
-            args: ""
+            args: "--bundles deb"
           - platform: "windows-latest"
-            args: ""
+            args: "--bundles nsis"
 
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Enable corepack
         run: corepack enable
@@ -73,7 +75,7 @@ jobs:
           version: 1.0
 
       - name: Install frontend dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build with Tauri Action
         uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1.0.0
