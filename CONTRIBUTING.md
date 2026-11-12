@@ -149,13 +149,13 @@ Three GitHub Actions workflows cover the pipeline:
 
 | Workflow | Trigger | What it does |
 | --- | --- | --- |
-| `ci.yml` | Pull requests to `main` | `cargo audit`, `pnpm audit --audit-level=high`, type check, unit tests, e2e tests, frontend build, and a debug Tauri build |
+| `ci.yml` | Pull requests to `main` | `cargo audit`, `pnpm audit --audit-level=high`, lint, type check, unit tests, e2e tests, frontend build, and a debug Tauri build |
 | `cd.yml` | Pushes to `main` | Runs CI, then builds installers for macOS (Intel), Linux, and Windows and uploads them as workflow artifacts |
 | `release.yml` | A GitHub Release is published | Runs CI, then builds all bundles for the three platforms, attaches them to the release, and attests build provenance |
 
 CI and CD are skipped when a change only touches documentation (any `*.md` file, `docs/**`, `LICENSE`) or the other paths listed under `paths-ignore` in `ci.yml` and `cd.yml`.
 
-The app version is declared in `package.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml` (mirrored in `src-tauri/Cargo.lock`), and the sidebar footer (`src/components/sidebar/SidebarFooter.tsx`). Keep them in sync with the release tag.
+`package.json` is the source of truth for the app version: change it there and nowhere else. `src-tauri/tauri.conf.json` and the sidebar footer read it directly. `scripts/sync-version.mjs` copies it into `src-tauri/Cargo.toml` and `src-tauri/Cargo.lock`; it runs at the start of `pnpm dev` and `pnpm build` (and therefore of every Tauri build, including CD and releases), or on demand with `pnpm sync:version`. Commit the Cargo files it updates. The release tag (`vX.Y.Z`) is created by hand and is not checked against the version.
 
 ## Dependency Updates
 
