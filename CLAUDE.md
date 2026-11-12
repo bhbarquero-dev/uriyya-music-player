@@ -64,3 +64,10 @@
 
 ## Commits
 * Use Conventional Commits style for commit messages
+## Dependency Updates
+* Group Dependabot PRs into one branch/PR; keep major bumps in their own PR
+* `@tauri-apps/*` (api, cli, plugins) and their Rust crates (`tauri`, `tauri-plugin-*`) must match on major.minor, or `pnpm tauri build` fails. After `cargo update`, bump the npm side with `pnpm update --latest` and confirm `pnpm tauri info` shows no mismatch
+* Prefer `cargo update -p <crate>`, then raise the minimum versions in `src-tauri/Cargo.toml` to match the lockfile
+* CI runs `pnpm audit --audit-level=high` and `cargo audit`; a high vulnerability in a transitive dependency (e.g. `vite`, `undici`) fails every PR. Fix it with `pnpm update <pkg> -r`
+* GitHub Actions are pinned by SHA with a version comment. Take the new SHA from the Dependabot PR and update every workflow that uses the action (`ci.yml`, `cd.yml`, `release.yml`)
+* Rust may not compile locally on Windows without the MSVC linker (`link.exe`); rely on CI for the Rust check
